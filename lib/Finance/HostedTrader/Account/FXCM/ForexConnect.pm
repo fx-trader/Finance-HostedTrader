@@ -28,6 +28,7 @@ extends 'Finance::HostedTrader::Account', 'Finance::HostedTrader::Logger';
 use Moose::Util::TypeConstraints;
 use YAML::Syck;
 use Finance::HostedTrader::Trade;
+use Data::Dumper;
 
 =attr C<username>
 
