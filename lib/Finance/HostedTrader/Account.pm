@@ -346,6 +346,8 @@ Returns a hashref whose key is a "trading symbol" and value a L<Finance::HostedT
 sub getPositions {
     my ($self, $forceRefresh) = @_;
 
+    $self->logger->info("Positions last refreshed: " . $self->{_lastRefreshPositions});
+
     # Clients call getPositions() all the time to get list of current positions
     # Avoid going to the server every single time. This improves performance (less network traffic)
     # at a cost of the positions not being necessarly up to date (eg: a position might have been opened/closed via manual trading)

@@ -23,7 +23,7 @@ package Finance::HostedTrader::Account::FXCM::ForexConnect;
 =cut
 
 use Moose;
-extends 'Finance::HostedTrader::Account';
+extends 'Finance::HostedTrader::Account', 'Finance::HostedTrader::Logger';
 
 use Moose::Util::TypeConstraints;
 use YAML::Syck;
@@ -168,12 +168,15 @@ sub refreshPositions {
 
     $self->{_positions} = {};
     my $yml = $self->_fx->getTrades();
+    $self->logger->info("Got trade list as string");
 
     return if (!$yml);
     my $trades = YAML::Syck::Load( $yml );
     die("Invalid yaml: $!") if (!$trades);
+    $self->logger->info("Parsed trade list from yaml");
 
     foreach my $trade_data (@$trades) {
+        $self->logger->info(Dumper(\$trade_data));
         $trade_data->{symbol} =~ s|/||;
         if ($trade_data->{direction} eq 'short') {
             #FXCM returns short positions as positive numbers,
@@ -201,6 +204,8 @@ Returns the current ask(long) price for $symbol
 sub getAsk {
     my ($self, $symbol) = @_;
 
+    $self->logger->info($symbol);
+
     $symbol = $self->_convertSymbolToFXCM($symbol);
     return $self->_fx->getAsk($symbol);
 }
@@ -213,6 +218,8 @@ Returns the current bid(short) price for $symbol
 
 sub getBid {
     my ($self, $symbol) = @_;
+
+    $self->logger->info($symbol);
 
     $symbol = $self->_convertSymbolToFXCM($symbol);
     return $self->_fx->getBid($symbol);
@@ -236,6 +243,8 @@ $price   - The price at which the trade was executed.
 augment 'openMarket' => sub {
     my ($self, $symbol, $direction, $amount, $stopLoss) = @_;
 
+    $self->logger->info($symbol, $direction, $amount, $stopLoss);
+
     my $fxcm_symbol = $self->_convertSymbolToFXCM($symbol);
     my $fxcm_direction = ($direction eq 'long' ? 'B' : 'S');
     my $isSuccess;
@@ -246,10 +255,11 @@ augment 'openMarket' => sub {
     TRY_OPENTRADE: foreach my $try (1..3) {
         eval {
             $self->_fx->openMarket($fxcm_symbol,$fxcm_direction,$amount);
+            $self->logger->warn("openMarket succeded");
             $isSuccess = 1;
             1;
         } or do {
-            #TODO would be preferable to log something here
+            $self->logger->warn("openMarket failed: $!");
             next;
         };
         last TRY_OPENTRADE;
@@ -269,6 +279,8 @@ Returns $closedTradeID
 
 augment closeMarket => sub {
     my ($self, $tradeID, $amount) = @_;
+
+    $self->logger->info($tradeID, $amount);
 
     return $self->_fx->closeMarket($tradeID,$amount);
 };
@@ -315,13 +327,6 @@ sub _convertSymbolToFXCM {
     return $symbolMap{$symbol};
 }
 
-
-sub _sendCmd {
-    my ($self, $cmd) = @_;
-
-    die($cmd . ' not implemented');
-}
-
 sub getServerEpoch {
     my $self = shift;
 
@@ -345,7 +350,8 @@ This method is called by Trader.pl.
 =cut
 sub waitForNextTrade {
     my ($self, $system) = @_;
-    
+
+    $self->logger->info("waiting 20 seconds for next trade");
     sleep(20);
 }
 
