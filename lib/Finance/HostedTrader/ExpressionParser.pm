@@ -3,6 +3,7 @@ package Finance::HostedTrader::ExpressionParser;
 use strict;
 use warnings;
 use Date::Manip;
+use Log::Log4perl qw(:easy);
 my ( %INDICATORS, %VALUES );
 
 use Parse::RecDescent;
@@ -99,11 +100,18 @@ function:
 
     my $parser    = Parse::RecDescent->new($grammar);
 
+    if (!Log::Log4perl->initialized()) {
+        if ( -r "/etc/hostedtrader.log.conf" ) {
+            Log::Log4perl->init("/etc/hostedtrader.log.conf");
+        }
+    }
+
     my $self = {
         '_parser' => $parser,
         '_ds'       => ( $ds ? $ds : Finance::HostedTrader::Datasource->new() ),
         '_cache'    => {}, # caches parsing of expressions
         '_result_cache' => {}, # caches actual indicator values
+        '_logger'   => Log::Log4perl::get_logger(),
     };
 
     return bless( $self, $class );
@@ -208,6 +216,7 @@ ORDER BY datetime $order_ext
 );
 
     print $sql if ($args->{debug});
+    $self->{_logger}->debug($sql);
 
     my $dbh = $self->{_ds}->dbh;
     my $data = $dbh->selectall_arrayref($sql) or die($DBI::errstr);
@@ -229,6 +238,7 @@ sub getSignalData {
     my ( $self, $args ) = @_;
     my $sql = $self->_getSignalSql($args);
     print $sql if ($args->{debug});
+    $self->{_logger}->debug($sql);
 
     my $dbh = $self->{_ds}->dbh;
     my $data = $dbh->selectall_arrayref($sql) or die( $DBI::errstr . $sql );
@@ -253,6 +263,7 @@ sub getSystemData {
 
     my $sql = $sql_entry . ' UNION ALL ' . $sql_exit . ' ORDER BY datetime';
     print $sql if ($args{debug});
+    $self->{_logger}->debug($sql);
 
     my $dbh = $self->{_ds}->dbh;
     my $data = $dbh->selectall_arrayref($sql) or die( $DBI::errstr . $sql );
