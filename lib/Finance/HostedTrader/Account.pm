@@ -191,14 +191,24 @@ sub getBaseUnit {
 
 =method C<balance()>
 
-This method must be overriden to return the current balance in the account ( before p/l of open positions )
+Returns the current balance in the account ( before p/l of open positions )
 
 =cut
 sub balance {
     my $self = shift;
 
-    my $balance = inner();
+    my $balance = inner() + $self->getExternalDeposits();
     return $balance;
+}
+
+=method C<getExternalDeposits()>
+
+Returns the total amount of deposits available as collateral.
+This is added to the account balance/nav.
+
+=cut
+sub getExternalDeposits {
+    return 0;
 }
 
 =method C<getBaseCurrency()>

@@ -312,6 +312,10 @@ augment 'balance' => sub {
     return $self->_fx->getBalance();
 };
 
+sub getExternalDeposits {
+    return 1500; #hard coded for now
+}
+
 =method C<getBaseCurrency>
 
 =cut

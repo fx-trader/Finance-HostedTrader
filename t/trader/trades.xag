@@ -4,14 +4,14 @@
   stopLoss: 1.3274
   now: 2012-05-01 14:08:00
   nav: 50000.0000
-  balance: 50000.0000
+  balance: 50000
 - symbol: EURUSD
   direction: short
   amount: 220000
   stopLoss: 1.3067
   now: 2012-05-30 00:00:00
   nav: 84514.5196
-  balance: 50000.0000
+  balance: 50000
 - symbol: EURUSD
   direction: short
   amount: -930000
