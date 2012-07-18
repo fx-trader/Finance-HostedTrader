@@ -306,11 +306,11 @@ Return the current balance in the account (before profit/loss of existing positi
 
 =cut
 
-sub balance {
+augment 'balance' => sub {
     my ($self) = @_;
 
     return $self->_fx->getBalance();
-}
+};
 
 =method C<getBaseCurrency>
 

@@ -196,7 +196,9 @@ This method must be overriden to return the current balance in the account ( bef
 =cut
 sub balance {
     my $self = shift;
-    $self->logger->logcroak("balance must be overriden");
+
+    my $balance = inner();
+    return $balance;
 }
 
 =method C<getBaseCurrency()>

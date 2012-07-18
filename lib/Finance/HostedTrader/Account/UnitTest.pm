@@ -268,10 +268,11 @@ sub getNav {
 =method C<balance>
 
 =cut
-sub balance {
+augment 'balance' => sub {
     my ($self) = @_;
+
     return sprintf("%.4f", $self->{_account_data}->{balance});
-}
+};
 
 #sub checkSignal_slow {
 #    my ($self, $symbol, $signal_definition, $signal_args) = @_;
