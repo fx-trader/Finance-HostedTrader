@@ -9,4 +9,18 @@ use Finance::HostedTrader::Config;
 use Data::Dumper;
 
 my $cfg = Finance::HostedTrader::Config->new();
-print Dumper(\$cfg);
+
+if (@ARGV) {
+    my @values;
+    foreach my $key (@ARGV) {
+        my @path = split('::', $key);
+        my $ptr = $cfg;
+        foreach (@path) {
+            $ptr = $ptr->{$_};
+        }
+        push @values, $ptr;
+    }
+    print join(" ", @values);
+} else {
+    print Dumper(\$cfg);
+}
