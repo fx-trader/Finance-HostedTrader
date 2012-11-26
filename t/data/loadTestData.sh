@@ -13,6 +13,7 @@ for file in *gz; do
     gunzip $file
 done
 
-mysqlimport --ignore --ignore-lines=1 --local --fields-terminated-by='\t' --lines-terminated-by='\n' -s -ufxcm fxcm *_*
+#TODO Hardcoded mysql credentials
+mysqlimport --ignore --ignore-lines=1 --local --fields-terminated-by='\t' --lines-terminated-by='\n' -s -ufxcm -pfxcm fxcm *_*
 cd ..
 rm -fR testdata
