@@ -92,4 +92,5 @@ PRIMARY KEY ( `datetime` )
     }
 
 }
-print "GRANT ALL ON `$dbname`.* TO `$dbuser`@`$userhost`" . ($dbpasswd ? " IDENTIFIED BY `$dbpasswd`": '') . ";\n";
+# the GRANT ALL syntax below is no longer valid in mysql 5.5, remove for now
+# print "GRANT ALL ON `$dbname`.* TO `$dbuser`@`$userhost`" . ($dbpasswd ? " IDENTIFIED BY `$dbpasswd`": '') . ";\n";
