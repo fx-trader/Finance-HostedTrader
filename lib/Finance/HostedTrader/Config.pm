@@ -42,13 +42,13 @@ package Finance::HostedTrader::Config;
 use strict;
 use warnings;
 use Config::Any;
-use Data::Dumper;
 use Hash::Merge;
 use Moose;
 
 use Finance::HostedTrader::Config::DB;
 use Finance::HostedTrader::Config::Symbols;
 use Finance::HostedTrader::Config::Timeframes;
+use Finance::HostedTrader::Config::TradingProvider::Factory;
 
 BEGIN {
                Hash::Merge::specify_behavior(
@@ -101,6 +101,15 @@ has timeframes => (
     required => 1,
 );
 
+=attr C<tradingProviders>
+<L><Finance::HostedTrader::Config::TradingProvider> hasref of available trading providers configuration
+=cut
+has tradingProviders => (
+    is       => 'ro',
+    isa      => 'HashRef[Finance::HostedTrader::Config::TradingProvider]',
+    required => 0,
+);
+
 =method C<BUILDARGS>
 
 See SYNOPSIS for available options.
@@ -140,6 +149,9 @@ around BUILDARGS => sub {
         'db' => Finance::HostedTrader::Config::DB->new($cfg->{db}),
 	'symbols' => Finance::HostedTrader::Config::Symbols->new($cfg->{symbols}),
 	'timeframes' => Finance::HostedTrader::Config::Timeframes->new($cfg->{timeframes}),
+        'tradingProviders' => {
+		map { $_ => Finance::HostedTrader::Config::TradingProvider::Factory->new()->create_instance($_, $cfg->{tradingProviders}->{$_}) }  keys %{$cfg->{tradingProviders}}
+	},
     };
 
     return $class->$orig($class_args);
