@@ -91,5 +91,5 @@ PRIMARY KEY ( `datetime` )
 
     }
 
-print "GRANT ALL ON `$dbname`.* TO `$dbuser`@`$userhost`" . ($dbpasswd ? " IDENTIFIED BY `$dbpasswd`": '') . ";\n";
 }
+print "GRANT ALL ON `$dbname`.* TO `$dbuser`@`$userhost`" . ($dbpasswd ? " IDENTIFIED BY `$dbpasswd`": '') . ";\n";
