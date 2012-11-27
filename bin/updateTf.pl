@@ -4,7 +4,7 @@ package Finance::HostedTrader;
 
 =head1 SYNOPSIS
 
-    updateTf.pl [--start="5 years ago"] [--end=today] [--symbols=s] [--timeframes=tf] [--verbose] --available-timeframe=s
+    updateTf.pl [--start="5 years ago"] [--end=today] [--symbols=s] [--timeframes=tf] [--verbose] --available-timeframe=i
 
 =head1 DESCRIPTION
 
@@ -41,11 +41,9 @@ If not supplied, defaults to the list entries in the config file items "timefram
 
 tf can be a valid integer timeframe as defined in L<Finance::HostedTrader::Datasource>
 
-=item C<--available-timeframes=s>
+=item C<--available-timeframes=i>
 
 The base timeframe to use for conversion.
-
-Use timeframe name instead of numeric code
 
 =item C<--help>
 
@@ -102,7 +100,7 @@ my $result = GetOptions(
     "end=s",                 \$end_date,
     "symbols=s",             \$symbols_txt,
     "timeframes=s",           \$timeframe_txt,
-    "available-timeframe=s", \$available_timeframe,
+    "available-timeframe=i", \$available_timeframe,
     "verbose",               \$verbose,
     "debug",               \$debug,
     "help",               \$help,
@@ -135,8 +133,6 @@ else {
 my $tfs = $cfg->timeframes->synthetic();
 $tfs = [ split( ',', $timeframe_txt ) ] if ($timeframe_txt);
 
-$available_timeframe = $cfg->timeframes->getTimeframeID($available_timeframe);
-
 foreach my $tf ( @{$tfs} ) {
     next if ( $tf == $available_timeframe );
     foreach my $symbol ( @{$symbols} ) {
@@ -145,5 +141,5 @@ foreach my $tf ( @{$tfs} ) {
         $db->convertOHLCTimeSeries( symbol => $symbol, tf_src => $available_timeframe, tf_dst => $tf,
             start_date => $start_date, end_date => $end_date );
     }
-#    $available_timeframe = $tf; #This won't work in some cases, eg: if timeframes = 7200,10800
+#    $available_timeframe = $tf; #TODO: This won't work in some cases, eg: if timeframes = 7200,10800
 }
