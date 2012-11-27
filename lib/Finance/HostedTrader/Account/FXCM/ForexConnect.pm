@@ -146,6 +146,15 @@ my %symbolMap = (
     USOil  => 'USOil',
 );
 
+
+my %timeframeMap = (
+    60     => 'm1',
+    300    => 'm5',
+    3600   => 'H1',
+    86400  => 'D1',
+    604800 => 'W1',
+);
+
 has '_fx' => (
     is      => 'ro',
     isa     => 'Finance::FXCM::Simple',
@@ -207,7 +216,7 @@ sub getAsk {
 
     $self->logger->info($symbol);
 
-    $symbol = $self->_convertSymbolToFXCM($symbol);
+    $symbol = $self->convertSymbolToFXCM($symbol);
     return $self->_fx->getAsk($symbol);
 }
 
@@ -222,7 +231,7 @@ sub getBid {
 
     $self->logger->info($symbol);
 
-    $symbol = $self->_convertSymbolToFXCM($symbol);
+    $symbol = $self->convertSymbolToFXCM($symbol);
     return $self->_fx->getBid($symbol);
 }
 
@@ -246,7 +255,7 @@ augment 'openMarket' => sub {
 
     $self->logger->info($symbol, $direction, $amount, $stopLoss);
 
-    my $fxcm_symbol = $self->_convertSymbolToFXCM($symbol);
+    my $fxcm_symbol = $self->convertSymbolToFXCM($symbol);
     my $fxcm_direction = ($direction eq 'long' ? 'B' : 'S');
     my $isSuccess;
 
@@ -296,7 +305,7 @@ In FXCM, most symbols trade at multiples of 10.000, but some will vary ( XAGUSD 
 sub getBaseUnit {
     my ($self, $symbol) = @_;
 
-    $symbol = $self->_convertSymbolToFXCM($symbol);
+    $symbol = $self->convertSymbolToFXCM($symbol);
     return $self->_fx->getBaseUnitSize($symbol);
 }
 
@@ -325,11 +334,30 @@ sub getBaseCurrency {
 
 }
 
-sub _convertSymbolToFXCM {
+=method C<convertSymbolToFXCM>
+
+=cut
+sub convertSymbolToFXCM {
     my ($self, $symbol) = @_;
 
+    if (ref($self) ne __PACKAGE__) {
+        $symbol = $self;
+    }
     die("Unsupported symbol '$symbol'") if (!exists($symbolMap{$symbol}));
     return $symbolMap{$symbol};
+}
+
+=method C<convertTimeframeToFXCM>
+
+=cut
+sub convertTimeframeToFXCM {
+    my ($self, $timeframe) = @_;
+
+    if (ref($self) ne __PACKAGE__) {
+        $timeframe = $self;
+    }
+    die("Unsupported timeframe '$timeframe'") if (!exists($timeframeMap{$timeframe}));
+    return $timeframeMap{$timeframe};
 }
 
 sub getServerEpoch {
