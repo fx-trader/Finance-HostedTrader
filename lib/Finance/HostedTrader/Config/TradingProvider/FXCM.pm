@@ -54,7 +54,7 @@ has accountType => (
 
 =attr C<serverURL>
 
-ForexConnect server URL. Tipically http://forexforums.dailyfx.com/forexconnect/
+ForexConnect server URL. Tipically http://www.fxcorporate.com/Hosts.jsp
 
 =cut
 
@@ -62,7 +62,7 @@ ForexConnect server URL. Tipically http://forexforums.dailyfx.com/forexconnect/
 has serverURL => (
     is     => 'ro',
     isa    => 'Str',
-    default=> 'http://forexforums.dailyfx.com/forexconnect/',
+    default=> 'http://www.fxcorporate.com/Hosts.jsp',
     required=>1,
 );
 
