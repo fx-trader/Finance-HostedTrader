@@ -1,4 +1,6 @@
 #!/usr/bin/perl
+package Finance::HostedTrader;
+# ABSTRACT: Downloads historical data from fxcm, inserts it into local database and handles dependent synthetic symbols and timeframes
 
 use strict;
 use warnings;
