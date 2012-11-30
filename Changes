@@ -1,6 +1,8 @@
 Revision history for Finance::HostedTrader
 
 {{$NEXT}}
+
+0.011 2012-11-30 01:08:42 UTC
       MySQL 5.5 support
       Add TradingProviders configuration support
       Simplify timeframe handling ( support numeric codes only, not names )
