@@ -1,3 +1,5 @@
 .build
 Finance-HostedTrader-*.tar.gz
 Finance-HostedTrader-*/
+t/systems/trendfollow.symbols.yml
+t/systems/trendfollow.tradeable.yml
