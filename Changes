@@ -1,6 +1,12 @@
 Revision history for Finance::HostedTrader
 
 {{$NEXT}}
+      MySQL 5.5 support
+      Add TradingProviders configuration support
+      Simplify timeframe handling ( support numeric codes only, not names )
+      Add scripts to package:
+        - fx-trader.pl
+        - fx-download-fxcm.pl
 0.010 2012-11-24 19:44:34 BST
       showConfig.pl can now print individual configuration items. This is useful to retrieve configuration values in shell scripts.
 0.009 2012-06-14 22:06:34 BST
