@@ -59,6 +59,8 @@ sub run {
     my $self = shift;
     my $args = shift || '';
     my $ENV=$ENV{HARNESS_PERL_SWITCHES} || '';
+    my $TRADER_HOME = $ENV{TRADER_HOME} || '.';
+
     my $systemName	= $self->systemName;
     my $symbols     = $self->symbols;
 
@@ -72,10 +74,11 @@ sub run {
 
     $yml->write($self->pathToSystems."/$systemName.tradeable.yml") || die($!);
     if (-e $self->pathToSystems."/$systemName.symbols.yml" ) { unlink($self->pathToSystems."/$systemName.symbols.yml") || die($!); }
-    system('perl '.$ENV.' ' . $ENV{TRADER_HOME} . '/data/fxcm/servers/Trader/Trader.pl '.$args.' --class=UnitTest --startDate="'.$self->startDate.'" --endDate="'.$self->endDate.'" --expectedTradesFile=' . $self->resultsFile . ' --pathToSystems="'.$self->pathToSystems.'"');
+
+    system('perl '.$ENV.' ' . $TRADER_HOME . '/bin/fx-trader.pl '.$args.' --class=UnitTest --startDate="'.$self->startDate.'" --endDate="'.$self->endDate.'" --expectedTradesFile=' . $self->resultsFile . ' --pathToSystems="'.$self->pathToSystems.'"');
 }
 
 =head1 SEE ALSO
-L<Trader.pl>
+L<fx-trader.pl>
 =cut
 1;
