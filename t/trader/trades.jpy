@@ -1,7 +1,6 @@
 - symbol: USDJPY
   direction: short
   amount: 460000
-  stopLoss: 81.8210
   now: 2012-03-05 13:36:00
   nav: 50000.0000
   balance: 50000
@@ -15,7 +14,6 @@
 - symbol: USDJPY
   direction: short
   amount: 590000
-  stopLoss: 81.8430
   now: 2012-03-09 06:20:00
   nav: 48493.7019
   balance: 48493.7019
@@ -29,7 +27,6 @@
 - symbol: USDJPY
   direction: short
   amount: 440000
-  stopLoss: 82.5430
   now: 2012-03-12 02:28:00
   nav: 46979.1033
   balance: 46979.1033

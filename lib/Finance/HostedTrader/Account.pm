@@ -141,8 +141,8 @@ If a notifier has been defined, the L<Finance::HostedTrader::Notifier> open meth
 
 =cut
 sub openMarket {
-    my ($self, $symbol, $direction, $amount, $stopLoss) = @_;
-    $self->logger->info("openMarket $symbol $direction $amount $stopLoss");
+    my ($self, $symbol, $direction, $amount) = @_;
+    $self->logger->info("openMarket $symbol $direction $amount");
     inner();
     $self->{_lastRefreshPositions} = 0; # Force retrieving fresh position list from server on next call to getPositions
     
@@ -152,7 +152,6 @@ sub openMarket {
             symbol      => $symbol,
             direction   => $direction,
             amount      => $amount, 
-            stopLoss    => $stopLoss,
             now         => $self->getServerDateTime(),
             nav         => $self->getNav(),
             balance     => $self->balance(),

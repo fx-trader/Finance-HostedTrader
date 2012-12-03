@@ -251,9 +251,9 @@ $price   - The price at which the trade was executed.
 =cut
 
 augment 'openMarket' => sub {
-    my ($self, $symbol, $direction, $amount, $stopLoss) = @_;
+    my ($self, $symbol, $direction, $amount) = @_;
 
-    $self->logger->info($symbol, $direction, $amount, $stopLoss);
+    $self->logger->info($symbol, $direction, $amount);
 
     my $fxcm_symbol = $self->convertSymbolToFXCM($symbol);
     my $fxcm_direction = ($direction eq 'long' ? 'B' : 'S');
@@ -274,7 +274,7 @@ augment 'openMarket' => sub {
         };
         last TRY_OPENTRADE;
     }
-    die("Failed to open order ($symbol, $direction,$amount,$stopLoss)") if(!$isSuccess);
+    die("Failed to open order ($symbol, $direction,$amount)") if(!$isSuccess);
 };
 
 =method C<closeMarket($tradeID, $amount)>

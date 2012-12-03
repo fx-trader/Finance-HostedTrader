@@ -31,13 +31,10 @@ sub open {
     my $symbol      = $args{symbol};
     my $direction   = $args{direction};
     my $amount      = $args{amount};
-    my $stopLoss    = $args{stopLoss};
-    
 
     $self->_sendMail('Trading Robot - Open Trade ' . $symbol, qq {Open Trade:
 Instrument: $symbol
 Amount: $amount
-Stop Loss: $stopLoss
             });
 }
 
