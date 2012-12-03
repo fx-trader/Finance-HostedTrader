@@ -294,27 +294,42 @@ sub waitForNextTrade {
     $self->logger->logcroak("waitForNextTrade must be overriden");
 }
 
-#=method C<convertToBaseCurrency($amount, $currentCurrency, $bidask>
-#
-#Converts $amount from $currentCurrency to the account's base currency, using either 'bid' or 'ask' price.
-#
-#=cut
-#sub convertToBaseCurrency {
-#    my ($self, $amount, $currentCurrency, $bidask) = @_;
-#    $bidask = 'ask' if (!$bidask);
-#
-#    my $baseCurrency = $self->getBaseCurrency();
-#
-#    return $amount if ($baseCurrency eq $currentCurrency);
-#    my $pair = $baseCurrency . $currentCurrency;
-#    if ($bidask eq 'ask') {
-#        return $amount / $self->getAsk($pair);
-#    } elsif ($bidask eq 'bid') {
-#        return $amount / $self->getBid($pair);
-#    } else {
-#        die("Invalid value in bidask argument: '$bidask'");
-#    }
-#}
+=method C<convertToBaseCurrency($amount, $currentCurrency, $bidask>
+
+Converts $amount from $currentCurrency to the account's base currency, using either 'bid' or 'ask' price.
+
+=cut
+sub convertToBaseCurrency {
+    my ($self, $amount, $currentCurrency, $bidask) = @_;
+    $bidask = 'ask' if (!$bidask);
+    if ($bidask ne 'ask' && $bidask ne 'bid') {
+        $self->logger->logdie("Invalid value in bidask argument: '$bidask'");
+    }
+
+    my $baseCurrency = $self->getBaseCurrency();
+    return $amount if ($baseCurrency eq $currentCurrency);
+
+    my $pair;
+    if ($self->isSymbolAvailable("$baseCurrency$currentCurrency")) {
+        $pair = "$baseCurrency$currentCurrency";
+        if ($bidask eq 'ask') {
+            $amount /= $self->getAsk($pair);
+        } else {
+            $amount /= $self->getBid($pair);
+        }
+    } elsif ($self->isSymbolAvailable("$currentCurrency$baseCurrency")) {
+        $pair = "$currentCurrency$baseCurrency";
+        if ($bidask eq 'ask') {
+            $amount *= $self->getAsk($pair);
+        } else {
+            $amount *= $self->getBid($pair);
+        }
+    } else {
+        $self->logger->logcroak("Don't know how to convert $currentCurrency to $baseCurrency");
+    }
+
+    return sprintf("%.4f", $amount);
+}
 
 =method C<convertBaseUnit($symbol, $amount)>
 
@@ -531,6 +546,15 @@ sub getSymbolBase {
     }
 
     return $symbolBaseMap{$symbol};
+}
+
+=method C<isSymbolAvailable($symbol)>
+Boolean indicating wether $symbol is available with this account provider
+=cut
+sub isSymbolAvailable {
+    my ($self, $symbol) = @_;
+
+    $self->logger->logdie("Must be overriden");
 }
 
 __PACKAGE__->meta->make_immutable;

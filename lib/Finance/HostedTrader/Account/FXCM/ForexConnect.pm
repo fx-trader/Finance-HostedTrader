@@ -388,4 +388,14 @@ sub waitForNextTrade {
     sleep(20);
 }
 
+=method C<isSymbolAvailable($symbol)>
+Boolean indicating wether $symbol is available with this account provider
+=cut
+sub isSymbolAvailable {
+    my ($self, $symbol) = @_;
+
+    return defined($symbolMap{$symbol});
+}
+
+
 1;

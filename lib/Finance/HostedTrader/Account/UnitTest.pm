@@ -96,6 +96,18 @@ has notifier => (
                   },
 );
 
+=attr C<baseCurrency>
+Defined as a Moose attribute so that it can be overwritten on the constructor.
+
+Other Finance::HostedTrader::Account::* classes don't need this attribute because this value is external (eg: read from the account provider)
+=cut
+has baseCurrency => (
+    is      => 'rw',
+    isa     => 'Str',
+    required=> 1,
+    default => 'GBP',
+);
+
 =method C<BUILD>
 
 Initializes internal structures
@@ -529,6 +541,27 @@ sub date_to_epoch {
                   );
 }
 
+=method C<isSymbolAvailable($symbol)>
+Boolean indicating wether $symbol is available with this account provider
+=cut
+sub isSymbolAvailable {
+    my ($self, $symbol) = @_;
 
+    my %availableSymbols = (
+        XAGUSD => '1',
+        EURUSD => '1',
+        USDJPY => '1',
+        GBPJPY => '1',
+        GBPUSD => '1',
+    );
+
+    return 1 if (exists($availableSymbols{$symbol}));
+}
+
+sub getBaseCurrency {
+    my ($self) = @_;
+
+    return $self->baseCurrency;
+}
 
 1;
