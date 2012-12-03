@@ -65,16 +65,13 @@ has accountType => (
 
 =attr <notifier>
 =cut
-has notifier => (
-    is     => 'ro',
-    isa    => 'Maybe[Finance::HostedTrader::Trader::Notifier]',
-    required=>1,
-    default=> sub {
-                    my $self = shift;
-                    require Finance::HostedTrader::Trader::Notifier::Production;
-                    return Finance::HostedTrader::Trader::Notifier::Production->new();
-                  },
-);
+has '+notifier' => (
+    default     =>  sub {
+                        my $self = shift;
+                        require Finance::HostedTrader::Trader::Notifier::Production;
+                        return Finance::HostedTrader::Trader::Notifier::Production->new();
+                    },
+    );
 
 
 my %symbolMap = (

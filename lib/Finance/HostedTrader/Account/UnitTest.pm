@@ -85,11 +85,8 @@ Optional. An instance L<Finance::HostedTrader::Notifier>.
 
 Defaults to L<Finance::HostedTrader::Trader::Notifier::UnitTest>.
 =cut
-has notifier => (
-    is     => 'ro',
-    isa    => 'Finance::HostedTrader::Trader::Notifier',
-    required=>1,
-    default=> sub {
+has '+notifier' => (
+    default => sub {
                     my $self = shift;
                     require Finance::HostedTrader::Trader::Notifier::UnitTest;
                     return Finance::HostedTrader::Trader::Notifier::UnitTest->new( expectedTradesFile => $self->expectedTradesFile );

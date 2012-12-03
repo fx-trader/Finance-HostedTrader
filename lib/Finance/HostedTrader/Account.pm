@@ -50,9 +50,9 @@ has endDate => (
 =attr C<notifier>
 =cut
 has 'notifier' => (
-    is     => 'ro',
-    isa    => 'Finance::HostedTrader::Trader::Notifier',
-    required=>0,
+    is      => 'ro',
+    isa     => 'Maybe[Finance::HostedTrader::Trader::Notifier]',
+    required=> 1,
 );
 
 has '_signal_processor' => (
@@ -145,7 +145,7 @@ sub openMarket {
     $self->logger->info("openMarket $symbol $direction $amount");
     inner();
     $self->{_lastRefreshPositions} = 0; # Force retrieving fresh position list from server on next call to getPositions
-    
+
     my $notifier = $self->notifier();
     if ($notifier) {
         $notifier->open(
@@ -408,7 +408,7 @@ sub closeTrades {
         $posSize += $trade->size;
     }
     $self->{_lastRefreshPositions} = 0; # Force retrieving fresh position list from server on next call to getPositions
-    
+
     my $notifier = $self->notifier;
     if ($notifier) {
         my $value = ($directionToClose eq 'long' ? $self->getAsk($symbol) : $self->getBid($symbol) );
