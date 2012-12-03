@@ -14,24 +14,28 @@ my $acc;
 
 throws_ok {
     $acc = Finance::HostedTrader::Account->new(
+            notifier    => undef,
             startDate => 'invalid',
     	);
 } qr /Invalid date format: invalid/, 'Dies with invalid start date';
 
 throws_ok {
     $acc = Finance::HostedTrader::Account->new(
+            notifier    => undef,
             endDate => 'invalid',
     	);
 } qr /Invalid date format: invalid/, 'Dies with invalid end date';
 
 throws_ok {
     $acc = Finance::HostedTrader::Account->new(
+            notifier    => undef,
             startDate   => '3000-01-01 00:00:00',
             endDate     => '1000-01-01 00:00:00',
     	);
 } qr /End date cannot be earlier than start date/, 'Dies with end date smaller than start date';
 
     $acc = Finance::HostedTrader::Account->new(
+            notifier    => undef,
             startDate     => '1001-01-01 00:00:00',
             endDate   => '3001-01-01 00:00:00',
     	);
