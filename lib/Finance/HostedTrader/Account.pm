@@ -318,7 +318,9 @@ sub waitForNextTrade {
 
 =method C<convertBaseUnit($symbol, $amount)>
 
-Convert $amount to the base unit supported by $symbol.
+Convert $amount to a multiple of the base unit supported by $symbol.
+
+Eg: If this account provider only supports trading EURUSD in multiples of 10000, and amount is 25000, this functions returns 20000.
 
 See the L</getBaseUnit($symbol)> method.
 
