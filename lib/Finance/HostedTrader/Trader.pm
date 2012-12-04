@@ -5,8 +5,8 @@ use Finance::HostedTrader::Config;
 use Finance::HostedTrader::Position;
 use Finance::HostedTrader::System;
 
-
 use Moose;
+with 'MooseX::Log::Log4perl';
 use List::Compare::Functional qw( get_intersection );
 use Math::Round qw(nearest);
 
@@ -227,19 +227,26 @@ my $action = ( $numTrades == 0 ? 'enter' : 'add');
 my $allowedExposure = $self->system->{signals}->{$action}->{$direction}->{exposure};
 
     if ($action eq 'add') {
-        if ($numTrades > scalar(@$allowedExposure)) {
+        my $allowedNumTrades = scalar(@$allowedExposure);
+        if ($numTrades > $allowedNumTrades) {
+            $self->logger->info("No more trades allowed, have $numTrades, $allowedNumTrades max allowed");
             return (0,undef,undef);
         }
         $allowedExposure = $allowedExposure->[$numTrades-1];
     }
     $allowedExposure = $allowedExposure / 100;
+    $self->logger->debug("Allowed exposure = $allowedExposure");
 
     my $balance = $account->balance();
-    die("balance is negative") if ($balance < 0);
+    $self->logger->debug("Account balance = $balance");
+    $self->logger->logdie("balance is negative") if ($balance < 0);
     my $amountAtRisk = $self->amountAtRisk($position);
-    my $existingExposure = $amountAtRisk / $balance;
+    $self->logger->debug("Amount at Risk = $amountAtRisk");
+    my $existingExposure = nearest(.0001, $amountAtRisk / $balance);
+    $self->logger->debug("Existing exposure = $existingExposure");
 
     my $maxExposure = $allowedExposure - $existingExposure;
+    $self->logger->debug("Exposure for this trade = $maxExposure");
     return (0,undef,undef) if ($maxExposure <= 0);
 
     my $maxLossAmount   = $balance * $maxExposure;
@@ -259,12 +266,18 @@ my $allowedExposure = $self->system->{signals}->{$action}->{$direction}->{exposu
         $maxLossPts = $stopLoss - $value;
     }
 
+    $self->logger->debug("Max acceptable loss for this trade = $maxLossAmount");
+    $self->logger->debug("Current price = $value");
+    $self->logger->debug("Stop loss price level = $stopLoss");
+
     if ( $maxLossPts <= 0 ) {
         die("Tried to set stop to " . $stopLoss . " but current price is " . $value);
     }
     my $amount = $account->convertBaseUnit($symbol, $maxLossAmount / $maxLossPts);
-    #print "SIZE: $amount\t$existingExposure\t$amountAtRisk\t$maxExposure\t$maxLossAmount\t".$account->{_now}."\n";
-    die('Tried to open trade with negative amount. This shouldn not happen unless there is a bug') if ($amount < 0);
+    $self->logger->debug("Acceptable trade size = $amount");
+    $self->logger->logdie('Tried to open trade with negative amount. This should not happen unless there is a bug') if ($amount < 0);
+    my $maxLeveragePerTrade = 15; #TODO config setting
+    $self->logger->logdie("Trade size too big, refusing") if ( $amount > $balance * $maxLeveragePerTrade );
     return ($amount, $value, $stopLoss);
 }
 
