@@ -1,6 +1,8 @@
 Revision history for Finance::HostedTrader
 
 {{$NEXT}}
+
+0.012 2012-12-04 18:58:07 UTC
       Add logging to Trader::getTradeSize
       API cleanup ( remove unused arguments, Notifiers inherit attributes from base class )
       Remove hardcoded assumption account currency is GBP in Trader::amountAtRisk
