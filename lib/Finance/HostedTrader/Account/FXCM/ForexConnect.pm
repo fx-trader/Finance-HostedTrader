@@ -23,7 +23,8 @@ package Finance::HostedTrader::Account::FXCM::ForexConnect;
 =cut
 
 use Moose;
-extends 'Finance::HostedTrader::Account', 'Finance::HostedTrader::Logger';
+with 'MooseX::Log::Log4perl';
+extends 'Finance::HostedTrader::Account';
 
 use Moose::Util::TypeConstraints;
 use YAML::Syck;
