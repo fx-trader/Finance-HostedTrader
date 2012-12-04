@@ -1,6 +1,8 @@
 Revision history for Finance::HostedTrader
 
 {{$NEXT}}
+
+0.013 2012-12-04 19:11:35 UTC
       Account::FXCM::ForexConnect was still using custom Logger class which was removed in 0.012
 0.012 2012-12-04 18:58:07 UTC
       Add logging to Trader::getTradeSize
