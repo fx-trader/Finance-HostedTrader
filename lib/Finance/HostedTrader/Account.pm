@@ -10,15 +10,12 @@ package Finance::HostedTrader::Account;
 =cut
 
 
-use strict;
-use warnings;
 use Moose;
+with 'MooseX::Log::Log4perl';
 use Finance::HostedTrader::ExpressionParser;
 use Finance::HostedTrader::Position;
 
 use Date::Manip;
-
-extends "Finance::HostedTrader::Logger";
 
 
 ##These should exist everywhere, regardless of broker
