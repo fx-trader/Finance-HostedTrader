@@ -6,8 +6,6 @@ package Finance::HostedTrader::Config::TradingProvider::FXCM;
 
 =cut
 
-use strict;
-use warnings;
 use Moose;
 use Moose::Util::TypeConstraints;
 

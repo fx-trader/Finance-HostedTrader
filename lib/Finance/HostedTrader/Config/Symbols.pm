@@ -11,8 +11,6 @@ package Finance::HostedTrader::Config::Symbols;
                 );
 =cut
 
-use strict;
-use warnings;
 use Moose;
 
 =attr C<natural>

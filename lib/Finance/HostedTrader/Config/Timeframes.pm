@@ -10,8 +10,6 @@ package Finance::HostedTrader::Config::Timeframes;
                 );
 =cut
 
-use strict;
-use warnings;
 use Moose;
 use Moose::Util::TypeConstraints;
 

@@ -8,8 +8,6 @@ package Finance::HostedTrader::Datasource;
 
 =cut
 
-use strict;
-use warnings;
 use DBI;
 use Finance::HostedTrader::Config;
 use Data::Dumper;

@@ -10,9 +10,6 @@ package Finance::HostedTrader::Trader::Notifier;
 =cut
 
 
-use strict;
-use warnings;
-
 use Moose;
 use Params::Validate qw(:all);
 use Scalar::Util;

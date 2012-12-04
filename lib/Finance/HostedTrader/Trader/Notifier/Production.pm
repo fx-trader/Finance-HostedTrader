@@ -10,9 +10,6 @@ package Finance::HostedTrader::Trader::Notifier::Production;
 =cut
 
 
-use strict;
-use warnings;
-
 use Moose;
 extends 'Finance::HostedTrader::Trader::Notifier';
 use MIME::Lite;

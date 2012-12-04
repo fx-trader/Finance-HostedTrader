@@ -13,8 +13,6 @@ package Finance::HostedTrader::Report;
 
 =cut
 
-use strict;
-use warnings;
 use Moose;
 use Moose::Util::TypeConstraints;
 

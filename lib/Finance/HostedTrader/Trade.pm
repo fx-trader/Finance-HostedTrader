@@ -8,8 +8,6 @@ package Finance::HostedTrader::Trade;
                 );
 =cut
 
-use strict;
-use warnings;
 use Moose;
 use Moose::Util::TypeConstraints;
 

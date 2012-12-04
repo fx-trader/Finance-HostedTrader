@@ -39,8 +39,6 @@ package Finance::HostedTrader::Config;
 
 =cut
 
-use strict;
-use warnings;
 use Config::Any;
 use Hash::Merge;
 use Moose;

@@ -10,9 +10,6 @@ package Finance::HostedTrader::Trader::Notifier::UnitTest;
 =cut
 
 
-use strict;
-use warnings;
-
 use Moose;
 extends 'Finance::HostedTrader::Trader::Notifier';
 use Test::More;

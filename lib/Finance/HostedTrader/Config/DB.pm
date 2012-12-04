@@ -13,8 +13,6 @@ package Finance::HostedTrader::Config::DB;
 
 =cut
 
-use strict;
-use warnings;
 use Moose;
 
 =attr C<dbhost>

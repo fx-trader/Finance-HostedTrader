@@ -6,8 +6,6 @@ package Finance::HostedTrader::Config::TradingProvider;
 
 =cut
 
-use strict;
-use warnings;
 use Moose;
 
 
