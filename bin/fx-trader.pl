@@ -10,6 +10,12 @@ use Data::Dumper;
 use Data::Compare;
 use Pod::Usage;
 
+use Log::Log4perl;
+BEGIN{
+    if ( -r "/etc/fxtrader/fxtrader.log.conf" ) {
+        Log::Log4perl->init("/etc/fxtrader/fxtrader.log.conf");
+    }
+}
 
 use Finance::HostedTrader::Factory::Account;
 use Finance::HostedTrader::Trader;
