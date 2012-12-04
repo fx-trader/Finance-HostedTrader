@@ -1,7 +1,13 @@
 Revision history for Finance::HostedTrader
 
 {{$NEXT}}
-
+      Add logging to Trader::getTradeSize
+      API cleanup ( remove unused arguments, Notifiers inherit attributes from base class )
+      Remove hardcoded assumption account currency is GBP in Trader::amountAtRisk
+      More unit tests
+      Use MooseX::Log::Log4perl and retire custom logging class
+      New method Account::convertToBaseCurrency
+      Consolidate config files in /etc/fxtrader
 0.011 2012-11-30 01:08:42 UTC
       MySQL 5.5 support
       Add TradingProviders configuration support
