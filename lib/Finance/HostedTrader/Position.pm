@@ -10,10 +10,9 @@ package Finance::HostedTrader::Position;
 
 =cut
 
-use strict;
-use warnings;
 use Moose;
 use Moose::Util::TypeConstraints;
+use Math::Round qw(nearest);
 
 =attr C<symbol>
 
@@ -128,7 +127,7 @@ sub averagePrice {
     }
 
     return undef if ($size == 0);
-    return $price / $size;
+    return nearest(.0001, $price / $size);
 }
 
 =method C<pl>
