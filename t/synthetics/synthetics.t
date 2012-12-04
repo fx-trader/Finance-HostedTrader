@@ -19,7 +19,7 @@ die("Could not find config file t/synthetics/fx.yml") if (!$config_file);
 my $ds = Finance::HostedTrader::Datasource->new(
 	cfg => Finance::HostedTrader::Config->new(
 		files => [
-			'/etc/fx.yml',
+			'/etc/fxtrader/fx.yml',
 			$ENV{HOME} . '/.fx.yml',
 			$config_file
 		]
