@@ -1,9 +1,6 @@
 package Finance::HostedTrader::Trader;
 # ABSTRACT: Finance::HostedTrader::Trader - 
 
-use strict;
-use warnings;
-
 use Finance::HostedTrader::Config;
 use Finance::HostedTrader::Position;
 use Finance::HostedTrader::System;
@@ -11,6 +8,7 @@ use Finance::HostedTrader::System;
 
 use Moose;
 use List::Compare::Functional qw( get_intersection );
+use Math::Round qw(nearest);
 
 =attr C<system>
 =cut
@@ -200,18 +198,14 @@ sub amountAtRisk {
     my $direction = ($size > 0 ? 'long' : 'short');
     my $stopLoss = $self->_getSignalValue('exit', $symbol, $direction);
     die("Could not get stop loss for $symbol $direction") if (!defined($stopLoss));
-    my $openPrice = $position->averagePrice();
-    return 0 if (!$openPrice);
+    my $avgOpenPrice = $position->averagePrice();
 
-    my $pl = ( $openPrice - $stopLoss ) * $size;
+    return 0 if (!$avgOpenPrice);
 
-    my $base = uc(substr($symbol, -3));
+    my $pl = nearest(.0001, ( $avgOpenPrice - $stopLoss ) * $size);
+    my $symbolBaseUnit = $account->getSymbolBase($symbol);
 
-    if ($base ne "GBP") { # TODO: should not be hardcoded that account is based on GBP
-        $pl /= $account->getAsk("GBP$base");
-    }
-    
-    return $pl; #TODO this is not working for net short positions
+    return nearest(.0001, $account->convertToBaseCurrency($pl, $symbolBaseUnit, 'bid'));
 }
 
 =method C<getTradeSize>
