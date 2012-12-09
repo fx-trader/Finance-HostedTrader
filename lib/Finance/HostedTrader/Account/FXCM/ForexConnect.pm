@@ -27,7 +27,6 @@ with 'MooseX::Log::Log4perl';
 extends 'Finance::HostedTrader::Account';
 
 use Moose::Util::TypeConstraints;
-use YAML::Syck;
 use Finance::HostedTrader::Trade;
 use Data::Dumper;
 
@@ -175,14 +174,8 @@ sub refreshPositions {
     my ($self) = @_;
 
     $self->{_positions} = {};
-    my $yml = $self->_fx->getTrades();
-    $self->logger->info("Got trade list as string");
 
-    return if (!$yml);
-    my $trades = YAML::Syck::Load( $yml );
-    die("Invalid yaml: $!") if (!$trades);
-    $self->logger->info("Parsed trade list from yaml");
-
+    my $trades = $self->_fx->getTrades();
     foreach my $trade_data (@$trades) {
         $self->logger->info(Dumper(\$trade_data));
         $trade_data->{symbol} =~ s|/||;
