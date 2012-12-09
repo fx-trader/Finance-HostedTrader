@@ -52,6 +52,7 @@ while(@timeframes) {
 
         $fxcm->saveHistoricalDataToFile($tableToLoad, Finance::HostedTrader::Account::FXCM::ForexConnect::convertSymbolToFXCM($symbol), $fxcmTimeframe, $numItemsToDownload);
         $ds->dbh->do("LOAD DATA LOCAL INFILE '$tableToLoad' IGNORE INTO TABLE $tableToLoad FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n'") or die($!);
+        unlink($tableToLoad);
     }
 
     foreach my $synthetic (@$syntheticSymbols) {
