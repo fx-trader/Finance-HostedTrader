@@ -35,18 +35,18 @@ my $result = GetOptions(
 pod2usage(1) if ($help);
 
 
-my $trendfollow = Finance::HostedTrader::System->new( name => $systemName, pathToSystems => $pathToSystems );
+my $system = Finance::HostedTrader::System->new( name => $systemName, pathToSystems => $pathToSystems );
 
 my %classArgs = map { s/^--//; split(/=/) } @ARGV;
 my $account = Finance::HostedTrader::Factory::Account->new(
                 SUBCLASS => $accountClass,
-                system => $trendfollow,
+                system => $system,
                 %classArgs,
             )->create_instance();
 
-my @systems =   (   
+my @systems =   (
                     Finance::HostedTrader::Trader->new(
-                        system => $trendfollow,
+                        system => $system,
                         account => $account,
                     ),
                 );
@@ -152,7 +152,7 @@ sub checkSystem {
             logger("Checking ".$systemTrader->system->name." $symbol $direction") if ($verbose > 2);
             $result = $systemTrader->checkAddUpSignal($symbol, $direction);
         }
-        
+
         if ($result) {
             my ($amount, $value, $stopLoss) = $systemTrader->getTradeSize($symbol, $direction, $position);
             if ($verbose > 2 && $result) {
