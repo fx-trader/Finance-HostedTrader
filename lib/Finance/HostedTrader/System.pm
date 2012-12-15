@@ -102,7 +102,7 @@ sub _loadSystem {
     );
     my $system = {};
 
-	my $merge = Hash::Merge->new('custom_merge'); #The custom_merge behaviour is defined in Finance::HostedTrader::Config
+    my $merge = Hash::Merge->new('custom_merge'); #The custom_merge behaviour is defined in Finance::HostedTrader::Config
     foreach my $file (@files) {
         next unless ( $system_all->{$file} );
         my $new_system = $merge->merge($system_all->{$file}, $system);
@@ -120,7 +120,11 @@ sub _loadSystem {
         $filter_signal->{args}->{period} = int(Delta_Format(ParseDateDelta($filter_signal->{args}->{period}), 0, "%st"));
     }
     foreach my $signal (qw/enter exit add/) {
-        $self->{signals}->{$signal}->{args}->{period} = int(Delta_Format(ParseDateDelta($self->{signals}->{$signal}->{args}->{period}), 0, "%st"));
+        if (defined($self->{signals}->{$signal})) {
+            my $seconds_delta = int(Delta_Format(ParseDateDelta($self->{signals}->{$signal}->{args}->{period}), 0, "%st"));
+            die("Bad signal argument: $self_name\->signals->$signal\->period = $self->{signals}->{$signal}->{args}->{period}") if (!$seconds_delta);
+            $self->{signals}->{$signal}->{args}->{period} = $seconds_delta;
+        }
     }
 }
 
