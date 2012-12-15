@@ -63,15 +63,16 @@ sub BUILD {
 sub getSymbolsNextUpdate {
     my $self = shift;
 
-    my $nextUpdate = $self->{_symbolsLastUpdated} + $self->symbolUpdateInterval;
+    my $nextWeekdayUpdate = $self->{_symbolsLastUpdated} + $self->symbolUpdateInterval;
 
     #TODO what i mean here is, if the market is open, use $self->symbolUpdateInterval
     #if the market is not open, wait until it's open.
-    my ($sec, $min, $hr, $day, $month, $year, $weekday) = gmtime($nextUpdate);
+    my ($sec, $min, $hr, $day, $month, $year, $weekday) = gmtime($nextWeekdayUpdate);
     if  ($weekday != 0 && $weekday != 6 ) {
-        return $nextUpdate;
+        return $nextWeekdayUpdate;
     } else {
-        return $self->{_symbolsLastUpdated} + 10800;
+        my $nextWeekendUpdate = $self->{_symbolsLastUpdated} + 10800;
+        return ($nextWeekendUpdate > $nextWeekdayUpdate ? $nextWeekendUpdate : $nextupdate);
     }
 
 }
