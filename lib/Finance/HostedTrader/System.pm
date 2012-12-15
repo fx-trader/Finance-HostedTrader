@@ -72,7 +72,7 @@ sub getSymbolsNextUpdate {
         return $nextWeekdayUpdate;
     } else {
         my $nextWeekendUpdate = $self->{_symbolsLastUpdated} + 10800;
-        return ($nextWeekendUpdate > $nextWeekdayUpdate ? $nextWeekendUpdate : $nextupdate);
+        return ($nextWeekendUpdate > $nextWeekdayUpdate ? $nextWeekendUpdate : $nextWeekdayUpdate);
     }
 
 }
