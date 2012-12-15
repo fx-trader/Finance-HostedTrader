@@ -22,19 +22,20 @@ use Finance::HostedTrader::Trader;
 use Finance::HostedTrader::System;
 use Finance::HostedTrader::Report;
 
-my ($verbose, $help, $accountClass, $pathToSystems) = (0, 0, 'ForexConnect', 'systems');
+my ($verbose, $help, $accountClass, $pathToSystems, $systemName) = (0, 0, 'ForexConnect', 'systems', 'trendfollow');
 
 my $result = GetOptions(
     "class=s",          \$accountClass,
     "verbose",          \$verbose,
     "help",             \$help,
     "pathToSystems=s",  \$pathToSystems,
+    "systemName=s",     \$systemName,
 ) || pod2usage(2);
 
 pod2usage(1) if ($help);
 
 
-my $trendfollow = Finance::HostedTrader::System->new( name => 'trendfollow', pathToSystems => $pathToSystems );
+my $trendfollow = Finance::HostedTrader::System->new( name => $systemName, pathToSystems => $pathToSystems );
 
 my %classArgs = map { s/^--//; split(/=/) } @ARGV;
 my $account = Finance::HostedTrader::Factory::Account->new(
