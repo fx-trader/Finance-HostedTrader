@@ -1,0 +1,12 @@
+#DOC OUT OF DATE, use as a reference, not absolute truth
+
+#Create MySQL tables
+createTables.pl --tableType=MEMORY --symbols=CHFJPY | mysql -ufxcm fxcm
+
+#Edit fx.yml and add the new symbol
+
+#Create synthetic data for each natural timeframe
+synthetics.pl --timeframe=300 --verbose --symbols=CHFJPY
+
+#Create synthetic timeframes
+updateTf.pl --start="0001-01-01" --timeframes=900,1800,7200,10800,14400 --available-timeframe=300 --symbols=CHFJPY --verbose
