@@ -46,7 +46,7 @@ has system => (
     is     => 'ro',
     isa    => 'Finance::HostedTrader::System',
     required=>1,
-); 
+);
 
 =attr C<skipToDatesWithSignal>
 
@@ -116,7 +116,7 @@ sub BUILD {
     $self->{_now_epoch} = UnixDate($self->{_now}, '%s');
     $self->{_signal_cache} = {};
     $self->{_price_cache} = {};
-    
+
     $self->{_account_data} = {
         balance => 50000,
     };
@@ -160,7 +160,7 @@ sub _calculatePL {
     my $self = shift;
     my $trade = shift;
     my $sizeToClose = shift;
-    
+
     my $trade_size = $trade->size;
     die("sizeToClose parameter cannot be larger than trade->size") if (abs($sizeToClose) > abs($trade_size));
     my $symbol = $trade->symbol;
@@ -168,12 +168,12 @@ sub _calculatePL {
     my $rate = ($trade_direction eq "long" ? $self->getAsk($symbol) : $self->getBid($symbol));
     my $base = $self->getSymbolBase($symbol);
     my $openPrice = $trade->openPrice;
-    
+
     my $pl = ($rate - $openPrice) * $sizeToClose;
     if ($base ne "GBP") { # TODO: should not be hardcoded that account is based on GBP
         $pl /= $self->getAsk("GBP$base"); # TODO: this won't work for all cases( eg, if base is EUR)
     }
-    
+
     return $pl;
 }
 
@@ -229,7 +229,7 @@ augment 'openMarket' => sub {
 =cut
 sub closeMarket {
     my ($self, $tradeID, $amountToClose) = @_;
-    
+
     die('$amountToClose must be positive value') if ($amountToClose <= 0);
 
     my $positions = $self->getPositions();
@@ -254,11 +254,11 @@ TODO. Set base unit for other symbols.
 =cut
 sub getBaseUnit {
     my ($self, $symbol) = @_;
-    
+
     my %base_units = (
         'XAGUSD' => 50,
     );
-    
+
     return $base_units{$symbol} if (exists($base_units{$symbol}));
     return 10000;
 }
@@ -288,7 +288,7 @@ augment 'balance' => sub {
 #
 #    return $self->_signal_processor->checkSignal(
 #        {
-#            'expr' => $signal_definition, 
+#            'expr' => $signal_definition,
 #            'symbol' => $symbol,
 #            'tf' => $signal_args->{timeframe},
 #            'maxLoadedItems' => $signal_args->{maxLoadedItems},
@@ -335,7 +335,7 @@ sub checkSignal {
 
 
         $cache->{$symbol}->{$signal_definition} = $self->_signal_processor->getSignalData( {
-            'expr' => $signal_definition, 
+            'expr' => $signal_definition,
             'symbol' => $symbol,
             'tf' => $signal_args->{timeframe},
             'startPeriod' => $startDate,
@@ -361,7 +361,7 @@ sub checkSignal {
         last if ( $signal_valid_from lt $signal_date && ( !defined($signal_list->[1]) || $signal_list->[1]->[0] gt $self->{_now} ));
         shift @{ $signal_list };
     }
-    
+
 
     if ($signal_date gt $self->{_now} || $signal_date lt $signal_valid_from) {
         $signal = undef;
@@ -403,7 +403,7 @@ sub waitForNextTrade {
     my ($sec, $min, $hr, $day, $month, $year, $weekday) = gmtime($self->getServerEpoch());
     my $interval = $self->interval;
     my $date = $self->{_now};
-    
+
     if (!$self->skipToDatesWithSignal) {
         $self->{_now} = sprintf('%d-%02d-%02d %02d:%02d:%02d', Add_Delta_DHMS(substr($date,0,4),substr($date,5,2),substr($date,8,2),substr($date,11,2),substr($date,14,2),substr($date,17,2),0,0,0,$interval));
         $self->{_now_epoch} += $interval;
@@ -412,14 +412,14 @@ sub waitForNextTrade {
     my $nextSignalDate = $self->_getNextSignalDate();
 
 #Adjust next signal date to take into account the signal check interval
-    if ($nextSignalDate) {    
+    if ($nextSignalDate) {
         my $periods = int(delta_dates($nextSignalDate, $date) / $interval);
         $nextSignalDate = delta_add($date, $periods*$interval);
     }
 
     my $normalWaitDate = delta_add($date, $interval);
     my $nowWillBe = ($nextSignalDate && $nextSignalDate gt $normalWaitDate ? $nextSignalDate : $normalWaitDate);
-    
+
     $self->{_now} = $nowWillBe;
     $self->{_now_epoch} = date_to_epoch($self->{_now});
 }
@@ -474,7 +474,6 @@ sub delta_add {
                                             0,0,0,$delta
                                            )
                           );
-    
 }
 
 =method C<delta_dates($date1,$date2)>
@@ -512,7 +511,7 @@ return $v;
 sub epoch_to_date {
     my $epoch = shift;
 
-    my ($sec, $min, $hr, $day, $month, $year, $weekday) = gmtime($epoch);    
+    my ($sec, $min, $hr, $day, $month, $year, $weekday) = gmtime($epoch);
     return sprintf( '%04d-%02d-%02d %02d:%02d:%02d',
                             $year+1900,
                             $month+1,
