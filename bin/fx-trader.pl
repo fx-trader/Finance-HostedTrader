@@ -38,6 +38,10 @@ pod2usage(1) if ($help);
 my $system = Finance::HostedTrader::System->new( name => $systemName, pathToSystems => $pathToSystems );
 
 my %classArgs = map { s/^--//; split(/=/) } @ARGV;
+foreach (keys %classArgs) {
+    $classArgs{$_} = undef if ($classArgs{$_} eq 'undef');
+}
+
 my $account = Finance::HostedTrader::Factory::Account->new(
                 SUBCLASS => $accountClass,
                 system => $system,
