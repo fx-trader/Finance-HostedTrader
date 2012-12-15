@@ -82,8 +82,6 @@ sub getSymbolsSignalFilter {
     my $filters = shift;
     my $rv = { long => [], short => [] };
 
-    return $rv if (!defined($filters) || !defined($filters->{signals}));
-
     my $long_symbols = $filters->{symbols}->{long};
     my $short_symbols = $filters->{symbols}->{short};
     my $account = $self->account;
@@ -92,7 +90,7 @@ sub getSymbolsSignalFilter {
     my $filter=$filters->{signals}->[0];#TODO should loop through every filter signal available ?
 
     foreach my $symbol (@$long_symbols) {
-        if ($account->checkSignal(
+        if (!$filter || $account->checkSignal(
                 $symbol,
                 $filter->{longSignal},
                 $filter->{args}
@@ -102,7 +100,7 @@ sub getSymbolsSignalFilter {
     }
 
     foreach my $symbol (@$short_symbols) {
-        if ($account->checkSignal(
+        if (!$filter || $account->checkSignal(
             $symbol,
             $filter->{shortSignal},
             $filter->{args},
