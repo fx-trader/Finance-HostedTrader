@@ -49,7 +49,7 @@ sub updateSymbols {
             } elsif ($direction eq 'short') {
                 $symbols{short}->{$symbol} = 1;
             } else {
-                die('Invalid trade direction: ' . $trade->direction);
+                $self->logger->logconfess('Invalid trade direction: ' . $trade->direction);
             }
         }
     }
@@ -69,7 +69,7 @@ sub updateSymbols {
     my $yml = YAML::Tiny->new;
     $yml->[0] = { name => $self->system->name, symbols => \%symbols};
     my $file = $self->system->_getSymbolFileName();
-    $yml->write($file) || die("Failed to write symbols file $file. $!");
+    $yml->write($file) || $self->logger->logconfess("Failed to write symbols file $file. $!");
     $self->system->{symbols} = \%symbols;
     $self->system->{_symbolsLastUpdated} = $account->getServerEpoch();
 }
@@ -133,8 +133,10 @@ sub _getSignalValue {
 
     my $signal = $self->system->{signals}->{$action};#TODO what if there are multiple signals ?
 
+    return undef if (!defined($signal->{$tradeDirection}->{currentPoint}));
+
     return $self->account->getIndicatorValue(
-                $symbol, 
+                $symbol,
                 $signal->{$tradeDirection}->{currentPoint},
                 $signal->{args}
     );
@@ -145,7 +147,7 @@ sub _getSignalValue {
 sub checkEntrySignal {
     my $self = shift;
 
-    return $self->_checkSignalWithAction('enter', @_);
+    return $self->_checkSignalWithAction('enter', 1, @_);
 }
 
 =method C<checkAddUpSignal>
@@ -153,7 +155,7 @@ sub checkEntrySignal {
 sub checkAddUpSignal {
     my $self = shift;
 
-    return $self->_checkSignalWithAction('add', @_);
+    return $self->_checkSignalWithAction('add', 0, @_);
 }
 
 =method C<checkExitSignal>
@@ -161,14 +163,15 @@ sub checkAddUpSignal {
 sub checkExitSignal {
     my $self = shift;
 
-    return $self->_checkSignalWithAction('exit', @_);
+    return $self->_checkSignalWithAction('exit', 1, @_);
 }
 
 sub _checkSignalWithAction {
-    my ($self, $action, $symbol, $tradeDirection) = @_;
+    my ($self, $action, $required, $symbol, $tradeDirection) = @_;
 
     my $signal = $self->system->{signals}->{$action};
-    die("System definition file is missing entry signals->$action ") if (!defined($signal));
+    return if (!$required && !$signal);
+    $self->logger->logconfess("System definition file is missing entry signals->$action ") if (!defined($signal));
     my $signal_definition = $signal->{$tradeDirection};#TODO what if there are multiple signals ?
     my $signal_args = $signal->{args};
 
@@ -197,7 +200,7 @@ sub amountAtRisk {
     my $size = $position->size();
     my $direction = ($size > 0 ? 'long' : 'short');
     my $stopLoss = $self->_getSignalValue('exit', $symbol, $direction);
-    die("Could not get stop loss for $symbol $direction") if (!defined($stopLoss));
+    $self->logger->logconfess("Could not get stop loss for $symbol $direction") if (!defined($stopLoss));
     my $avgOpenPrice = $position->averagePrice();
 
     return 0 if (!$avgOpenPrice);
@@ -239,7 +242,7 @@ my $allowedExposure = $self->system->{signals}->{$action}->{$direction}->{exposu
 
     my $balance = $account->balance();
     $self->logger->debug("Account balance = $balance");
-    $self->logger->logdie("balance is negative") if ($balance < 0);
+    $self->logger->logconfess("balance is negative") if ($balance < 0);
     my $amountAtRisk = $self->amountAtRisk($position);
     $self->logger->debug("Amount at Risk = $amountAtRisk");
     my $existingExposure = nearest(.0001, $amountAtRisk / $balance);
@@ -251,10 +254,13 @@ my $allowedExposure = $self->system->{signals}->{$action}->{$direction}->{exposu
 
     my $maxLossAmount   = $balance * $maxExposure;
     my $stopLoss = $self->_getSignalValue('exit', $symbol, $direction);
+    $self->logger->logconfess("Could not get stop loss for $symbol $direction") if (!defined($stopLoss));
     my $base = $account->getSymbolBase($symbol);
 
     if ($base ne "GBP") { # TODO: should not be hardcoded that account is based on GBP
-        $maxLossAmount *= $account->getAsk("GBP$base");
+        my $conversionFactor = $account->getAsk("GBP$base");
+        $self->logger->logconfess("Could not retrieve current price for GBP$base") if (!defined($conversionFactor));
+        $maxLossAmount *= $conversionFactor;
     }
 
     my $value;
@@ -271,13 +277,13 @@ my $allowedExposure = $self->system->{signals}->{$action}->{$direction}->{exposu
     $self->logger->debug("Stop loss price level = $stopLoss");
 
     if ( $maxLossPts <= 0 ) {
-        die("Tried to set stop to " . $stopLoss . " but current price is " . $value);
+        $self->logger->logconfess("Tried to set stop to " . $stopLoss . " but current price is " . $value);
     }
     my $amount = $account->convertBaseUnit($symbol, $maxLossAmount / $maxLossPts);
     $self->logger->debug("Acceptable trade size = $amount");
-    $self->logger->logdie('Tried to open trade with negative amount. This should not happen unless there is a bug') if ($amount < 0);
+    $self->logger->logconfess('Tried to open trade with negative amount. This should not happen unless there is a bug') if ($amount < 0);
     my $maxLeveragePerTrade = 15; #TODO config setting
-    $self->logger->logdie("Trade size too big, refusing") if ( $amount > $balance * $maxLeveragePerTrade );
+    $self->logger->logconfess("Trade size too big, refusing") if ( $amount > $balance * $maxLeveragePerTrade );
     return ($amount, $value, $stopLoss);
 }
 
