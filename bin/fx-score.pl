@@ -1,4 +1,6 @@
 #!/usr/bin/perl
+# PODNAME: fx-score.pl
+# ABSTRACT: List FX currencies sorted by relative strength
 
 use strict;
 use warnings;

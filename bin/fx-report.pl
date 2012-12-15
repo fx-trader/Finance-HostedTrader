@@ -1,4 +1,6 @@
 #!/usr/bin/perl
+# PODNAME: fx-report.pl
+# ABSTRACT: Report on current system performance
 
 use strict;
 use warnings;
