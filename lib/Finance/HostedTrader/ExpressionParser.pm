@@ -101,8 +101,8 @@ function:
     my $parser    = Parse::RecDescent->new($grammar);
 
     if (!Log::Log4perl->initialized()) {
-        if ( -r "/etc/hostedtrader.log.conf" ) {
-            Log::Log4perl->init("/etc/hostedtrader.log.conf");
+        if ( -r "/etc/fxtrader/hostedtrader.log.conf" ) {
+            Log::Log4perl->init("/etc/fxtrader/hostedtrader.log.conf");
         }
     }
 
@@ -138,13 +138,13 @@ sub getIndicatorData {
     my @good_args = qw(tf fields symbol maxLoadedItems startPeriod endPeriod numItems debug cacheResults);
 
     foreach my $key (keys %$args) {
-        die("invalid arg in getIndicatorData: $key") unless grep { /$key/ } @good_args;
+        $self->{_logger}->logconfess("invalid arg in getIndicatorData: $key") unless grep { /$key/ } @good_args;
     }
 
     #Handle arguments
     my $tf_name = $args->{tf} || 'day';
     my $tf = $self->{_ds}->cfg->timeframes->getTimeframeID($tf_name);
-    die( "Could not understand timeframe " . ( $tf_name ) ) if (!$tf);
+    $self->{_logger}->logconfess( "Could not understand timeframe " . ( $tf_name ) ) if (!$tf);
     my $maxLoadedItems = $args->{maxLoadedItems};
     $maxLoadedItems = 10_000_000_000
       if ( !defined( $args->{maxLoadedItems} ) );
@@ -153,8 +153,8 @@ sub getIndicatorData {
     my $order_ext = 'ASC';
     my $order_int = 'DESC';
     my $itemCount = $args->{numItems} || $maxLoadedItems;
-    my $expr      = $args->{fields}          || die("No fields set for indicator");
-    my $symbol    = $args->{symbol}          || die("No symbol set for indicator");
+    my $expr      = $args->{fields}          || $self->{_logger}->logconfess("No fields set for indicator");
+    my $symbol    = $args->{symbol}          || $self->{_logger}->logconfess("No symbol set for indicator");
     my $cacheResults = $args->{cacheResults};
     $cacheResults = 1 if (!defined($cacheResults));
 
@@ -179,7 +179,7 @@ sub getIndicatorData {
         $result     = $self->{_parser}->start_indicator($expr);
 
 #TODO: Need a more meaningfull error message describing what's wrong with the given expression
-        die("Syntax error in indicator \n\n$expr\n")
+        $self->{_logger}->logconfess("Syntax error in indicator \n\n$expr\n")
           unless ( defined($result) );
         my @fields = map { "$_ AS T$INDICATORS{$_}" } keys %INDICATORS;
         $select_fields = join( ', ', @fields );
@@ -219,7 +219,7 @@ ORDER BY datetime $order_ext
     $self->{_logger}->debug($sql);
 
     my $dbh = $self->{_ds}->dbh;
-    my $data = $dbh->selectall_arrayref($sql) or die($DBI::errstr);
+    my $data = $dbh->selectall_arrayref($sql) or $self->{_logger}->logconfess($DBI::errstr);
     my $lastItemIndex = scalar(@$data) - 1;
     if ( 0 && defined($itemCount) && ( $lastItemIndex > $itemCount ) ) {
         my @slice =
@@ -241,7 +241,7 @@ sub getSignalData {
     $self->{_logger}->debug($sql);
 
     my $dbh = $self->{_ds}->dbh;
-    my $data = $dbh->selectall_arrayref($sql) or die( $DBI::errstr . $sql );
+    my $data = $dbh->selectall_arrayref($sql) or $self->{_logger}->logconfess( $DBI::errstr . $sql );
     return $data;
 }
 
@@ -266,7 +266,7 @@ sub getSystemData {
     $self->{_logger}->debug($sql);
 
     my $dbh = $self->{_ds}->dbh;
-    my $data = $dbh->selectall_arrayref($sql) or die( $DBI::errstr . $sql );
+    my $data = $dbh->selectall_arrayref($sql) or $self->{_logger}->logconfess( $DBI::errstr . $sql );
     return $data;
 }
 
@@ -276,14 +276,14 @@ my ($self, $args) = @_;
     my @good_args = qw(tf expr symbol maxLoadedItems startPeriod endPeriod numItems fields debug noOrderBy);
 
     foreach my $key (keys %$args) {
-        die("invalid arg in _getSignalSql: $key") unless grep { /$key/ } @good_args;
+        $self->{_logger}->logconfess("invalid arg in _getSignalSql: $key") unless grep { /$key/ } @good_args;
     }
 
     my $tf_name = $args->{tf} || 'day';
     my $tf = $self->{_ds}->cfg->timeframes->getTimeframeID($tf_name);
-    die( "Could not understand timeframe " . ( $tf_name ) ) if (!$tf);
-    my $expr   = $args->{expr}   || die("No expression set for signal");
-    my $symbol = $args->{symbol} || die("No symbol set");
+    $self->{_logger}->logconfess( "Could not understand timeframe " . ( $tf_name ) ) if (!$tf);
+    my $expr   = $args->{expr}   || $self->{_logger}->logconfess("No expression set for signal");
+    my $symbol = $args->{symbol} || $self->{_logger}->logconfess("No symbol set");
     my $maxLoadedItems = $args->{maxLoadedItems};
     my $startPeriod = $args->{startPeriod} || '0001-01-01 00:00:00';
     my $endPeriod = $args->{endPeriod} || '9999-12-31 23:59:59';
@@ -295,7 +295,7 @@ my ($self, $args) = @_;
 
     %INDICATORS = ();
     my $result = $self->{_parser}->start_signal( $args->{expr} );
-    die("Syntax error in signal \n\n$expr\n") unless ( defined($result) );
+    $self->{_logger}->logconfess("Syntax error in signal \n\n$expr\n") unless ( defined($result) );
 
     my @fields = map { "$_ AS T$INDICATORS{$_}" } keys %INDICATORS;
     my $select_fields = join( ', ', @fields );
@@ -340,12 +340,12 @@ sub checkSignal {
     my @good_args = qw( expr symbol tf maxLoadedItems debug period simulatedNowValue);
 
     foreach my $key (keys %$args) {
-        die("invalid arg in checkSignal: $key") unless grep { /$key/ } @good_args;
+        $self->{_logger}->logconfess("invalid arg in checkSignal: $key") unless grep { /$key/ } @good_args;
     }
 
-    my $expr = $args->{expr} || die("expr argument missing in checkSignal");
-    my $symbol = $args->{symbol} || die("symbol argument missing in checkSignal");
-    my $timeframe = $args->{tf} || die("timeframe argument missing in checkSignal");
+    my $expr = $args->{expr} || $self->{_logger}->logconfess("expr argument missing in checkSignal");
+    my $symbol = $args->{symbol} || $self->{_logger}->logconfess("symbol argument missing in checkSignal");
+    my $timeframe = $args->{tf} || $self->{_logger}->logconfess("timeframe argument missing in checkSignal");
     my $maxLoadedItems = $args->{maxLoadedItems} || -1;
     my $debug = $args->{debug} || 0;
     my $period = $args->{period} || 3600;
