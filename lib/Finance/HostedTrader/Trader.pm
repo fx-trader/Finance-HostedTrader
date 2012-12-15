@@ -80,12 +80,14 @@ Return list of symbols to add to the system
 sub getSymbolsSignalFilter {
     my $self = shift;
     my $filters = shift;
+    my $rv = { long => [], short => [] };
+
+    return $rv if (!defined($filters) || !defined($filters->{signals}));
 
     my $long_symbols = $filters->{symbols}->{long};
     my $short_symbols = $filters->{symbols}->{short};
     my $account = $self->account;
 
-    my $rv = { long => [], short => [] };
 
     my $filter=$filters->{signals}->[0];#TODO should loop through every filter signal available ?
 
