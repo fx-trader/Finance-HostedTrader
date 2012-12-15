@@ -62,7 +62,7 @@ sub BUILD {
 =cut
 sub getSymbolsNextUpdate {
     my $self = shift;
-    
+
     my $nextUpdate = $self->{_symbolsLastUpdated} + $self->symbolUpdateInterval;
 
     #TODO what i mean here is, if the market is open, use $self->symbolUpdateInterval
@@ -73,7 +73,7 @@ sub getSymbolsNextUpdate {
     } else {
         return $self->{_symbolsLastUpdated} + 10800;
     }
-    
+
 }
 
 =method C<symbols()>
