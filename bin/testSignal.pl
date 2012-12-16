@@ -1,6 +1,6 @@
 #!/usr/bin/perl
-package Finance::HostedTrader;
 # ABSTRACT: Outputs the value of a signal against all known symbols
+# PODNAME: testSignal.pl
 
 =head1 SYNOPSIS
 

@@ -1,6 +1,6 @@
 #!/usr/bin/perl
-package Finance::HostedTrader;
 # ABSTRACT: Generates synthetic timeframes
+# PODNAME: updateTf.pl
 
 =head1 SYNOPSIS
 

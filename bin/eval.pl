@@ -1,6 +1,6 @@
 #!/usr/bin/perl
-package Finance::HostedTrader;
-# ABSTRACT: eval.pl - Outputs the value of an indicator against all known symbols
+# ABSTRACT: Outputs the value of an indicator against all known symbols
+# PODNAME: eval.pl
 
 =head1 SYNOPSIS
 

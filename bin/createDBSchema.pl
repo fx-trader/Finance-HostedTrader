@@ -1,6 +1,6 @@
 #!/usr/bin/perl
-package Finance::HostedTrader;
 # ABSTRACT: Outputs SQL suitable to create db, mysql users and tables to store symbol historical data in various timeframes
+# PODNAME: createDBSchema.pl
 
 =head1 SYNOPSIS
 
