@@ -1,10 +1,10 @@
 #!/usr/bin/perl
 # ABSTRACT: Outputs the value of a signal against all known symbols
-# PODNAME: testSignal.pl
+# PODNAME: fx-test-signal.pl
 
 =head1 SYNOPSIS
 
-    testSignal.pl [--timeframe=tf] [--verbose] [--symbols=s] [--debug] [--maxLoadedItems=i] [--numItems=i] expr
+    fx-test-signal.pl [--timeframe=tf] [--verbose] [--symbols=s] [--debug] [--maxLoadedItems=i] [--numItems=i] expr
 
 
 =head1 DESCRIPTION

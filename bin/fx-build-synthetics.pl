@@ -1,10 +1,10 @@
 #!/usr/bin/perl 
 # ABSTRACT: Create synthetic data for FX pairs based on existing USD pairs
-# PODNAME: synthetics.pl
+# PODNAME: fx-build-synthetics.pl
 
 =head1 SYNOPSIS
 
-    synthetics.pl --timeframe=tf [--verbose] [--symbols=s]
+    fx-build-synthetics.pl --timeframe=tf [--verbose] [--symbols=s]
 
 =head1 DESCRIPTION
 

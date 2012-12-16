@@ -1,10 +1,10 @@
 #!/usr/bin/perl
 # ABSTRACT: Generates synthetic timeframes
-# PODNAME: updateTf.pl
+# PODNAME: fx-update-tf.pl
 
 =head1 SYNOPSIS
 
-    updateTf.pl [--start="5 years ago"] [--end=today] [--symbols=s] [--timeframes=tf] [--verbose] --available-timeframe=i
+    fx-update-tf.pl [--start="5 years ago"] [--end=today] [--symbols=s] [--timeframes=tf] [--verbose] --available-timeframe=i
 
 =head1 DESCRIPTION
 

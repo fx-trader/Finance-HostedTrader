@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # ABSTRACT: Monitor if data is up to date for real time trading
-# PODNAME: dataUp2Date.pl
+# PODNAME: fx-data-up-2-date.pl
 
 use strict;
 use warnings;
