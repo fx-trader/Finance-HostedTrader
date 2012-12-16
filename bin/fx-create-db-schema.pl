@@ -1,10 +1,10 @@
 #!/usr/bin/perl
 # ABSTRACT: Outputs SQL suitable to create db, mysql users and tables to store symbol historical data in various timeframes
-# PODNAME: createDBSchema.pl
+# PODNAME: fx-create-db-schema.pl
 
 =head1 SYNOPSIS
 
-    createDBSchema.pl [--timeframes=tfs] [--help] [--symbols=s]
+    fx-create-db-schema.pl [--timeframes=tfs] [--help] [--symbols=s]
 
 =head1 DESCRIPTION
 
