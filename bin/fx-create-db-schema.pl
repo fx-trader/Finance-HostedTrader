@@ -48,7 +48,7 @@ my ( $symbols_txt, $tfs_txt, $drop_table, $help );
 my ($table_type) = ('MYISAM');
 my $cfg = Finance::HostedTrader::Config->new();
 
-my $result = GetOptions( "symbols=s", \$symbols_txt, "timeframes=s", \$tfs_txt, "tableType=s", \$table_type, "help", \$help, "dropTable", \$drop_table)
+my $result = GetOptions( "symbols=s", \$symbols_txt, "timeframes=s", \$tfs_txt, "tableType=s", \$table_type, "help", \$help, "dropTables", \$drop_table)
   or pod2usage(1);
 pod2usage(1) if ($help);
 
