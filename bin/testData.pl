@@ -1,6 +1,6 @@
 #!/usr/bin/perl
-package Finance::HostedTrader::DataManager;
 # ABSTRACT: Test dataset for error conditions
+# PODNAME: fx-test-data.pl
 
 use strict;
 use warnings;
