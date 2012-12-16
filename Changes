@@ -1,6 +1,8 @@
 Revision history for Finance::HostedTrader
 
 {{$NEXT}}
+
+0.015 2012-12-16 14:22:32 UTC
       Scripts were renamed for consistency
       Added bin/fx-score.pl
       Added bin/fx-report.pl
