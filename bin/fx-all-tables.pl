@@ -1,12 +1,11 @@
 #!/usr/bin/perl
 # ABSTRACT: Generates SQL statments which can be used against all symbols/timeframes
-# PODNAME: AllTables.pl
+# PODNAME: fx-all-tables.pl
 
 use strict;
 use warnings;
 use Getopt::Long;
 use Finance::HostedTrader::Datasource;
-use Data::Dumper;
 
 my ($sql,$timeframes_txt, $symbols_txt) = ('TABLE_NAME');
 
