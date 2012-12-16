@@ -2,6 +2,33 @@
 # PODNAME: fx-report.pl
 # ABSTRACT: Report on current system performance
 
+=head1 SYNOPSIS
+
+    fx-report.pl [--format=text|html]
+
+=head1 DESCRIPTION
+
+=head2 OPTIONS
+
+=over 12
+
+=item C<--format=s>
+
+The output format of the report. Either 'text' or 'html'.
+
+=item C<--help>
+
+Display usage information.
+
+=back
+
+=head1 SEE ALSO
+
+L<Finance::HostedTrader::Report>
+
+=cut
+
+
 use strict;
 use warnings;
 
