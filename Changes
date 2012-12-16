@@ -1,7 +1,15 @@
 Revision history for Finance::HostedTrader
 
 {{$NEXT}}
-
+      Scripts were renamed for consistency
+      Added bin/fx-score.pl
+      Added bin/fx-report.pl
+      Added howtos directory
+      fx-trader.pl takes systemName as an optional argument
+      More input validation in multiple subroutines
+      More log4perl usage
+      More script documentation
+      Larger test dataset
 0.014 2012-12-09 18:03:44 UTC
       fx-download-fxcm.pl now cleans temporary files
       Adapt Finance::HostedTrader::Account::FXCM::ForexConnect due to interface change in dependency Finance::FXCM::Simple
