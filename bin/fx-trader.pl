@@ -35,7 +35,7 @@ my $result = GetOptions(
 pod2usage(1) if ($help);
 
 
-my $system = Finance::HostedTrader::System->new( name => $systemName, pathToSystems => $pathToSystems, symbolUpdateInterval => 43200 );
+my $system = Finance::HostedTrader::System->new( name => $systemName, pathToSystems => $pathToSystems );
 
 my %classArgs = map { s/^--//; split(/=/) } @ARGV;
 foreach (keys %classArgs) {
