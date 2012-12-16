@@ -44,11 +44,11 @@ use Getopt::Long;
 use Finance::HostedTrader::Config;
 use Pod::Usage;
 
-my ( $symbols_txt, $tfs_txt, $help );
+my ( $symbols_txt, $tfs_txt, $drop_table, $help );
 my ($table_type) = ('MYISAM');
 my $cfg = Finance::HostedTrader::Config->new();
 
-my $result = GetOptions( "symbols=s", \$symbols_txt, "timeframes=s", \$tfs_txt, "tableType=s", \$table_type, "help", \$help)
+my $result = GetOptions( "symbols=s", \$symbols_txt, "timeframes=s", \$tfs_txt, "tableType=s", \$table_type, "help", \$help, "dropTable", \$drop_table)
   or pod2usage(1);
 pod2usage(1) if ($help);
 
@@ -67,8 +67,8 @@ print qq{
 
 foreach my $symbol (@$symbols) {
     foreach my $tf (@$tfs) {
+        print "DROP TABLE IF EXISTS `$symbol\_$tf`;\n" if ($drop_table);
         print qq /
-DROP TABLE IF EXISTS `$symbol\_$tf`;
 CREATE TABLE IF NOT EXISTS `$symbol\_$tf` (
 `datetime` DATETIME NOT NULL ,
 `open` DECIMAL(9,4) NOT NULL ,
