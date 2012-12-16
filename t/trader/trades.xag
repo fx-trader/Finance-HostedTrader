@@ -1,26 +1,26 @@
 - symbol: EURUSD
   direction: short
-  amount: 710000
+  amount: 460000
   now: 2012-05-01 14:08:00
   nav: 50000.0000
   balance: 50000
 - symbol: EURUSD
   direction: short
-  amount: 220000
+  amount: 140000
   now: 2012-05-30 00:00:00
-  nav: 84514.5196
+  nav: 72063.0556
   balance: 50000
 - symbol: EURUSD
   direction: short
-  amount: -930000
-  value: 1.2636
+  amount: -600000
+  value: 1.2647
   now: 2012-06-15 17:00:00
-  nav: 75205.7245
-  balance: 75205.7245
+  nav: 65745.1156
+  balance: 65745.1156
 - symbol: EURUSD
   direction: short
-  amount: 510000
-  now: 2012-06-18 08:12:00
-  nav: 75205.7245
-  balance: 75205.7245
+  amount: 330000
+  now: 2012-06-18 08:20:00
+  nav: 65745.1156
+  balance: 65745.1156
 

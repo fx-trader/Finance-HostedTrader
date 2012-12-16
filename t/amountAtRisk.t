@@ -27,10 +27,10 @@ my $trendfollow = Finance::HostedTrader::System->new( name => 'trendfollow', pat
     my $trader = Finance::HostedTrader::Trader->new( system => $trendfollow, account => $account );
 
     $account->openMarket('EURUSD', 'short', 10000);
-    is($trader->amountAtRisk($account->getPosition('EURUSD')), 409, "Added short trade");
+    is($trader->amountAtRisk($account->getPosition('EURUSD')), 419, "Added short trade");
     $account->waitForNextTrade(); # move forward in time
     $account->openMarket('EURUSD', 'short', 20000);
-    is($trader->amountAtRisk($account->getPosition('EURUSD')), 1661, "Added short trade");
+    is($trader->amountAtRisk($account->getPosition('EURUSD')), 1699, "Added short trade");
 }
 
 {
@@ -47,10 +47,10 @@ my $trendfollow = Finance::HostedTrader::System->new( name => 'trendfollow', pat
     my $trader = Finance::HostedTrader::Trader->new( system => $trendfollow, account => $account );
 
     $account->openMarket('GBPUSD', 'long', 30000);
-    is($trader->amountAtRisk($account->getPosition('GBPUSD')), 1467, "Added long trade");
+    is($trader->amountAtRisk($account->getPosition('GBPUSD')), 1485, "Added long trade");
     $account->waitForNextTrade(); # move forward in time
     $account->openMarket('GBPUSD', 'long', 20000);
-    is($trader->amountAtRisk($account->getPosition('GBPUSD')), 1496, "Added long trade");
+    is($trader->amountAtRisk($account->getPosition('GBPUSD')), 1587, "Added long trade");
 }
 
 {
@@ -67,9 +67,9 @@ my $trendfollow = Finance::HostedTrader::System->new( name => 'trendfollow', pat
     my $trader = Finance::HostedTrader::Trader->new( system => $trendfollow, account => $account );
 
     $account->openMarket('GBPUSD', 'long', 30000);
-    is($trader->amountAtRisk($account->getPosition('GBPUSD')), 1467, "Added long trade");
+    is($trader->amountAtRisk($account->getPosition('GBPUSD')), 1485, "Added long trade");
     $account->waitForNextTrade(); # move forward in time
     $account->openMarket('GBPUSD', 'short', 20000);
 
-    is($trader->amountAtRisk($account->getPosition('GBPUSD')), 532, "Added short trade");
+    is($trader->amountAtRisk($account->getPosition('GBPUSD')), 555, "Added short trade");
 }

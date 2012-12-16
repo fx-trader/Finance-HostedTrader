@@ -20,13 +20,13 @@ my $usd_account = Finance::HostedTrader::Factory::Account->new( SUBCLASS => 'Uni
 my $trader = Finance::HostedTrader::Trader->new( system => $trendfollow, account => $usd_account );
 isa_ok($trader, 'Finance::HostedTrader::Trader');
 
-is($trader->getEntryValue('EURUSD', 'long'), 1.3781, 'getEntryValue long');
-is($trader->getEntryValue('EURUSD', 'short'), 1.3779, 'getEntryValue short');
+is($trader->getEntryValue('EURUSD', 'long'), 1.3804, 'getEntryValue long');
+is($trader->getEntryValue('EURUSD', 'short'), 1.3757, 'getEntryValue short');
 
-is($trader->getExitValue('EURUSD', 'long'), '1.3590', 'getExitValue long');
-is($trader->getExitValue('EURUSD', 'short'), 1.4236, 'getExitValue short');
+is($trader->getExitValue('EURUSD', 'long'), '1.3584', 'getExitValue long');
+is($trader->getExitValue('EURUSD', 'short'), 1.4249, 'getExitValue short');
 
 diag("Testing convertToBaseCurrency");
 is($usd_account->convertToBaseCurrency(10000, 'USD'), '10000', 'from USD to USD');
-is($usd_account->convertToBaseCurrency(10000, 'JPY'), '128.0967', 'from JPY to USD');
-is($usd_account->convertToBaseCurrency(10000, 'EUR'), '13827.0000', 'from EUR to USD');
+is($usd_account->convertToBaseCurrency(10000, 'JPY'), '128.1115', 'from JPY to USD');
+is($usd_account->convertToBaseCurrency(10000, 'EUR'), '13830.0000', 'from EUR to USD');

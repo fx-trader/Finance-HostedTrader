@@ -19,7 +19,7 @@ my $test = Finance::HostedTrader::Test::TestSystem->new(
                                 },
                 resultsFile => "$t_path/trader/trades.xag",
                 startDate   => '2012-05-01 00:00:00',
-                endDate     => '2012-06-20 00:00:00',
+                endDate     => '2012-06-18 12:00:00',
                 pathToSystems   => "$t_path/systems",
 );
 
