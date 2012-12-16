@@ -60,16 +60,6 @@ Sets the debug flag in the Finance::HostedTrader::Datasource object which causes
 
 =back
 
-
-
-=head1 LICENSE
-
-This is released under the MIT license. See L<http://www.opensource.org/licenses/mit-license.php>.
-
-=head1 AUTHOR
-
-Joao Costa - L<http://zonalivre.org/>
-
 =head1 SEE ALSO
 
 L<Finance::HostedTrader::Datasource>

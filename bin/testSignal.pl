@@ -48,14 +48,6 @@ Number of indicator periods to display. Defaults to one (eg: only display the in
 
 =back
 
-=head1 LICENSE
-
-This is released under the MIT license. See L<http://www.opensource.org/licenses/mit-license.php>.
-
-=head1 AUTHOR
-
-Joao Costa - L<http://zonalivre.org/>
-
 =head1 SEE ALSO
 
 L<Finance::HostedTrader::Datasource>
