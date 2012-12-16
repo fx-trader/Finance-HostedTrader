@@ -1,10 +1,10 @@
 #!/usr/bin/perl
 # ABSTRACT: Outputs the value of an indicator against all known symbols
-# PODNAME: eval.pl
+# PODNAME: fx-eval.pl
 
 =head1 SYNOPSIS
 
-    eval.pl [--timeframe=tf] [--verbose] [--symbols=s] [--debug] [--maxLoadedItems=i] [--numItems=i] expr
+    fx-eval.pl [--timeframe=tf] [--verbose] [--symbols=s] [--debug] [--maxLoadedItems=i] [--numItems=i] expr
 
 
 =head1 DESCRIPTION
