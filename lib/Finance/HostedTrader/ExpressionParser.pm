@@ -4,37 +4,32 @@ use strict;
 use warnings;
 use Date::Manip;
 use Log::Log4perl qw(:easy);
-my ( %INDICATORS, %VALUES );
-
+use List::Util;
 use Parse::RecDescent;
 use Finance::HostedTrader::Datasource;
 
-sub checkArgs {
-    my @rv;
-    foreach my $arg (@_) {
-        my $value = $arg
-          ; #Copy to a different var otherwise values in the caller change as well.
-
-        while ( $value =~ /(T(\d+))/ ) {
-            my ( $find, $index ) = ( $1, $2 );
-            $value =~ s/$find/$VALUES{$index}/g;
-
-        }
-        push @rv, $value;
-    }
-    return @rv;
-}
+my ( %TIMEFRAMES, %INDICATORS, @VALUES );
 
 sub getID {
+    my $type = shift;
     my @rv = ();
+    my $key = scalar(@VALUES);
 
-    while ( my $key = shift ) {
-        $INDICATORS{$key} = scalar( keys %INDICATORS )
-          unless exists $INDICATORS{$key};
-        push @rv, $INDICATORS{$key};
-        $VALUES{ $INDICATORS{$key} } = $key;
+    push @VALUES, { type => $type, items => [] };
+
+    while ( defined(my $item = shift) ) {
+        $INDICATORS{$item} = scalar( keys %INDICATORS )
+          unless exists $INDICATORS{$item};
+        push @{ $VALUES[$key]->{items} }, $item;
     }
-    return wantarray ? @rv : $rv[$#rv];
+    return $key;
+}
+
+sub setSignalTimeframe {
+    my ($sig, $tf) = @_;
+
+    my $key = join (' ', @$sig);
+    $TIMEFRAMES{$key} = $tf;
 }
 
 #$::RD_TRACE=1;
@@ -43,26 +38,45 @@ $::RD_WARN   = 1;
 $::RD_ERRORS = 1;
 
 sub new {
-
     my ( $class, $ds ) = @_;
 
     my $grammar = q {
 start_indicator:          statement_indicator /\Z/               {$item[1]}
 
-start_signal:          statement_signal /\Z/               {$item[1]}
+start_signal:          recursive_timeframe_statement_signal /\Z/               {$item[1]}
 
-statement_indicator:		expression(s /,/) {join(',', @{$item[1]})}
+statement_indicator:		expression(s /,/) {join(',', map { (/^[0-9]/ ? $_ : "`$_`") } @{$item[1]})}
 
-statement_signal:		<leftop: signal boolop signal > {join(' ', @{$item[1]})}
+recursive_timeframe_statement_signal:       <leftop: timeframe_statement_signal boolop timeframe_statement_signal >     { $item[1] }
+
+timeframe_statement_signal:     'daily' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 86400); $item[3] }
+                              | '4hourly' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 14400); $item[3] }
+                              | '3hourly' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 10800); $item[3] }
+                              | '2hourly' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 7200); $item[3] }
+                              | 'hourly' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 3600); $item[3] }
+                              | '30minutely' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 1800); $item[3] }
+                              | '15minutely' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 900); $item[3] }
+                              | '5minutely' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 300); $item[3] }
+                              | '2minutely' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 120); $item[3] }
+                              | 'minutely' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 60); $item[3] }
+                              | '30seconds' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 30); $item[3] }
+                              | '15seconds' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 15); $item[3] }
+                              | '5seconds' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 5); $item[3] }
+                              | 'second' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 1); $item[3] }
+                              | statement_signal
+
+statement_signal:		<leftop: signal boolop signal > { $item[1] }
 
 statement: statement_indicator | statement_signal
 
 boolop:	'AND' | 'OR'
 
-signal:         
-			    'crossoverup' '(' expression ',' expression ')' { my @vals = Finance::HostedTrader::ExpressionParser::checkArgs($item[3],$item[5]);my ($t1,$t2) = Finance::HostedTrader::ExpressionParser::getID("ta_previous($vals[0],1)","ta_previous($vals[1],1)");"($item[3] > $item[5] AND T$t1 <= T$t2)"}
-			  | 'crossoverdown' '(' expression ',' expression ')' { my @vals = Finance::HostedTrader::ExpressionParser::checkArgs($item[3],$item[5]);my ($t1,$t2) = Finance::HostedTrader::ExpressionParser::getID("ta_previous($vals[0],1)","ta_previous($vals[1],1)");"($item[3] < $item[5] AND T$t1 >= T$t2)"}
-              | expression cmp_op expression      {"$item[1] $item[2] $item[3]"}
+signal:
+			    'crossoverup' '(' expression ',' number ')' { my $key = Finance::HostedTrader::ExpressionParser::getID("crossoverup","ta_previous($item[3],1)", $item[5], $item[3], $item[5]); $key }
+			  | 'crossoverup' '(' expression ',' expression ')' { my $key = Finance::HostedTrader::ExpressionParser::getID("crossoverup","ta_previous($item[3],1)", "ta_previous($item[5],1)", $item[3], $item[5]); $key }
+			  | 'crossoverdown' '(' expression ',' number ')' { my $key = Finance::HostedTrader::ExpressionParser::getID("crossoverdown","ta_previous($item[3],1)", $item[5], $item[3], $item[5]); $key }
+			  | 'crossoverdown' '(' expression ',' expression ')' { my $key = Finance::HostedTrader::ExpressionParser::getID("crossoverdown","ta_previous($item[3],1)", "ta_previous($item[5],1)", $item[3], $item[5]); $key }
+              | expression cmp_op expression      { my $key = Finance::HostedTrader::ExpressionParser::getID("cmpop$item[2]",$item[1],$item[3]); $key }
               | expression
 
 cmp_op:         '>=' | '>' | '<=' | '<'
@@ -82,20 +96,20 @@ number:         /-?\d+(\.\d+)?/
 field:			"datetime" | "open" | "high" | "low" | "close"
 
 function:
-		'ema(' expression ',' number ')' { my @vals = Finance::HostedTrader::ExpressionParser::checkArgs($item[2]); "T".Finance::HostedTrader::ExpressionParser::getID("round(ta_ema($vals[0],$item[4]), 4)") } |
-		'sma(' expression ',' number ')' { my @vals = Finance::HostedTrader::ExpressionParser::checkArgs($item[2]); "T".Finance::HostedTrader::ExpressionParser::getID("round(ta_sma($vals[0],$item[4]), 4)") } |
-		'rsi(' expression ',' number ')' { my @vals = Finance::HostedTrader::ExpressionParser::checkArgs($item[2]); "T".Finance::HostedTrader::ExpressionParser::getID("round(ta_rsi($vals[0],$item[4]), 2)") } |
-		'max(' expression ',' number ')' { my @vals = Finance::HostedTrader::ExpressionParser::checkArgs($item[2]); "T".Finance::HostedTrader::ExpressionParser::getID("ta_max($vals[0],$item[4])") } |
-		'min(' expression ',' number ')' { my @vals = Finance::HostedTrader::ExpressionParser::checkArgs($item[2]); "T".Finance::HostedTrader::ExpressionParser::getID("ta_min($vals[0],$item[4])") } |
-		'tr(' ')'  { "T".Finance::HostedTrader::ExpressionParser::getID("round(ta_tr(high,low,close), 4)") } |
-		'atr(' number ')'  { "T".Finance::HostedTrader::ExpressionParser::getID("round(ta_ema(ta_tr(high,low,close),$item[2]), 4)") } |
-		'previous(' expression ',' number ')' { my @vals = Finance::HostedTrader::ExpressionParser::checkArgs($item[2]); "T".Finance::HostedTrader::ExpressionParser::getID("ta_previous($vals[0],$item[4])") } |
-		'bolhigh(' expression ',' number ',' number ')' { my @vals = Finance::HostedTrader::ExpressionParser::checkArgs($item[2]); my ($t1,$t2) = Finance::HostedTrader::ExpressionParser::getID("ta_sma($vals[0],$item[4])","ta_stddevp($vals[0], $item[4])"); "round(T$t1 + $item[6]*T$t2, 4)" } |
-		'bollow(' expression ',' number ',' number ')' { my @vals = Finance::HostedTrader::ExpressionParser::checkArgs($item[2]); my ($t1,$t2) = Finance::HostedTrader::ExpressionParser::getID("ta_sma($vals[0],$item[4])","ta_stddevp($vals[0], $item[4])"); "round(T$t1 - $item[6]*T$t2, 4)" } |
-		'trend(' expression ',' number ')' { my @vals = Finance::HostedTrader::ExpressionParser::checkArgs($item[2]); my ($t1,$t2) = Finance::HostedTrader::ExpressionParser::getID("ta_sma($vals[0],$item[4])","ta_sum(POW($vals[0] - ta_sma($vals[0], $item[4]), 2), $item[4])"); "round(($vals[0] - T$t1) / (SQRT(T$t2/$item[4])), 2)" } |
-		'macd(' expression ',' number ',' number ',' number ')' {my @vals = Finance::HostedTrader::ExpressionParser::checkArgs($item[2]); my ($t1,$t2) = Finance::HostedTrader::ExpressionParser::getID("ta_ema($vals[0],$item[4])", "ta_ema($vals[0],$item[6])");"round(T$t1 - T$t2, 4)" } |
-		'macdsig(' expression ',' number ',' number ',' number ')' {my @vals=Finance::HostedTrader::ExpressionParser::checkArgs($item[2]);"T".Finance::HostedTrader::ExpressionParser::getID("round(ta_ema(ta_ema($vals[0],$item[4]) - ta_ema($item[2],$item[6]),$item[8]),4)") } |
-		'abs(' expression ')' { my @vals = Finance::HostedTrader::ExpressionParser::checkArgs($item[2]); "T".Finance::HostedTrader::ExpressionParser::getID("round(abs($vals[0]), 4)") }
+		'ema(' expression ',' number ')' { "round(ta_ema($item[2],$item[4]), 4)" } |
+		'sma(' expression ',' number ')' { "round(ta_sma($item[2],$item[4]), 4)" } |
+		'rsi(' expression ',' number ')' { "round(ta_rsi($item[2],$item[4]), 2)" } |
+		'max(' expression ',' number ')' { "ta_max($item[2],$item[4])" } |
+		'min(' expression ',' number ')' { "ta_min($item[2],$item[4])" } |
+		'tr(' ')'  { "round(ta_tr(high,low,close), 4)" } |
+		'atr(' number ')'  { "round(ta_ema(ta_tr(high,low,close),$item[2]), 4)" } |
+		'previous(' expression ',' number ')' { "ta_previous($item[2],$item[4])" } |
+		'bolhigh(' expression ',' number ',' number ')' { "round(ta_sma($item[2],$item[4]) + $item[6]*ta_stddevp($item[2], $item[4]), 4)" } |
+		'bollow(' expression ',' number ',' number ')' { "round(ta_sma($item[2],$item[4]) - $item[6]*ta_stddevp($item[2], $item[4]), 4)" } |
+		'trend(' expression ',' number ')' { "round(($item[2] - ta_sma($item[2],$item[4])) / (SQRT(ta_sum(POW($item[2] - ta_sma($item[2], $item[4]), 2), $item[4])/$item[4])), 2)" } |
+		'macd(' expression ',' number ',' number ',' number ')' { "round(ta_ema($item[2],$item[4]) - ta_ema($item[2],$item[6]), 4)" } |
+		'macdsig(' expression ',' number ',' number ',' number ')' { "round(ta_ema(ta_ema($item[2],$item[4]) - ta_ema($item[2],$item[6]),$item[8]),4)" } |
+		'abs(' expression ')' { "round(abs($item[2]), 4)" }
 };
 
     my $parser    = Parse::RecDescent->new($grammar);
@@ -150,8 +164,6 @@ sub getIndicatorData {
       if ( !defined( $args->{maxLoadedItems} ) );
     my $displayEndDate   = $args->{endPeriod} || '9999-12-31';
     my $displayStartDate = $args->{startPeriod} || '0001-01-31';
-    my $order_ext = 'ASC';
-    my $order_int = 'DESC';
     my $itemCount = $args->{numItems} || $maxLoadedItems;
     my $expr      = $args->{fields}          || $self->{_logger}->logconfess("No fields set for indicator");
     my $symbol    = $args->{symbol}          || $self->{_logger}->logconfess("No symbol set for indicator");
@@ -164,55 +176,50 @@ sub getIndicatorData {
         return $cached_result->[1];
     }
 
-    my ( $result, $select_fields );
+    my ( $result );
     my $cache = $self->{_cache}->{$expr};
     if ( defined($cache) ) {
-        ( $result, $select_fields ) =
-          ( $cache->{result}, $cache->{select_fields} );
+        $result = $cache;
     }
     else {
 
-#Reset the global variable the parser uses to store information
-#TODO: This shouldn't be global, I ought to have one of these per call
 #TODO: Refactor the parser bit so that it can be called independently. This will be usefull to validate expressions before running them.
-        %INDICATORS = ();
         $result     = $self->{_parser}->start_indicator($expr);
 
 #TODO: Need a more meaningfull error message describing what's wrong with the given expression
         $self->{_logger}->logconfess("Syntax error in indicator \n\n$expr\n")
           unless ( defined($result) );
-        my @fields = map { "$_ AS T$INDICATORS{$_}" } keys %INDICATORS;
-        $select_fields = join( ', ', @fields );
-        $self->{_cache}->{$expr} =
-          { 'result' => $result, 'select_fields' => $select_fields };
+        $self->{_cache}->{$expr} = $result;
     }
-
-    $select_fields = ',' . $select_fields if ($select_fields);
 
     my $WHERE_FILTER = "WHERE datetime <= '$displayEndDate'";
     $WHERE_FILTER .= ' AND dayofweek(datetime) <> 1' if ( $tf != 604800 );
 
     my $EXT_WHERE = "datetime >= '$displayStartDate'";
 
+    my $int_result = $result;
+    $int_result =~ s/`//g;
+
     my $sql = qq(
-SELECT * FROM (
 SELECT $result FROM (
-SELECT *$select_fields
+SELECT * FROM (
+SELECT $int_result
 FROM (
     SELECT * FROM (
         SELECT * FROM $symbol\_$tf
         $WHERE_FILTER
-        ORDER BY datetime $order_int
+        ORDER BY datetime DESC
         LIMIT $maxLoadedItems
     ) AS T_LIMIT
-    ORDER BY datetime
+    ORDER BY datetime ASC
 ) AS T_INNER
-) AS T_OUTER
+
 WHERE $EXT_WHERE
-ORDER BY datetime $order_int
-LIMIT $itemCount
 ) AS DT
-ORDER BY datetime $order_ext
+ORDER BY datetime DESC
+LIMIT $itemCount
+) AS O
+ORDER BY datetime ASC
 );
 
     print $sql if ($args->{debug});
@@ -226,7 +233,7 @@ ORDER BY datetime $order_ext
           @{$data}[ $lastItemIndex - $itemCount + 1 .. $lastItemIndex ];
         return \@slice;
     }
-    
+
     $self->{_result_cache}->{$cache_key} = [ "$displayStartDate/$displayEndDate", $data ] if ($cacheResults);
     return $data;
 }
@@ -273,15 +280,15 @@ sub getSystemData {
 sub _getSignalSql {
 my ($self, $args) = @_;
 
-    my @good_args = qw(tf expr symbol maxLoadedItems startPeriod endPeriod numItems fields debug noOrderBy);
+    my @good_args = qw(tf expr symbol maxLoadedItems startPeriod endPeriod numItems fields debug);
 
     foreach my $key (keys %$args) {
         $self->{_logger}->logconfess("invalid arg in _getSignalSql: $key") unless grep { /$key/ } @good_args;
     }
 
     my $tf_name = $args->{tf} || 'day';
-    my $tf = $self->{_ds}->cfg->timeframes->getTimeframeID($tf_name);
-    $self->{_logger}->logconfess( "Could not understand timeframe " . ( $tf_name ) ) if (!$tf);
+    my $default_tf = $self->{_ds}->cfg->timeframes->getTimeframeID($tf_name);
+    $self->{_logger}->logconfess( "Could not understand timeframe " . ( $tf_name ) ) if (!$default_tf);
     my $expr   = $args->{expr}   || $self->{_logger}->logconfess("No expression set for signal");
     my $symbol = $args->{symbol} || $self->{_logger}->logconfess("No symbol set");
     my $maxLoadedItems = $args->{maxLoadedItems};
@@ -293,21 +300,78 @@ my ($self, $args) = @_;
     $maxLoadedItems = 10_000_000_000
       if ( !defined( $args->{maxLoadedItems} ));
 
+    %TIMEFRAMES = ();
     %INDICATORS = ();
-    my $result = $self->{_parser}->start_signal( $args->{expr} );
-    $self->{_logger}->logconfess("Syntax error in signal \n\n$expr\n") unless ( defined($result) );
+    @VALUES     = ();
+    my $results = $self->{_parser}->start_signal( $args->{expr} );
+    use Data::Dumper;
+    #print "TIMEFRAMES = " . Dumper(\%TIMEFRAMES);
+    #print "INDICATORS = " . Dumper(\%INDICATORS);
+    #print "VALUES = " . Dumper(\@VALUES);
+    #print "results = " . Dumper(\$results);
+    #exit;
 
-    my @fields = map { "$_ AS T$INDICATORS{$_}" } keys %INDICATORS;
-    my $select_fields = join( ', ', @fields );
-    $select_fields = ',' . $select_fields if ($select_fields);
+    $self->{_logger}->logconfess("Syntax error in signal \n\n$expr\n") unless ( defined($results) );
 
-    my $WHERE_FILTER = " WHERE datetime <= '$endPeriod'";
-    $WHERE_FILTER .= ' AND dayofweek(datetime) <> 1' if ( $tf != 604800 );
-    my $ORDERBY_CLAUSE='';
-       $ORDERBY_CLAUSE='ORDER BY datetime' if (!$args->{noOrderBy});
+    my @all_timeframes_sql = ();
+    my @timeframes_sql_glue = ();
 
-    my $sql = qq(
-SELECT $fields FROM (
+    my $max_timeframe_requested = List::Util::max(values %TIMEFRAMES) || $default_tf;
+    my $min_timeframe_requested = List::Util::min(values %TIMEFRAMES) || $default_tf;
+    my $cfg = $self->{_ds}->cfg;
+    my $common_timeframe_pattern = $cfg->timeframes->getTimeframeFormat($cfg->timeframes->getTimeframeName($max_timeframe_requested));
+
+    foreach my $result (@$results) {
+
+        my $result_str;
+        if (!ref($result)) {
+            push @timeframes_sql_glue, $result;
+            next;
+        }
+        my $tf = $TIMEFRAMES{join(' ', @$result)} || $default_tf;
+        my @fields;
+
+        foreach my $result_signal (@$result) {
+            if ($result_signal =~ /^[0-9]+$/) {
+                my $value = $VALUES[$result_signal];
+                my $str;
+
+                push @fields, map { "$_ AS T$INDICATORS{$_}" } @{$value->{items}};
+
+                if ( $value->{type} eq 'crossoverup' ) {
+                    $str = "(T" . $INDICATORS{$value->{items}->[0]} . " <= T" . $INDICATORS{$value->{items}->[1]} . " AND T" . $INDICATORS{$value->{items}->[2]} . " > T" . $INDICATORS{$value->{items}->[3]} . ")";
+                } elsif ( $value->{type} eq 'crossoverdown' ) {
+                    $str = "(T" . $INDICATORS{$value->{items}->[0]} . " >= T" . $INDICATORS{$value->{items}->[1]} . " AND T" . $INDICATORS{$value->{items}->[2]} . " < T" . $INDICATORS{$value->{items}->[3]} . ")";
+                } elsif ( $value->{type} eq 'cmpop>=' ) {
+                    $str = "(T" . $INDICATORS{$value->{items}->[0]} . " >= T" . $INDICATORS{$value->{items}->[1]} . ")";
+                } elsif ( $value->{type} eq 'cmpop>' ) {
+                    $str = "(T" . $INDICATORS{$value->{items}->[0]} . " > T" . $INDICATORS{$value->{items}->[1]} . ")";
+                } elsif ( $value->{type} eq 'cmpop<=' ) {
+                    $str = "(T" . $INDICATORS{$value->{items}->[0]} . " <= T" . $INDICATORS{$value->{items}->[1]} . ")";
+                } elsif ( $value->{type} eq 'cmpop<' ) {
+                    $str = "(T" . $INDICATORS{$value->{items}->[0]} . " < T" . $INDICATORS{$value->{items}->[1]} . ")";
+                } else {
+                    die("Invalid grammar. $value->{type}");
+                }
+                $result_str .= $str;
+            } else {
+                $result_str .= ' ' . $result_signal . ' ';
+            }
+        }
+
+        my %unique_fields = map { $_ => undef } @fields;
+
+        my $select_fields = join( ', ', keys %unique_fields );
+        $select_fields = ',' . $select_fields if ($select_fields);
+
+        my $WHERE_FILTER = " WHERE datetime <= '$endPeriod'";
+        $WHERE_FILTER .= ' AND dayofweek(datetime) <> 1' if ( $tf != 604800 );
+        my $ORDERBY_CLAUSE='';
+        $ORDERBY_CLAUSE='ORDER BY datetime';
+
+        my $tf_sql = qq(
+(
+SELECT $fields, $common_timeframe_pattern AS COMMON_TIMEFRAME_PATTERN FROM (
 SELECT $fields FROM (
 SELECT *$select_fields
 FROM (
@@ -320,15 +384,43 @@ FROM (
     ORDER BY datetime
 ) AS T_INNER
 ) AS T_OUTER
-WHERE ( $result ) AND datetime >= '$startPeriod' AND datetime <='$endPeriod'
+WHERE $result_str AND datetime >= '$startPeriod' AND datetime <='$endPeriod'
 ORDER BY datetime DESC
 LIMIT $nbItems
 ) AS DT
 $ORDERBY_CLAUSE
+) AS SIGNALS_TF_$tf
+
 );
 
-return $sql;
+        push @all_timeframes_sql,  {sql => $tf_sql, tf => $tf};
+    }
 
+    #print Dumper(\@all_timeframes_sql);
+    #print Dumper(\@timeframes_sql_glue);
+
+    my $sql;
+    if (!@timeframes_sql_glue) {
+        my $leftop = shift(@all_timeframes_sql);
+        $sql = "SELECT datetime FROM $leftop->{sql}";
+    } else {
+        $sql = "SELECT SIGNALS_TF_$min_timeframe_requested.datetime FROM\n";
+        foreach my $op (@timeframes_sql_glue) {
+            my $leftop = shift(@all_timeframes_sql);
+            my $rightop = shift(@all_timeframes_sql);
+            die("Unexpected undefined value leftop") if (!defined($leftop));
+            die("Unexpected undefined value rightop") if (!defined($rightop));
+
+            if ($op eq 'AND') {
+                $sql .= $leftop->{sql} . "\nINNER JOIN\n" . $rightop->{sql} . " ON SIGNALS_TF_$leftop->{tf}.COMMON_TIMEFRAME_PATTERN = SIGNALS_TF_$rightop->{tf}.COMMON_TIMEFRAME_PATTERN";
+            } elsif ($op eq 'OR') {
+                $sql .= $leftop->{sql} . "\nUNION ALL\n" . $rightop->{sql};
+            } else {
+                die("Unknown operator: $op");
+            }
+        }
+    }
+    return $sql;
 }
 
 =method C<checkSignal>
