@@ -1,0 +1,18 @@
+To cut a new release
+
+# Look at differences since last release and update Changes file
+git log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --stat
+vi Changes
+
+#cut release
+dzil release
+
+#update .spec file
+cpanspec Finance-HostedTrader-*.tar.gz
+vimdiff perl-Finance-HostedTrader.spec spec/perl-Finance-HostedTrader.spec
+
+#build rpm
+mach build spec/perl-Finance-HostedTrader.spec
+
+#commit spec file
+git commit spec/perl-Finance-HostedTrader.spec
