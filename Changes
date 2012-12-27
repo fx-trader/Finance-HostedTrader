@@ -1,7 +1,12 @@
 Revision history for Finance::HostedTrader
 
 {{$NEXT}}
-
+      fx-create-db-schema.pl
+                - Emitting DROP TABLE is now optional
+                - Fix option name
+      ExpressionParser.pm
+                - Fix Bollinger Bands formula and make use of new function in libmysqludf_ta
+                - Add timeframe signal functions
 0.015 2012-12-16 14:22:32 UTC
       Scripts were renamed for consistency
       Added bin/fx-score.pl
