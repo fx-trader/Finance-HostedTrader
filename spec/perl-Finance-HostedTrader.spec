@@ -1,5 +1,5 @@
 Name:           perl-Finance-HostedTrader
-Version:        0.015
+Version:        0.016
 Release:        1%{?dist}
 Summary:        Finance::HostedTrader Perl module
 License:        MIT
@@ -18,6 +18,7 @@ BuildRequires:  perl(Finance::FXCM::Simple)
 BuildRequires:  perl(Hash::Merge)
 BuildRequires:  perl(HTML::Table)
 BuildRequires:  perl(List::Compare::Functional)
+BuildRequires:  perl(List::Util)
 BuildRequires:  perl(Log::Log4perl)
 BuildRequires:  perl(Math::Round)
 BuildRequires:  perl(MIME::Lite)
@@ -41,6 +42,7 @@ Requires:       perl(Finance::FXCM::Simple)
 Requires:       perl(Hash::Merge)
 Requires:       perl(HTML::Table)
 Requires:       perl(List::Compare::Functional)
+Requires:       perl(List::Util)
 Requires:       perl(Log::Log4perl)
 Requires:       perl(Math::Round)
 Requires:       perl(MIME::Lite)
@@ -54,8 +56,8 @@ Requires:       perl(Test::Differences)
 Requires:       perl(Test::More)
 Requires:       perl(Text::ASCIITable)
 Requires:       perl(YAML::Tiny)
-BuildRequires:  libmysqludf_ta
-Requires:       libmysqludf_ta
+BuildRequires:  libmysqludf_ta >= 0.1-3
+Requires:       libmysqludf_ta >= 0.1-3
 Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 
 %description
@@ -108,6 +110,8 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Dec 27 2012 João Costa <joaocosta@zonalivre.org> 0.016-1
+- New upstream version available
 * Tue Dec 16 2012 João Costa <joaocosta@zonalivre.org> 0.015-1
 - New upstream version available
 
