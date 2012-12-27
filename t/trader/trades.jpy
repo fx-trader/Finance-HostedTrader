@@ -1,7 +1,7 @@
 - symbol: USDJPY
   direction: short
   amount: 320000
-  now: 2012-03-05 06:00:00
+  now: 2012-03-05 12:36:00
   nav: 50000.0000
   balance: 50000
 - symbol: USDJPY
@@ -9,5 +9,5 @@
   amount: -320000
   value: 81.8950
   now: 2012-03-09 03:16:00
-  nav: 48508.6075
-  balance: 48508.6075
+  nav: 48486.3847
+  balance: 48486.3847
