@@ -1,5 +1,7 @@
 package Finance::HostedTrader::ExpressionParser;
 # ABSTRACT: Finance::HostedTrader::ExpressionParser - Utility object to calculate indicators/signals based on complex expressions
+#Maybe one day convert this to lex/bison
+#http://www.scribd.com/doc/8669780/Lex-yacc-Tutorial
 use strict;
 use warnings;
 use Date::Manip;
