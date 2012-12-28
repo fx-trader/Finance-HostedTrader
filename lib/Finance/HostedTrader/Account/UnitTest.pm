@@ -117,7 +117,6 @@ sub BUILD {
     $self->{_now} = UnixDate($self->startDate, '%Y-%m-%d %H:%M:%S');
     $self->{_now_epoch} = UnixDate($self->{_now}, '%s');
     $self->{_signal_cache} = {};
-    $self->{_price_cache} = {};
 
     $self->{_account_data} = {
         balance => 50000,
@@ -434,17 +433,21 @@ sub _getNextSignalDate {
     my $date = $self->{_now};
 
     my $signals = $self->{_signal_cache};
-    my @next_signals = ();
+
+    my @allsignaldates;
     foreach my $symbol (keys(%$signals)) {
         foreach my $signal (keys(%{$signals->{$symbol}})) {
             my $data = $signals->{$symbol}->{$signal};
-            push @next_signals, $data->[0]->[0] if ($data->[0] && $data->[0]->[0] gt $date);
-            push @next_signals, $data->[1]->[0] if ($data->[1] && $data->[1]->[0] gt $date);
+            push @allsignaldates, map{ $_->[0] } @$data;
         }
     }
-    @next_signals = sort (@next_signals);
+    @allsignaldates = sort(@allsignaldates);
 
-    return $next_signals[0];
+    foreach my $nextsignal (@allsignaldates) {
+        return $nextsignal if ($nextsignal gt $date);
+    }
+
+    return;
 }
 
 sub getServerEpoch {
