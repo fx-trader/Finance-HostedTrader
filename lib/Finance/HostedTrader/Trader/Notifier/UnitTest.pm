@@ -47,7 +47,7 @@ Constructor.
 sub BUILD {
 sub _load {
     my $file = shift;
-    
+
     my $yaml = YAML::Tiny->new;
     if (-e $file) {
         $yaml = YAML::Tiny->read( $file ) || die("Cannot read symbols from $file. $!");
@@ -60,7 +60,7 @@ sub _load {
     my $self = shift;
 
     $self->{_tradeCount} = 0;
-    
+
     my $expectedTradesFile = $self->expectedTradesFile;
     if (defined($expectedTradesFile)) {
         $self->{_skipTests} = 0;
@@ -77,23 +77,24 @@ sub _load {
 sub open {
     my $self = shift;
     my %args=@_;
-    
+
     $self->{_tradeCount}++;
 
     my $got_trade = {
-        symbol      => $args{symbol}, 
+        symbol      => $args{symbol},
         direction   => $args{direction},
         amount      => $args{amount},
         now         => $args{now},
         nav         => $args{nav},
         balance     => $args{balance},
     };
-    
+
     my $expected_trade = shift @{ $self->{_expectedTrades} };
-    
-    warn("Was not expecting any more trades !") && exit if (!defined($expected_trade));
- 
-    eq_or_diff($got_trade, $expected_trade, "Open trade " . $self->{_tradeCount}) unless($self->{_skipTests});
+
+    if (!$self->{_skipTests}) {
+        warn("Was not expecting any more trades !") && exit if (!defined($expected_trade));
+        eq_or_diff($got_trade, $expected_trade, "Open trade " . $self->{_tradeCount});
+    }
 }
 
 =method C<close()>
@@ -102,24 +103,25 @@ sub open {
 sub close {
     my $self = shift;
     my %args=@_;
-    
+
     $self->{_tradeCount}++;
 
     my $got_trade = {
-        symbol      => $args{symbol}, 
+        symbol      => $args{symbol},
         direction   => $args{direction},
         amount      => $args{amount},
-        value       => $args{currentValue},       
+        value       => $args{currentValue},
         now         => $args{now},
         nav         => $args{nav},
         balance     => $args{balance},
     };
-    
+
     my $expected_trade = shift @{ $self->{_expectedTrades} };
-    
-    warn("Was not expecting any more trades !") && exit if (!defined($expected_trade));
- 
-    eq_or_diff($got_trade, $expected_trade, "Open trade " . $self->{_tradeCount}) unless($self->{_skipTests});
+
+    if (!$self->{_skipTests}) {
+        warn("Was not expecting any more trades !") && exit if (!defined($expected_trade));
+        eq_or_diff($got_trade, $expected_trade, "Open trade " . $self->{_tradeCount});
+    }
 }
 
 
