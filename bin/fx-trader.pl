@@ -112,15 +112,19 @@ sub checkSystem {
         my $posSize = $position->size;
 
         my $result;
+        my $signal_type;
         if ($posSize == 0) {
             logger("Checking ".$systemTrader->system->name." $symbol $direction") if ($verbose > 2);
             $result = $systemTrader->checkEntrySignal($symbol, $direction);
+            $signal_type = 'entry';
         } else {
             logger("Checking ".$systemTrader->system->name." $symbol $direction") if ($verbose > 2);
             $result = $systemTrader->checkAddUpSignal($symbol, $direction);
+            $signal_type = 'add';
         }
 
         if ($result) {
+            logger("Found $signal_type signal: " . Dumper(\$result)) if ($verbose);
             my ($amount, $value, $stopLoss) = $systemTrader->getTradeSize($symbol, $direction, $position);
             if ($verbose > 2 && $result) {
                 logger("$symbol $direction at " . $result->[0] . " Amount=" . $amount . " value=" . $value . " stopLoss=" . $stopLoss);
@@ -147,6 +151,7 @@ sub checkSystem {
         } elsif ( $posSize ) {
             my $result = $systemTrader->checkExitSignal($symbol, $direction);
             if ($result) {
+                logger("Found exit signal: " . Dumper(\$result));
                 my $report;
                 if ($verbose) {
                     $report = Finance::HostedTrader::Report->new( account => $account, systemTrader => $systemTrader );

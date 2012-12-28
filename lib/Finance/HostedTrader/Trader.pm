@@ -171,9 +171,12 @@ my $allowedExposure = $self->system->{signals}->{$action}->{$direction}->{exposu
     $self->logger->logconfess("Could not get stop loss for $symbol $direction") if (!defined($stopLoss));
     my $base = $account->getSymbolBase($symbol);
 
+    $self->logger->debug("Max acceptable loss in account currency = $maxLossAmount GBP");
+    my $conversionFactor = 1;
     if ($base ne "GBP") { # TODO: should not be hardcoded that account is based on GBP
-        my $conversionFactor = $account->getAsk("GBP$base");
+        $conversionFactor = $account->getAsk("GBP$base");
         $self->logger->logconfess("Could not retrieve current price for GBP$base") if (!defined($conversionFactor));
+        $self->logger->debug("Conversion factor to trade currency= $conversionFactor");
         $maxLossAmount *= $conversionFactor;
     }
 
@@ -186,18 +189,21 @@ my $allowedExposure = $self->system->{signals}->{$action}->{$direction}->{exposu
         $maxLossPts = $stopLoss - $value;
     }
 
-    $self->logger->debug("Max acceptable loss for this trade = $maxLossAmount");
-    $self->logger->debug("Current price = $value");
-    $self->logger->debug("Stop loss price level = $stopLoss");
+    $self->logger->debug("Max acceptable loss in trade currency = $maxLossAmount $base");
+    $self->logger->debug("Current price ($symbol) = $value");
+    $self->logger->debug("Stop loss price level ($symbol) = $stopLoss");
 
     if ( $maxLossPts <= 0 ) {
         $self->logger->logconfess("Tried to set stop to " . $stopLoss . " but current price is " . $value);
     }
-    my $amount = $account->convertBaseUnit($symbol, $maxLossAmount / $maxLossPts);
-    $self->logger->debug("Acceptable trade size = $amount");
+    $self->logger->debug("Maximum loss points = $maxLossPts");
+    my $tradeSize = $maxLossAmount / $maxLossPts;
+    $self->logger->debug("Trade Size = $tradeSize");
+    my $amount = $account->convertBaseUnit($symbol, $tradeSize);
+    $self->logger->debug("Trade size converted to a multiple of broker's base unit = $amount");
     $self->logger->logconfess('Tried to open trade with negative amount. This should not happen unless there is a bug') if ($amount < 0);
-    my $maxLeveragePerTrade = 15; #TODO config setting
-    $self->logger->logconfess("Trade size too big, refusing") if ( $amount > $balance * $maxLeveragePerTrade );
+    #my $maxLeveragePerTrade = 15; #TODO config setting
+    #$self->logger->logconfess("Trade size too big, refusing\namount=$amount, baseCurrencyAmount=$baseCurrencyAmount, balance=$balance") if ( $baseCurrencyAmount > $balance * $maxLeveragePerTrade );
     return ($amount, $value, $stopLoss);
 }
 

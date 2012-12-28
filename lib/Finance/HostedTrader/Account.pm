@@ -61,7 +61,7 @@ has '_signal_processor' => (
 
 sub _build_signal_processor {
     my $self = shift;
-    $self->logger->info("Lazy build ExpressionParser");
+    $self->logger->trace("Lazy build ExpressionParser");
     return Finance::HostedTrader::ExpressionParser->new();
 }
 
@@ -77,7 +77,7 @@ Validates dates.
 sub BUILD {
     my $self = shift;
 
-    $self->logger->info("Build new " . __PACKAGE__);
+    $self->logger->trace("Build new " . __PACKAGE__);
 
     my $startDate = UnixDate($self->startDate, '%Y-%m-%d %H:%M:%S');
     die("Invalid date format: " . $self->startDate) if (!$startDate);
@@ -356,7 +356,7 @@ This object will contain information about all open trades in $symbol.
 sub getPosition {
     my ($self, $symbol, $forceRefresh) = @_;
 
-    $self->logger->info("getPosition $symbol" . ($forceRefresh ? ' with force refresh' : ''));
+    $self->logger->trace("getPosition $symbol" . ($forceRefresh ? ' with force refresh' : ''));
 
     my $positions = $self->getPositions($forceRefresh);
     return Finance::HostedTrader::Position->new(symbol=>$symbol) if (!defined($positions->{$symbol}));
@@ -371,7 +371,7 @@ Returns a hashref whose key is a "trading symbol" and value a L<Finance::HostedT
 sub getPositions {
     my ($self, $forceRefresh) = @_;
 
-    $self->logger->info("Positions last refreshed: " . $self->{_lastRefreshPositions});
+    $self->logger->trace("Positions last refreshed: " . $self->{_lastRefreshPositions});
 
     # Clients call getPositions() all the time to get list of current positions
     # Avoid going to the server every single time. This improves performance (less network traffic)
@@ -379,7 +379,7 @@ sub getPositions {
     # Also, this is necessary because some APIs limit the number of requests one can make. Eg: ForexConnect only allow this request
     # 50 time per hour.
     if ($forceRefresh || time() - $self->{_lastRefreshPositions} > 150) {
-        $self->logger->info("fresh getPositions" . ($forceRefresh ? ' with force refresh' : ''));
+        $self->logger->trace("fresh getPositions" . ($forceRefresh ? ' with force refresh' : ''));
         $self->refreshPositions();
         $self->{_lastRefreshPositions} = time();
     }
@@ -430,7 +430,7 @@ sub pl {
     my $self = shift;
     my $pl = 0;
 
-    $self->logger->info("pl");
+    $self->logger->trace("pl");
 
     my $positions = $self->getPositions();
     foreach my $symbol (keys %{$positions}) {
@@ -449,7 +449,7 @@ Returns current Net Asset Value ( including p/l of open positions )
 sub getNav {
     my $self = shift;
 
-    $self->logger->info("getNav");
+    $self->logger->trace("getNav");
 
     return $self->balance() + $self->pl();
 }
@@ -535,7 +535,7 @@ Eg:
 =cut
 sub getSymbolBase {
     my ($self, $symbol) = @_;
-    $self->logger->info("getSymbolBase $symbol");
+    $self->logger->trace("getSymbolBase $symbol");
 
     if (!exists($symbolBaseMap{$symbol})) {
         $self->logger->logcroak("Unsupported symbol '$symbol'");

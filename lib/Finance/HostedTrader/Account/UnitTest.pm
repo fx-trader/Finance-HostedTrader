@@ -1,6 +1,7 @@
 package Finance::HostedTrader::Account::UnitTest;
 
 use Moose;
+with 'MooseX::Log::Log4perl';
 extends 'Finance::HostedTrader::Account';
 
 use Moose::Util::TypeConstraints;
@@ -10,6 +11,7 @@ use Finance::HostedTrader::Config;
 use Date::Manip;
 use Date::Calc qw (Add_Delta_DHMS Delta_DHMS Date_to_Time);
 use Time::HiRes;
+use Data::Dumper;
 
 
 
@@ -333,16 +335,18 @@ sub checkSignal {
         my $seconds_in_tf = Finance::HostedTrader::Config->new()->timeframes->getTimeframeID($signal_args->{timeframe});
         my $max_loaded_periods = int(($seconds_between_dates / $seconds_in_tf) + 0.5) + $signal_args->{maxLoadedItems};
 
+        $self->logger->info("Retrieving signals for $symbol $signal_definition");
 
-        $cache->{$symbol}->{$signal_definition} = $self->_signal_processor->getSignalData( {
+        my $signal_args = {
             'expr' => $signal_definition,
             'symbol' => $symbol,
             'tf' => $signal_args->{timeframe},
             'startPeriod' => $startDate,
             'endPeriod' => $self->endDate,
             'maxLoadedItems' => $max_loaded_periods,
-        });
-
+        };
+        $cache->{$symbol}->{$signal_definition} = $self->_signal_processor->getSignalData( $signal_args );
+        $self->logger->debug(Dumper(\$cache->{$symbol}->{$signal_definition}));
     }
 
     my $signal_list = $cache->{$symbol}->{$signal_definition};

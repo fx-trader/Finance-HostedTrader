@@ -224,8 +224,11 @@ LIMIT $itemCount
 ORDER BY datetime ASC
 );
 
-    print $sql if ($args->{debug});
-    $self->{_logger}->debug($sql);
+    if ($args->{debug}) {
+        $self->{_logger}->debug($sql);
+    } else {
+        $self->{_logger}->trace($sql);
+    }
 
     my $dbh = $self->{_ds}->dbh;
     my $data = $dbh->selectall_arrayref($sql) or $self->{_logger}->logconfess($DBI::errstr);
@@ -246,8 +249,11 @@ See L</getIndicatorData> for list of arguments.
 sub getSignalData {
     my ( $self, $args ) = @_;
     my $sql = $self->_getSignalSql($args);
-    print $sql if ($args->{debug});
-    $self->{_logger}->debug($sql);
+    if ($args->{debug}) {
+        $self->{_logger}->debug($sql);
+    } else {
+        $self->{_logger}->trace($sql);
+    }
 
     my $dbh = $self->{_ds}->dbh;
     my $data = $dbh->selectall_arrayref($sql) or $self->{_logger}->logconfess( $DBI::errstr . $sql );
@@ -271,8 +277,11 @@ sub getSystemData {
 
 
     my $sql = $sql_entry . ' UNION ALL ' . $sql_exit . ' ORDER BY datetime';
-    print $sql if ($args{debug});
-    $self->{_logger}->debug($sql);
+    if ($args{debug}) {
+        $self->{_logger}->debug($sql);
+    } else {
+        $self->{_logger}->trace($sql);
+    }
 
     my $dbh = $self->{_ds}->dbh;
     my $data = $dbh->selectall_arrayref($sql) or $self->{_logger}->logconfess( $DBI::errstr . $sql );
