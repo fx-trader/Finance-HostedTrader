@@ -82,9 +82,9 @@ while (1) {
     $previousTime = substr($account->getServerDateTime, 0, 10) if ($verbose);
     # sleep for a bit
     $account->waitForNextTrade();
-    if ($verbose > 1 && 0) {
+    if ($verbose > 1) {
         # print a report if the day changed
-        $currentTime = substr($account->getServerDateTime, 0, 10) if ($verbose);
+        $currentTime = substr($account->getServerDateTime, 0, 10);
         my $report = Finance::HostedTrader::Report->new( account => $account, systemTrader => $systemTrader );
         logger("NAV = " . $account->getNav) if ($previousTime ne $currentTime);
         logger("\n".$report->openPositions) if ($previousTime ne $currentTime);
@@ -124,9 +124,9 @@ sub checkSystem {
         }
 
         if ($result) {
-            logger("Found $signal_type signal: " . Dumper(\$result)) if ($verbose);
+            logger("Found $signal_type signal: " . $result->[0]) if ($verbose);
             my ($amount, $value, $stopLoss) = $systemTrader->getTradeSize($symbol, $direction, $position);
-            if ($verbose > 2 && $result) {
+            if ($verbose > 1 && $result) {
                 logger("$symbol $direction at " . $result->[0] . " Amount=" . $amount . " value=" . $value . " stopLoss=" . $stopLoss);
             }
             next if ($amount <= 0);
@@ -135,8 +135,8 @@ sub checkSystem {
                 $report = Finance::HostedTrader::Report->new( account => $account, systemTrader => $systemTrader );
                 logger("Positions before open trade");
                 logger("NAV=" . $account->getNav());
-                logger($report->openPositions);
-                logger($report->systemEntryExit);
+                logger("\n" . $report->openPositions);
+                logger("\n" . $report->systemEntryExit);
                 logger("Adding position for $symbol $direction ($amount)");
             }
 
@@ -145,33 +145,32 @@ sub checkSystem {
             if ($verbose) {
                 logger("Positions after open trade");
                 logger("NAV=" . $account->getNav());
-                logger($report->openPositions);
-                logger($report->systemEntryExit);
+                logger("\n" . $report->openPositions);
+                logger("\n" . $report->systemEntryExit);
             }
         } elsif ( $posSize ) {
             my $result = $systemTrader->checkExitSignal($symbol, $direction);
             if ($result) {
-                logger("Found exit signal: " . Dumper(\$result));
+                logger("Found exit signal: " . $result->[0]) if ($verbose);
                 my $report;
                 if ($verbose) {
                     $report = Finance::HostedTrader::Report->new( account => $account, systemTrader => $systemTrader );
                     logger("Positions before close trades");
                     logger("NAV=" . $account->getNav());
-                    logger($report->openPositions);
-                    logger($report->systemEntryExit);
+                    logger("\n" . $report->openPositions);
+                    logger("\n" . $report->systemEntryExit);
                     logger("Closing position for $symbol $direction ( $posSize )");
                 }
                 $account->closeTrades($symbol, $direction);
                 if ($verbose) {
                     logger("Positions after close trades");
                     logger("NAV=" . $account->getNav());
-                    logger($report->openPositions);
-                    logger($report->systemEntryExit);
+                    logger("\n" . $report->openPositions);
+                    logger("\n" . $report->systemEntryExit);
                 }
             }
         }
     }
-
 }
 
 sub logger {
