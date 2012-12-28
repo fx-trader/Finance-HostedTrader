@@ -14,7 +14,7 @@ signals:
       maxLoadedItems: 2000
       period: 1hour
   add:
-    long: 
+    long:
       signal: crossoverdown(macdsig(close,12,26,9), macd(close,12,26,9))
       exposure:
         - 1
