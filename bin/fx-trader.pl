@@ -7,7 +7,6 @@ use warnings;
 $| = 1;
 use Getopt::Long qw(:config pass_through);
 use Data::Dumper;
-use Data::Compare;
 use Pod::Usage;
 
 use Log::Log4perl;
@@ -61,45 +60,9 @@ foreach my $system (@systems) {
     logger("Loaded system " . $system->system->name) if ($verbose);
 }
 
-my $symbolsLastUpdated = 0;
+my $systemTrader = $systems[0];
 while (1) {
-    my $systemTrader = $systems[0];
-    # Applies system filters and updates list of symbols traded by this system
-    # Updates symbol list every 15 minutes
-    if ( $account->getServerEpoch() >= $systemTrader->system->getSymbolsNextUpdate() ) {
-        my %current_symbols;
-        my %existing_symbols;
-        if ($verbose > 1) {
-            my $symbols_long = $systemTrader->system->symbols('long');
-            my $symbols_short = $systemTrader->system->symbols('short');
-            if ($verbose > 2) {
-                logger("Current symbol list");
-                logger("long: " . join(',', @$symbols_long));
-                logger("short: " . join(',', @$symbols_short));
-            }
-            $current_symbols{long} = $symbols_long;
-            $current_symbols{short} = $symbols_short;
-        }
-        $systemTrader->updateSymbols();
-        if ($verbose > 1) {
-            my $symbols_long = $systemTrader->system->symbols('long');
-            my $symbols_short = $systemTrader->system->symbols('short');
-            if ($verbose > 2) {
-                logger("Updated symbol list");
-                logger("long: " . join(',', @$symbols_long));
-                logger("short: " . join(',', @$symbols_short));
-            }
-            $existing_symbols{long} = $symbols_long;
-            $existing_symbols{short} = $symbols_short;
-            if (!Compare(\%current_symbols, \%existing_symbols)) {
-                logger("Symbols list updated");
-                logger("FROM: " . join(',', @{ $current_symbols{long} }, @{ $current_symbols{short} }));
-                logger("TO  : " . join(',', @{ $existing_symbols{long} }, @{ $existing_symbols{short} }));
-            }
-        }
-
-    }
-    # Actually test the system
+    # test the system
     eval {
         checkSystem($account, $systemTrader, 'long');
         1;
@@ -181,9 +144,7 @@ sub checkSystem {
                 logger($report->openPositions);
                 logger($report->systemEntryExit);
             }
-        }
-
-        if ($posSize) {
+        } elsif ( $posSize ) {
             my $result = $systemTrader->checkExitSignal($symbol, $direction);
             if ($result) {
                 my $report;
@@ -205,6 +166,7 @@ sub checkSystem {
             }
         }
     }
+
 }
 
 sub logger {

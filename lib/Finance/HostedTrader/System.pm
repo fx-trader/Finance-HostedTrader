@@ -58,25 +58,6 @@ sub BUILD {
     $self->{_symbolsLastUpdated} = 0;
 }
 
-=method C<getSymbolsNextUpdate>
-=cut
-sub getSymbolsNextUpdate {
-    my $self = shift;
-
-    my $nextWeekdayUpdate = $self->{_symbolsLastUpdated} + $self->symbolUpdateInterval;
-
-    #TODO what i mean here is, if the market is open, use $self->symbolUpdateInterval
-    #if the market is not open, wait until it's open.
-    my ($sec, $min, $hr, $day, $month, $year, $weekday) = gmtime($nextWeekdayUpdate);
-    if  ($weekday != 0 && $weekday != 6 ) {
-        return $nextWeekdayUpdate;
-    } else {
-        my $nextWeekendUpdate = $self->{_symbolsLastUpdated} + 10800;
-        return ($nextWeekendUpdate > $nextWeekdayUpdate ? $nextWeekendUpdate : $nextWeekdayUpdate);
-    }
-
-}
-
 =method C<symbols()>
 
 =cut
@@ -92,8 +73,8 @@ sub _loadSystem {
 
     my $file = $self->pathToSystems."/".$self_name.".yml";
     die("Cannot read system file from '$file'") if ( ! -r $file);
-    my $tradeable_filter = $self->pathToSystems."/".$self_name.".tradeable.yml";
-    my @files = ($file, $tradeable_filter);
+    my $symbols_filter = $self->pathToSystems."/".$self_name.".symbols.yml";
+    my @files = ($file, $symbols_filter);
     my $system_all = Config::Any->load_files(
         {
             files => \@files,
@@ -111,7 +92,7 @@ sub _loadSystem {
     }
 
     die("failed to load system from $file. $!") unless defined($system_all);
-    die("invalid name in symbol file $tradeable_filter") if ($self_name ne $system->{name});
+    die("invalid name in symbol file $symbols_filter") if ($self_name ne $system->{name});
 
     foreach my $key (keys(%$system)) {
         $self->{$key} = $system->{$key};
@@ -131,7 +112,7 @@ sub _loadSystem {
 
 sub _loadSymbols {
     my $self = shift;
-    my $file = $self->_getSymbolFileName;
+    my $file = $self->pathToSystems.'/'.$self->name.'.symbols.yml';
 
     my $yaml = YAML::Tiny->new;
     if (-e $file) {
@@ -146,9 +127,4 @@ sub _loadSymbols {
     return $yaml->[0]->{symbols};
 }
 
-sub _getSymbolFileName {
-    my ($self) = @_;
-
-    return $self->pathToSystems.'/'.$self->name.'.symbols.yml';
-}
 1;

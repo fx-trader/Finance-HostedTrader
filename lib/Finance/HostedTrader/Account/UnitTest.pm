@@ -429,10 +429,8 @@ sub _getNextSignalDate {
     my $self = shift;
     my $date = $self->{_now};
 
-    my $nextSymbolUpdateDate = epoch_to_date($self->system->getSymbolsNextUpdate);
-
     my $signals = $self->{_signal_cache};
-    my @next_signals = ($nextSymbolUpdateDate);
+    my @next_signals = ();
     foreach my $symbol (keys(%$signals)) {
         foreach my $signal (keys(%{$signals->{$symbol}})) {
             my $data = $signals->{$symbol}->{$signal};

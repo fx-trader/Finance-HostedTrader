@@ -26,92 +26,6 @@ has 'account' => (
     required=>1,
 );
 
-=method C<updateSymbols>
-=cut
-sub updateSymbols {
-    my $self = shift;
-    my $account = $self->account;
-
-    my %symbols = (
-        'long' => {},
-        'short' => {},
-    );
-
-
-# Trade symbols where there are open positions
-    my $positions = $account->getPositions();
-    foreach my $symbol (keys %{$positions}) {
-        my $position = $positions->{$symbol};
-        foreach my $trade (@{$position->getOpenTradeList}) {
-            my $direction = $trade->direction;
-            if ($direction eq 'long') {
-                $symbols{long}->{$symbol} = 1;
-            } elsif ($direction eq 'short') {
-                $symbols{short}->{$symbol} = 1;
-            } else {
-                $self->logger->logconfess('Invalid trade direction: ' . $trade->direction);
-            }
-        }
-    }
-
-# And also symbols which match the system filter
-    my $newSymbols = $self->getSymbolsSignalFilter($self->system->{filters});
-    foreach my $tradeDirection (qw /long short/ ) {
-        foreach my $symbol ( @{$newSymbols->{$tradeDirection}} ) {
-            $symbols{$tradeDirection}->{$symbol} = 1;
-        }
-    }
-
-# Write the unique symbols to a yml file
-    $symbols{long} = [ keys %{$symbols{long}} ];
-    $symbols{short} = [ keys %{$symbols{short}} ];
-
-    my $yml = YAML::Tiny->new;
-    $yml->[0] = { name => $self->system->name, symbols => \%symbols};
-    my $file = $self->system->_getSymbolFileName();
-    $yml->write($file) || $self->logger->logconfess("Failed to write symbols file $file. $!");
-    $self->system->{symbols} = \%symbols;
-    $self->system->{_symbolsLastUpdated} = $account->getServerEpoch();
-}
-
-=method C<getSymbolsSignalFilter>
-Return list of symbols to add to the system
-=cut
-sub getSymbolsSignalFilter {
-    my $self = shift;
-    my $filters = shift;
-    my $rv = { long => [], short => [] };
-
-    my $long_symbols = $filters->{symbols}->{long};
-    my $short_symbols = $filters->{symbols}->{short};
-    my $account = $self->account;
-
-
-    my $filter=$filters->{signals}->[0];#TODO should loop through every filter signal available ?
-
-    foreach my $symbol (@$long_symbols) {
-        if (!$filter || $account->checkSignal(
-                $symbol,
-                $filter->{longSignal},
-                $filter->{args}
-        )) {
-            push @{ $rv->{long} }, $symbol;
-        }
-    }
-
-    foreach my $symbol (@$short_symbols) {
-        if (!$filter || $account->checkSignal(
-            $symbol,
-            $filter->{shortSignal},
-            $filter->{args},
-        )) {
-            push @{ $rv->{short} }, $symbol;
-        }
-    }
-
-    return $rv;
-}
-
 =method C<getEntryValue>
 =cut
 sub getEntryValue {
@@ -131,7 +45,7 @@ sub getExitValue {
 sub _getSignalValue {
     my ($self, $action, $symbol, $tradeDirection) = @_;
 
-    my $signal = $self->system->{signals}->{$action};#TODO what if there are multiple signals ?
+    my $signal = $self->system->{signals}->{$action};
 
     return undef if (!defined($signal->{$tradeDirection}->{currentPoint}));
 
@@ -172,7 +86,7 @@ sub _checkSignalWithAction {
     my $signal = $self->system->{signals}->{$action};
     return if (!$required && !$signal);
     $self->logger->logconfess("System definition file is missing entry signals->$action ") if (!defined($signal));
-    my $signal_definition = $signal->{$tradeDirection};#TODO what if there are multiple signals ?
+    my $signal_definition = $signal->{$tradeDirection};
     my $signal_args = $signal->{args};
 
     return $self->account->checkSignal(

@@ -67,13 +67,10 @@ sub run {
     my $yml = YAML::Tiny->new;
     $yml->[0] = {
         name => $systemName,
-        filters => {
-            symbols => $symbols
-        }
+        symbols => $symbols
     };
 
-    $yml->write($self->pathToSystems."/$systemName.tradeable.yml") || die($!);
-    if (-e $self->pathToSystems."/$systemName.symbols.yml" ) { unlink($self->pathToSystems."/$systemName.symbols.yml") || die($!); }
+    $yml->write($self->pathToSystems."/$systemName.symbols.yml") || die($!);
 
     system('perl '.$ENV.' ' . $TRADER_HOME . '/bin/fx-trader.pl '.$args.' --class=UnitTest --startDate="'.$self->startDate.'" --endDate="'.$self->endDate.'" --expectedTradesFile=' . $self->resultsFile . ' --pathToSystems="'.$self->pathToSystems.'"');
 }
