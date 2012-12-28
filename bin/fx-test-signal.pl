@@ -44,13 +44,21 @@ Number of database records to load. Defaults to 1000 which should be enough to c
 
 =item C<--numItems=i>
 
-Number of indicator periods to display. Defaults to one (eg: only display the indicator value today)
+Number of signal periods to display. By default, all signals in studied period will be displayed.
+
+=item C<--start=s>
+
+The date to start calculating signals from. Defaults to 90 days ago. Any expression understood by L<Date::Manip> is valid.
+
+=item C<--end=s>
+
+The date to calculate signals to. Defaults to today. Any expression understood by L<Date::Manip> is valid.
 
 =back
 
 =head1 SEE ALSO
 
-L<Finance::HostedTrader::Datasource>
+L<Finance::HostedTrader::Datasource>, L<Date::Manip>
 
 =cut
 
