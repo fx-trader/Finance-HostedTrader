@@ -413,7 +413,7 @@ $ORDERBY_CLAUSE
     my $sql;
     if (!@timeframes_sql_glue) {
         my $leftop = shift(@all_timeframes_sql);
-        $sql = "SELECT datetime FROM $leftop->{sql}";
+        $sql = "SELECT $fields FROM $leftop->{sql}";
     } else {
         $sql = "SELECT SIGNALS_TF_$min_timeframe_requested.datetime FROM\n";
         foreach my $op (@timeframes_sql_glue) {
