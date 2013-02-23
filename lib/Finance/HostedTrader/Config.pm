@@ -116,7 +116,7 @@ See SYNOPSIS for available options.
 around BUILDARGS => sub {
     my $orig = shift;
     my $class = shift;
-    my @files   = ( "/etc/fxtrader/fx.yml", "$ENV{HOME}/.fx.yml", "./fx.yml", @_ );
+    my @files   = ( "/etc/fxtrader/fx.yml", (defined($ENV{HOME}) ? "$ENV{HOME}/.fx.yml" : ()), "./fx.yml", @_ );
 
     if ( scalar(@_) > 1 ) {
 	if ( $_[0] eq 'files' ) {
