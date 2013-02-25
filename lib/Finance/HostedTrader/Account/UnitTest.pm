@@ -303,6 +303,14 @@ augment 'balance' => sub {
 =method C<checkSignal($symbol, $signal_definition, $signal_args)>
 
 =cut
+
+#sub checkSignal {
+#    my $self = shift;
+#
+#    $_[2]->{simulatedNowValue} = $self->{_now};
+#    $self->SUPER::checkSignal(@_);
+#}
+
 sub checkSignal {
     my ($self, $symbol, $signal_definition, $signal_args) = @_;
     my $cache = $self->{_signal_cache};
@@ -416,8 +424,10 @@ sub waitForNextTrade {
 
 #Adjust next signal date to take into account the signal check interval
     if ($nextSignalDate) {
+        $self->logger->debug("Next signal date $nextSignalDate");
         my $periods = int(delta_dates($nextSignalDate, $date) / $interval);
         $nextSignalDate = delta_add($date, $periods*$interval);
+        $self->logger->debug("Next adjust date $nextSignalDate");
     }
 
     my $normalWaitDate = delta_add($date, $interval);
@@ -428,6 +438,7 @@ sub waitForNextTrade {
 }
 
 # Returns the date of the next future signal
+# This doesn't work because it's not guaranteed all signals will be cached when this runs, but it assumes they are
 sub _getNextSignalDate {
     my $self = shift;
     my $date = $self->{_now};
