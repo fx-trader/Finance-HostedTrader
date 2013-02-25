@@ -146,19 +146,21 @@ ON DUPLICATE KEY UPDATE open=values(open), low=values(low), high=values(high), c
     $self->dbh->do($sql);
 }
 
-=method C<createSynthetic>
+=method C<getSyntheticComponents>
 
-Creates data for synthetic pairs, based on existing pairs.
+Returns a data structure with the necessary information to build
+a synthetic pair from existing data.
 
-For example, GBPJPY can be derived from GBPUSD AND USDJPY.
+Eg1, GBPCAD can be derived by GBPUSD * USDCAD.
+
+Eg2, EURGBP can be derived by EURUSD / GBPUSD. In this case, the low/high field
+are inverted ( eg low_EURUSD / low_GBPUSD = high_EURGBP ).
 
 =cut
-sub createSynthetic {
-    my ( $self, $synthetic, $timeframe ) = @_;
+sub getSyntheticComponents {
+    my ($self, $sym1, $sym2) = @_;
 
     my $symbols = $self->{cfg}->symbols->natural;
-    my $sym1    = substr( $synthetic, 0, 3 );
-    my $sym2    = substr( $synthetic, 3, 3 );
     my $search1 = $sym1 . 'USD';
     my $search2 = 'USD' . $sym1;
     my @u1      = grep( /$search1|$search2/, @$symbols );
@@ -189,8 +191,41 @@ sub createSynthetic {
         $u2[0] = $tmp;
     }
     else {
-        die("Don't know how to handle $synthetic synthetic pair");
+        die("Don't know how to handle $sym1$sym2 synthetic pair");
     }
+
+    return {
+        op      => $op,
+        low     => $low,
+        high    => $high,
+        leftop  => $u1[0],
+        rightop => $u2[0],
+    };
+}
+
+=method C<createSynthetic>
+
+Creates data for synthetic pairs, based on existing pairs, and inserts data
+in the database for the requested timeframe.
+
+
+
+For example, GBPJPY can be derived from GBPUSD AND USDJPY.
+
+=cut
+sub createSynthetic {
+    my ( $self, $synthetic, $timeframe ) = @_;
+
+    #TODO hardcoded forex symbols
+    my $sym1            = substr( $synthetic, 0, 3 );
+    my $sym2            = substr( $synthetic, 3, 3 );
+    my $synthetic_info  = $self->getSyntheticComponents($sym1, $sym2);
+
+    my $op      = $synthetic_info->{op};
+    my $low     = $synthetic_info->{low};
+    my $high    = $synthetic_info->{high};
+    my $leftop  = $synthetic_info->{leftop};
+    my $rightop = $synthetic_info->{rightop};
 
     my $sql =
 "insert ignore into $synthetic\_$timeframe (select T1.datetime, round(T1.open"
@@ -201,7 +236,7 @@ sub createSynthetic {
       . $op
       . "T2.$high,4) as high, round(T1.close"
       . $op
-      . "T2.close,4) as close from $u1[0]\_$timeframe as T1, $u2[0]\_$timeframe as T2 WHERE T1.datetime = T2.datetime)";
+      . "T2.close,4) as close from $leftop\_$timeframe as T1, $rightop\_$timeframe as T2 WHERE T1.datetime = T2.datetime)";
 #AND T1.datetime > DATE_SUB(NOW(), INTERVAL 2 WEEK))
     $self->dbh->do($sql);
 }
