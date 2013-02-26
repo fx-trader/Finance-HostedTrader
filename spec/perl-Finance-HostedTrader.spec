@@ -1,5 +1,5 @@
 Name:           perl-Finance-HostedTrader
-Version:        0.016
+Version:        0.017
 Release:        1%{?dist}
 Summary:        Finance::HostedTrader Perl module
 License:        MIT
@@ -9,7 +9,6 @@ Source0:        http://www.cpan.org/modules/by-module/Finance/Finance-HostedTrad
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
 BuildRequires:  perl(Config::Any)
-BuildRequires:  perl(Data::Compare)
 BuildRequires:  perl(Date::Calc)
 BuildRequires:  perl(Date::Manip)
 BuildRequires:  perl(DBI)
@@ -34,7 +33,6 @@ BuildRequires:  perl(Test::More)
 BuildRequires:  perl(Text::ASCIITable)
 BuildRequires:  perl(YAML::Tiny)
 Requires:       perl(Config::Any)
-Requires:       perl(Data::Compare)
 Requires:       perl(Date::Calc)
 Requires:       perl(Date::Manip)
 Requires:       perl(DBI)
@@ -110,6 +108,8 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Feb 26 2013 João Costa <joaocosta@zonalivre.org> 0.017-1
+- New upstream version available
 * Thu Dec 27 2012 João Costa <joaocosta@zonalivre.org> 0.016-1
 - New upstream version available
 * Tue Dec 16 2012 João Costa <joaocosta@zonalivre.org> 0.015-1
