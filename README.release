@@ -14,5 +14,18 @@ vimdiff perl-Finance-HostedTrader.spec spec/perl-Finance-HostedTrader.spec
 #build rpm
 mach build spec/perl-Finance-HostedTrader.spec
 
+#If mach build fails, try:
+mach clean
+cp /etc/yum.repos.d/zonalivre.repo /var/lib/mach/states/fedora-16-x86_64-updates/yum/yum.repos.d/
+# Then repeat the build rpm step
+
 #commit spec file
 git commit -m "Updated spec file for latest version" spec/perl-Finance-HostedTrader.spec
+
+#Upload file to repository
+find /var/tmp/mach/fedora-16-x86_64-updates -name "perl-Finance-HostedTrader-*.rpm" -exec scp -P $PORT {} joao@zonalivre.org:~/rpmbuild/RPMS/noarch/. \;
+ssh -p $PORT joao@zonalivre.org createrepo ~/rpmbuild/RPMS/noarch
+
+#Install updated rpm
+yum clean all
+yum -y update perl-Finance-HostedTrader
