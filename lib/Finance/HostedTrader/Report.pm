@@ -63,17 +63,21 @@ sub openPositions {
     my $systemTrader = $self->systemTrader;
     my $positions = $account->getPositions();
 
-    my $t = $self->_table_factory( format=> $self->format, headingText => 'Open Positions', cols => ['Symbol', 'Open Date','Size','Entry','Current','PL','%'] );
+    my $t = $self->_table_factory( format=> $self->format, headingText => 'Open Positions', cols => ['Symbol', 'Open Date','Size','Entry','Current','Exit','PL','%','Risk','%'] );
     my $balance = $account->balance;
+    my $nav = $account->getNav;
 
     foreach my $symbol (keys %$positions) {
     my $position = $positions->{$symbol};
 
     foreach my $trade (@{ $position->getOpenTradeList }) {
-        my $stopLoss = $systemTrader->getExitValue($trade->symbol, $trade->direction);
-        my $marketPrice = ($trade->direction eq 'short' ? $account->getAsk($trade->symbol) : $account->getBid($trade->symbol));
+        my $direction = $trade->direction;
+        my $stopLoss = $systemTrader->getExitValue($trade->symbol, $direction);
+        my $marketPrice = ($direction eq 'short' ? $account->getAsk($trade->symbol) : $account->getBid($trade->symbol));
         my $baseCurrencyPL = $trade->pl;
         my $percentPL = sprintf "%.2f", 100 * $baseCurrencyPL / $balance;
+        my $currentExit = $systemTrader->getExitValue($symbol, $direction);
+        my $amountAtRisk = -1*$trade->amountAtRisk($account, $systemTrader);
 
         $t->addRow(
             $trade->symbol,
@@ -81,8 +85,11 @@ sub openPositions {
             $trade->size,
             $trade->openPrice,
             $marketPrice,
+            $currentExit,
             sprintf('%.2f', $baseCurrencyPL),
-            $percentPL
+            $percentPL,
+            sprintf('%.2f',$amountAtRisk),
+            sprintf('%.2f',100 * $amountAtRisk / $nav)
         );
     }
     }
