@@ -9,8 +9,9 @@ package Finance::HostedTrader::Trade;
 =cut
 
 use Moose;
+with 'MooseX::Log::Log4perl';
 use Moose::Util::TypeConstraints;
-
+use Math::Round qw(nearest);
 
 subtype 'positiveNum'
     => as 'Num'
@@ -144,6 +145,27 @@ sub BUILD {
 #    die('WTF');
 #}
 
+=method C<amountAtRisk>
+=cut
+sub amountAtRisk {
+    my $self = shift;
+    my $account = shift;
+    my $system = shift;
+    my $symbol = $self->symbol;
+
+    my $size = $self->size();
+    my $direction = $self->direction;
+    my $stopLoss = $system->_getSignalValue('exit', $symbol, $direction);
+    $self->logger->logconfess("Could not get stop loss for $symbol $direction") if (!defined($stopLoss));
+    my $openPrice = $self->openPrice();
+
+    return 0 if (!$openPrice);
+
+    my $pl = nearest(.0001, ( $openPrice - $stopLoss ) * $size);
+    my $symbolBaseUnit = $account->getSymbolBase($symbol);
+
+    return nearest(.0001, $account->convertToBaseCurrency($pl, $symbolBaseUnit, 'bid'));
+}
 
 __PACKAGE__->meta->make_immutable;
 1;
