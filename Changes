@@ -2,6 +2,8 @@ Revision history for Finance::HostedTrader
 
 {{$NEXT}}
 
+0.018 2013-03-24 20:35:03 UTC
+      Add amountAtRisk method to the trade object ( to calculate risk of open positions )
 0.017 2013-02-26 22:16:09 UTC
       ExpressionParser now understands multiple timeframe signals
       Refactoring of synthetic pair creation in Datasource.pm for better code reuse
