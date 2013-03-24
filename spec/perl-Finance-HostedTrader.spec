@@ -1,5 +1,5 @@
 Name:           perl-Finance-HostedTrader
-Version:        0.017
+Version:        0.018
 Release:        1%{?dist}
 Summary:        Finance::HostedTrader Perl module
 License:        MIT
@@ -108,6 +108,8 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sun Mar 24 2013 João Costa <joaocosta@zonalivre.org> 0.018-1
+- New upstream version available
 * Tue Feb 26 2013 João Costa <joaocosta@zonalivre.org> 0.017-1
 - New upstream version available
 * Thu Dec 27 2012 João Costa <joaocosta@zonalivre.org> 0.016-1
