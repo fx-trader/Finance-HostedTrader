@@ -157,11 +157,17 @@ sub amountAtRisk {
     my $direction = $self->direction;
     my $stopLoss = $system->_getSignalValue('exit', $symbol, $direction);
     $self->logger->logconfess("Could not get stop loss for $symbol $direction") if (!defined($stopLoss));
-    my $openPrice = $self->openPrice();
 
-    return 0 if (!$openPrice);
+    my $maxLossPts;
+    if ($direction eq "long") {
+        my $value = $account->getAsk($symbol);
+        $maxLossPts = $value - $stopLoss;
+    } else {
+        my $value = $account->getBid($symbol);
+        $maxLossPts = $stopLoss - $value;
+    }
 
-    my $pl = nearest(.0001, ( $openPrice - $stopLoss ) * $size);
+    my $pl = nearest(.0001, $maxLossPts * $size);
     my $symbolBaseUnit = $account->getSymbolBase($symbol);
 
     return nearest(.0001, $account->convertToBaseCurrency($pl, $symbolBaseUnit, 'bid'));
