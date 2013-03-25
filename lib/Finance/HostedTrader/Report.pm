@@ -77,7 +77,7 @@ sub openPositions {
         my $baseCurrencyPL = $trade->pl;
         my $percentPL = sprintf "%.2f", 100 * $baseCurrencyPL / $balance;
         my $currentExit = $systemTrader->getExitValue($symbol, $direction);
-        my $amountAtRisk = -1*$trade->amountAtRisk($account, $systemTrader);
+        my $amountAtRisk = -1*$trade->navAtRisk($account, $stopLoss);
 
         $t->addRow(
             $trade->symbol,

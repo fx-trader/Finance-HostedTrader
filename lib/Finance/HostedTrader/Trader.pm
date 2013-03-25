@@ -97,34 +97,6 @@ sub _checkSignalWithAction {
 }
 
 
-=method C<amountAtRisk($position)>
-
-How much capital will be lost/gained if $ position closes at the stop loss
-level defined by this system.
-
-This returned value is relative to the opening price and does not take into
-account current profit/loss.
-=cut
-sub amountAtRisk {
-    my $self = shift;
-    my $position = shift;
-    my $account = $self->account;
-    my $symbol = $position->symbol;
-
-    my $size = $position->size();
-    my $direction = ($size > 0 ? 'long' : 'short');
-    my $stopLoss = $self->_getSignalValue('exit', $symbol, $direction);
-    $self->logger->logconfess("Could not get stop loss for $symbol $direction") if (!defined($stopLoss));
-    my $avgOpenPrice = $position->averagePrice();
-
-    return 0 if (!$avgOpenPrice);
-
-    my $pl = nearest(.0001, ( $avgOpenPrice - $stopLoss ) * $size);
-    my $symbolBaseUnit = $account->getSymbolBase($symbol);
-
-    return nearest(.0001, $account->convertToBaseCurrency($pl, $symbolBaseUnit, 'bid'));
-}
-
 =method C<getTradeSize>
 =cut
 sub getTradeSize {
@@ -157,7 +129,9 @@ my $allowedExposure = $self->system->{signals}->{$action}->{$direction}->{exposu
     my $balance = $account->balance();
     $self->logger->debug("Account balance = $balance");
     $self->logger->logconfess("balance is negative") if ($balance < 0);
-    my $amountAtRisk = $self->amountAtRisk($position);
+    my $stopLoss = $self->_getSignalValue('exit', $symbol, $direction);
+    $self->logger->logconfess("Could not get stop loss for $symbol $direction") if (!defined($stopLoss));
+    my $amountAtRisk = $position->balanceAtRisk($account, $stopLoss);
     $self->logger->debug("Amount at Risk = $amountAtRisk");
     my $existingExposure = nearest(.0001, $amountAtRisk / $balance);
     $self->logger->debug("Existing exposure = $existingExposure");
@@ -167,8 +141,6 @@ my $allowedExposure = $self->system->{signals}->{$action}->{$direction}->{exposu
     return (0,undef,undef) if ($maxExposure <= 0);
 
     my $maxLossAmount   = $balance * $maxExposure;
-    my $stopLoss = $self->_getSignalValue('exit', $symbol, $direction);
-    $self->logger->logconfess("Could not get stop loss for $symbol $direction") if (!defined($stopLoss));
     my $base = $account->getSymbolBase($symbol);
 
     $self->logger->debug("Max acceptable loss in account currency = $maxLossAmount GBP");

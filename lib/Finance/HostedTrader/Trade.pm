@@ -145,17 +145,16 @@ sub BUILD {
 #    die('WTF');
 #}
 
-=method C<amountAtRisk>
+=method C<navAtRisk($account, $stopLoss)>
 =cut
-sub amountAtRisk {
+sub navAtRisk {
     my $self = shift;
     my $account = shift;
-    my $system = shift;
+    my $stopLoss = shift;
     my $symbol = $self->symbol;
 
     my $size = $self->size();
     my $direction = $self->direction;
-    my $stopLoss = $system->_getSignalValue('exit', $symbol, $direction);
     $self->logger->logconfess("Could not get stop loss for $symbol $direction") if (!defined($stopLoss));
 
     my $value = ($direction eq 'long' ? $account->getAsk($symbol) : $account->getBid($symbol));

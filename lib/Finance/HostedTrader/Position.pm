@@ -11,7 +11,9 @@ package Finance::HostedTrader::Position;
 =cut
 
 use Moose;
+with 'MooseX::Log::Log4perl';
 use Moose::Util::TypeConstraints;
+use Math::Round qw(nearest);
 
 =attr C<symbol>
 
@@ -141,6 +143,34 @@ sub pl {
         $pl += $trade->pl;
     }
     return $pl
+}
+
+=method C<balanceAtRisk($account, $stopLoss)>
+
+How much capital will be lost/gained if $ position closes at $stopLoss.
+
+This returned value is relative to the opening price and does not take into
+account current profit/loss.
+
+Adjusted to the account's currency.
+=cut
+sub balanceAtRisk {
+    my $self = shift;
+    my $account = shift;
+    my $stopLoss = shift;
+    my $symbol = $self->symbol;
+
+    my $size = $self->size();
+    my $direction = ($size > 0 ? 'long' : 'short');
+    $self->logger->logconfess("Could not get stop loss for $symbol $direction") if (!defined($stopLoss));
+    my $avgOpenPrice = $self->averagePrice();
+
+    return 0 if (!$avgOpenPrice);
+
+    my $pl = nearest(.0001, ( $avgOpenPrice - $stopLoss ) * $size);
+    my $symbolBaseUnit = $account->getSymbolBase($symbol);
+
+    return nearest(.0001, $account->convertToBaseCurrency($pl, $symbolBaseUnit, 'bid'));
 }
 
 sub _empty_hash {
