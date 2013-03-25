@@ -5,7 +5,7 @@
 
 # Use the feed database at zonalivre.org instead of the limited local development database
 
-- sudo service stop mysqld
+- sudo service mysqld stop
 - sudo sed -i "s/dbhost: localhost/dbhost: 127.0.0.1/" /etc/fxtrader/fx.yml #Make sure mysql connects via TCP instead of local unix socket
 - fx-show-config.pl db::dbhost #Confirm value has been updated
 - ssh -g -p7822 -L 3306:127.0.0.1:3306 zonalivre.org # Establish tunnel
