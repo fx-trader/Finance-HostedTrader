@@ -109,7 +109,7 @@ sub systemEntryExit {
         foreach my $symbol (@{$systemTrader->system->symbols($direction)}) {
             my $currentExit = $systemTrader->getExitValue($symbol, $direction);
             my $currentEntry = $systemTrader->getEntryValue($symbol, $direction) || 'N/A';
-            my $amountAtRisk = -1*$systemTrader->amountAtRisk($account->getPosition($symbol));
+            my $amountAtRisk = -1*$account->getPosition($symbol)->balanceAtRisk($account, $systemTrader->getExitValue($symbol, $direction));
 
             $t->addRow( $symbol, 
                         ($direction eq 'long' ? $account->getAsk($symbol) : $account->getBid($symbol)),
