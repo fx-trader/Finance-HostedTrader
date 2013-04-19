@@ -2,6 +2,8 @@ Revision history for Finance::HostedTrader
 
 {{$NEXT}}
 
+0.020 2013-04-19 22:57:52 UTC
+      Added new symbols
 0.019 2013-03-25 21:55:11 UTC
       Added navAtRisk method to Trade object
       Refactor Trader::amountAtRisk to Position::balanceAtRisk
