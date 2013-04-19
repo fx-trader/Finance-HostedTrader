@@ -4,7 +4,7 @@
 
 =head1 SYNOPSIS
 
-    fx-eval.pl [--timeframe=tf] [--verbose] [--symbols=s] [--debug] [--maxLoadedItems=i] [--numItems=i] expr
+    fx-eval.pl [--timeframe=tf] [--symbols=s] [--debug] [--maxLoadedItems=i] [--numItems=i] expr
 
 
 =head1 DESCRIPTION
