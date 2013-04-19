@@ -141,6 +141,10 @@ my %symbolMap = (
     UKOil  => 'UKOil',
     US30   => 'US30',
     USOil  => 'USOil',
+    Copper => 'Copper',
+    XPTUSD => 'XPT/USD',
+    XPDUSD => 'CPD/USD',
+    USDOLLAR => 'USDOLLAR',
 );
 
 

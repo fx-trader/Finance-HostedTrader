@@ -521,6 +521,10 @@ my %symbolBaseMap = (
     UKOil  => 'GBP',
     US30   => 'USD',
     USOil  => 'USD',
+    Copper => 'USD',
+    XPTUSD => 'USD',
+    XPDUSD => 'USD',
+    USDOLLAR => 'USD',
 );
 
 =method C<getSymbolBase($symbol)>
