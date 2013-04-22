@@ -1,5 +1,5 @@
 Name:           perl-Finance-HostedTrader
-Version:        0.020
+Version:        0.021
 Release:        1%{?dist}
 Summary:        Finance::HostedTrader Perl module
 License:        MIT
@@ -31,6 +31,7 @@ BuildRequires:  perl(Test::Differences)
 BuildRequires:  perl(Test::Exception)
 BuildRequires:  perl(Test::More)
 BuildRequires:  perl(Text::ASCIITable)
+BuildRequires:  perl(Try::Tiny)
 BuildRequires:  perl(YAML::Tiny)
 Requires:       perl(Config::Any)
 Requires:       perl(Date::Calc)
@@ -53,6 +54,7 @@ Requires:       perl(Scalar::Util)
 Requires:       perl(Test::Differences)
 Requires:       perl(Test::More)
 Requires:       perl(Text::ASCIITable)
+Requires:       perl(Try::Tiny)
 Requires:       perl(YAML::Tiny)
 BuildRequires:  libmysqludf_ta >= 0.1-3
 Requires:       libmysqludf_ta >= 0.1-3
@@ -108,6 +110,8 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Apr 22 2013 João Costa <joaocosta@zonalivre.org> 0.021-1
+- New upstream version available
 * Sat Apr 20 2013 João Costa <joaocosta@zonalivre.org> 0.020-1
 - New upstream version available
 * Mon Mar 25 2013 João Costa <joaocosta@zonalivre.org> 0.019-1
