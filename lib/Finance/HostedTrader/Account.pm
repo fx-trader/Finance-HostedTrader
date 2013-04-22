@@ -525,6 +525,9 @@ my %symbolBaseMap = (
     XPTUSD => 'USD',
     XPDUSD => 'USD',
     USDOLLAR => 'USD',
+    NGAS => 'USD',
+    EUSTX50 => 'EUR',
+    Bund => 'EUR',
 );
 
 =method C<getSymbolBase($symbol)>

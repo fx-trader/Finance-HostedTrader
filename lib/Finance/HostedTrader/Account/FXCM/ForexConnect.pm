@@ -144,7 +144,10 @@ my %symbolMap = (
     Copper => 'Copper',
     XPTUSD => 'XPT/USD',
     XPDUSD => 'CPD/USD',
-    USDOLLAR => 'USDOLLAR',
+    USDOLLAR=> 'USDOLLAR',
+    NGAS    => 'NGAS',
+    EUSTX50 => 'EUSTX50',
+    Bund    => 'Bund',
 );
 
 
