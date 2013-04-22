@@ -2,6 +2,9 @@ Revision history for Finance::HostedTrader
 
 {{$NEXT}}
 
+0.021 2013-04-22 21:19:08 UTC
+      Error handling in fxcm download script
+      Added more symbols supported by FXCM (NGAS, EUSTX50, Bund)
 0.020 2013-04-19 22:57:52 UTC
       Added new symbols
 0.019 2013-03-25 21:55:11 UTC
