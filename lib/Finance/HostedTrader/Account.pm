@@ -173,16 +173,16 @@ sub closeMarket {
     return $rv;
 }
 
-=method C<getBaseUnit($symbol)>
+=method C<getMinTradeSize($symbol)>
 
 This method must be overriden. Returns the base unit at which the symbol trades.
 
 Eg, if baseUnit=10000, the symbol can only trade in multiples of 10000 (15000 would be an invalid trade size).
 
 =cut
-sub getBaseUnit {
+sub getMinTradeSize {
     my $self = shift;
-    $self->logger->logcroak("getBaseUnit must be overriden");
+    $self->logger->logcroak("getMinTradeSize must be overriden");
 }
 
 =method C<balance()>
@@ -333,7 +333,7 @@ Convert $amount to a multiple of the base unit supported by $symbol.
 
 Eg: If this account provider only supports trading EURUSD in multiples of 10000, and amount is 25000, this functions returns 20000.
 
-See the L</getBaseUnit($symbol)> method.
+See the L</getMinTradeSize($symbol)> method.
 
 =cut
 sub convertBaseUnit {
@@ -341,7 +341,7 @@ sub convertBaseUnit {
 
     $self->logger->info("convertBaseUnit $symbol $amount");
 
-    my $baseUnit = $self->getBaseUnit($symbol);
+    my $baseUnit = $self->getMinTradeSize($symbol);
 
     return int($amount / $baseUnit) * $baseUnit;
 }

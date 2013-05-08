@@ -39,7 +39,7 @@ $acc = Finance::HostedTrader::Factory::Account->new(
         endDate     => '2030-06-24 06:00:00',
 	)->create_instance();
 isa_ok($acc,'Finance::HostedTrader::Account::UnitTest');
-can_ok($acc, qw/refreshPositions getAsk getBid openMarket closeMarket getBaseUnit getNav balance getBaseCurrency checkSignal getIndicatorValue waitForNextTrade convertBaseUnit getPosition getPositions closeTrades pl getServerEpoch getSymbolBase/);
+can_ok($acc, qw/refreshPositions getAsk getBid openMarket closeMarket getMinTradeSize getNav balance getBaseCurrency checkSignal getIndicatorValue waitForNextTrade convertBaseUnit getPosition getPositions closeTrades pl getServerEpoch getSymbolBase/);
 is($acc->startDate, '2020-06-24 06:00:00', 'Factory set startDate argument appropriately');
 is($acc->endDate, '2030-06-24 06:00:00', 'Factory set endDate argument appropriately');
 
@@ -64,7 +64,7 @@ throws_ok {
             accountType => 'Demo',
     	)->create_instance();
 isa_ok($acc,'Finance::HostedTrader::Account::FXCM::ForexConnect');
-can_ok($acc, qw/refreshPositions getAsk getBid openMarket closeMarket getBaseUnit getNav balance getBaseCurrency checkSignal getIndicatorValue waitForNextTrade convertBaseUnit getPosition getPositions closeTrades pl getServerEpoch getSymbolBase/);
+can_ok($acc, qw/refreshPositions getAsk getBid openMarket closeMarket getMinTradeSize getNav balance getBaseCurrency checkSignal getIndicatorValue waitForNextTrade convertBaseUnit getPosition getPositions closeTrades pl getServerEpoch getSymbolBase/);
 is($acc->username, 'username', 'Factory set username argument appropriately');
 is($acc->password, 'password', 'Factory set password argument appropriately');
 

@@ -1,7 +1,7 @@
 Revision history for Finance::HostedTrader
 
 {{$NEXT}}
-
+      Rename Account::getBaseUnit to Account::getMinTradeSize
 0.021 2013-04-22 21:19:08 UTC
       Error handling in fxcm download script
       Added more symbols supported by FXCM (NGAS, EUSTX50, Bund)

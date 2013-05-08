@@ -249,11 +249,11 @@ sub closeMarket {
     }
 }
 
-=method C<getBaseUnit($symbol)>
+=method C<getMinTradeSize($symbol)>
 
 TODO. Set base unit for other symbols.
 =cut
-sub getBaseUnit {
+sub getMinTradeSize {
     my ($self, $symbol) = @_;
 
     my %base_units = (

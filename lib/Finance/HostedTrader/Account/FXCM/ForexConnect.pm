@@ -293,15 +293,15 @@ augment closeMarket => sub {
     return $self->_fx->closeMarket($tradeID,$amount);
 };
 
-=method C<getBaseUnit($symbol)>
+=method C<getMinTradeSize($symbol)>
 
 Returns the smallest volume $symbol can be traded at.
 
 Eg: The minimum trade size for EURUSD might be 10.000 or 1.000
-(depending on account type).
+(depending on account type). Minimum size on a micro account for XAGUSD is 50.
 =cut
 
-sub getBaseUnit {
+sub getMinTradeSize {
     my ($self, $symbol) = @_;
 
     $symbol = $self->convertSymbolToFXCM($symbol);
