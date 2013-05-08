@@ -295,9 +295,10 @@ augment closeMarket => sub {
 
 =method C<getBaseUnit($symbol)>
 
-Returns the base unit at which the symbol trades.
+Returns the smallest volume $symbol can be traded at.
 
-In FXCM, most symbols trade at multiples of 10.000, but some will vary ( XAGUSD uses multiples of 50 ).
+Eg: The minimum trade size for EURUSD might be 10.000 or 1.000
+(depending on account type).
 =cut
 
 sub getBaseUnit {
