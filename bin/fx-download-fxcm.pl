@@ -51,11 +51,12 @@ use Pod::Usage;
 use Try::Tiny;
 
 my $numItemsToDownload = 10;
-my ( $timeframes_from_txt, $start_date, $end_date, $verbose, $help ) = ( undef, '1900-01-01', '9998-12-31', 0, 0);
+my ( $timeframes_from_txt, $symbols_from_txt, $start_date, $end_date, $verbose, $help ) = ( undef, undef, '1900-01-01', '9998-12-31', 0, 0);
 
 my $result = GetOptions(
     "start=s",      \$start_date,
     "end=s",        \$end_date,
+    "symbols=s", \$symbols_from_txt,
     "timeframes=s", \$timeframes_from_txt,
     "numItems=i", \$numItemsToDownload,
     "verbose", \$verbose,
@@ -71,7 +72,7 @@ $end_date = UnixDate( $end_date, "%Y-%m-%d %H:%M:%S" )
 my $ds = Finance::HostedTrader::Datasource->new();
 my $cfg = $ds->cfg;
 
-my @naturalSymbols = @{ $cfg->symbols->natural };
+my @symbols = ( $symbols_from_txt ? split(',', $symbols_from_txt) : @{ $cfg->symbols->natural } );
 my @timeframes  = sort split(',', $timeframes_from_txt);
 my $providerCfg = $cfg->tradingProviders->{fxcm};
 
@@ -85,7 +86,7 @@ while(@timeframes) {
     my $nextTimeframe = shift(@timeframes);
     my $fxcmTimeframe = Finance::HostedTrader::Account::FXCM::ForexConnect::convertTimeframeToFXCM($timeframe);
 
-    foreach my $symbol (@naturalSymbols) {
+    foreach my $symbol (@symbols) {
         print "Fetching $symbol $timeframe\n" if ($verbose);
         my $tableToLoad = $symbol . '_' . $timeframe;
 
@@ -106,7 +107,7 @@ while(@timeframes) {
     foreach my $dst_timeframe ( @{$syntheticTfs} ) {
         next if ( $dst_timeframe <= $timeframe );
         next if ( defined($nextTimeframe) && $dst_timeframe >= $nextTimeframe);
-        foreach my $symbol ( @{$syntheticSymbols}, @naturalSymbols ) {
+        foreach my $symbol ( @{$syntheticSymbols}, @symbols ) { # This actually only works if @symbols == @naturalSymbols, or if there are no syntheticSymbols.
             print "Creating synthetic timeframe $dst_timeframe from $timeframe for $symbol\n" if ($verbose);
             $ds->convertOHLCTimeSeries( symbol => $symbol, tf_src => $timeframe, tf_dst => $dst_timeframe,
                 start_date => $start_date, end_date => $end_date );
