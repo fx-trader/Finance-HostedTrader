@@ -106,7 +106,7 @@ sub systemEntryExit {
     my $t = $self->_table_factory( format => $self->format, headingText => $systemTrader->system->name, cols => ['Symbol','Market','Entry','Exit','Direction', 'Worst Case', '%']);
 
     foreach my $direction (qw /long short/) {
-        foreach my $symbol (@{$systemTrader->system->symbols($direction)}) {
+        foreach my $symbol (@{$systemTrader->system->symbols($direction) || []}) {
             my $currentExit = $systemTrader->getExitValue($symbol, $direction);
             my $currentEntry = $systemTrader->getEntryValue($symbol, $direction) || 'N/A';
             my $amountAtRisk = -1*$account->getPosition($symbol)->balanceAtRisk($account, $systemTrader->getExitValue($symbol, $direction));
