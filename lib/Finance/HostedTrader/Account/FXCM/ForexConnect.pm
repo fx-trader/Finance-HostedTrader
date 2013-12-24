@@ -321,7 +321,7 @@ augment 'balance' => sub {
 };
 
 sub getExternalDeposits {
-    return 1500; #hard coded for now
+    return 0; #hard coded for now
 }
 
 =method C<getBaseCurrency>
