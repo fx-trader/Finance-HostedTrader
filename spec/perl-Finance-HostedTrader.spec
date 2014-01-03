@@ -122,16 +122,16 @@ rm -rf $RPM_BUILD_ROOT
 - New upstream version available
 * Thu Dec 27 2012 João Costa <joaocosta@zonalivre.org> 0.016-1
 - New upstream version available
-* Tue Dec 16 2012 João Costa <joaocosta@zonalivre.org> 0.015-1
+* Sun Dec 16 2012 João Costa <joaocosta@zonalivre.org> 0.015-1
 - New upstream version available
 
-* Tue Dec 09 2012 João Costa <joaocosta@zonalivre.org> 0.014-1
+* Sun Dec 09 2012 João Costa <joaocosta@zonalivre.org> 0.014-1
 - New upstream version available
 
 * Tue Dec 04 2012 João Costa <joaocosta@zonalivre.org> 0.013-1
 - New upstream version available
 
-* Sat Nov 30 2012 João Costa <joaocosta@zonalivre.org> 0.011-1
+* Fri Nov 30 2012 João Costa <joaocosta@zonalivre.org> 0.011-1
 - New upstream version available
 
 * Sat Nov 24 2012 João Costa <joaocosta@zonalivre.org> 0.010-1
