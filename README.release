@@ -14,12 +14,12 @@ cpanspec Finance-HostedTrader-*.tar.gz
 vimdiff perl-Finance-HostedTrader.spec spec/perl-Finance-HostedTrader.spec
 
 #build rpm
-mach build spec/perl-Finance-HostedTrader.spec
+cp Finance-HostedTrader-0.021.tar.gz ~/rpmbuild/SOURCES/
+cp spec/perl-Finance-HostedTrader.spec ~/rpmbuild/SPECS/
 
-#If mach build fails, try:
-mach clean
-cp /etc/yum.repos.d/zonalivre.repo /var/lib/mach/states/fedora-16-x86_64-updates/yum/yum.repos.d/
-# Then repeat the build rpm step
+rpmbuild -bs ~/rpmbuild/SPECS/perl-Finance-HostedTrader.spec
+mock rebuild --no-clean ~/rpmbuild/SRPMS/perl-Finance-HostedTrader-0*.src.rpm
+mock install /var/lib/mock/fedora-20-x86_64/result/perl-Finance-HostedTrader-0.021-1.fc20.noarch.rpm
 
 #commit spec file
 git commit -m "Updated spec file for latest version" spec/perl-Finance-HostedTrader.spec
