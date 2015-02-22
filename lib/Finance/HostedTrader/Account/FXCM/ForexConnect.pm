@@ -56,7 +56,7 @@ has password => (
 
 
 =cut
-enum 'FXCMOrder2GOAccountType' => qw(Demo Real);
+enum 'FXCMOrder2GOAccountType' => [qw(Demo Real)];
 has accountType => (
     is     => 'ro',
     isa    => 'FXCMOrder2GOAccountType',

@@ -35,7 +35,7 @@ my %timeframes = (
     'week'  => [604800, "date_format(date_sub(datetime, interval weekday(datetime)+1 DAY), '%Y-%m-%d 00:00:00')"],
 );
 
-enum 'TimeframeIDs' => qw(0 1 5 15 30 60 120 300 900 1800 3600 7200 10800 14400 86400 172800 604800);
+enum 'TimeframeIDs' => [qw(0 1 5 15 30 60 120 300 900 1800 3600 7200 10800 14400 86400 172800 604800)];
 
 #These two subs are used to make sure timeframe data is returned sorted
 sub _around_timeframes {

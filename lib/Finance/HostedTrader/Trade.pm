@@ -44,7 +44,7 @@ has symbol => (
 long or short
 
 =cut
-enum 'tradeDirection' => qw(long short);
+enum 'tradeDirection' => [qw(long short)];
 has direction => (
     is     => 'ro',
     isa    => 'Str',

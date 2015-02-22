@@ -43,7 +43,7 @@ has systemTrader => (
 =attr C<format>
 
 =cut
-enum 'enumFormat' => qw(text html);
+enum 'enumFormat' => [qw(text html)];
 has format => (
     is      => 'rw',
     isa     => 'enumFormat',
