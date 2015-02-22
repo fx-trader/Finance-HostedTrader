@@ -1,0 +1,65 @@
+symbols:
+    natural:
+        - AUDUSD
+        - AUDJPY
+        - CHFJPY
+        - EURCAD
+        - EURCHF
+        - EURGBP
+        - EURJPY
+        - EURUSD
+        - GBPCHF
+        - GBPJPY
+        - GBPUSD
+        - NZDUSD
+        - NZDJPY
+        - USDCAD
+        - USDCHF
+        - USDHKD
+        - USDJPY
+        - XAUUSD
+        - XAGUSD
+        - AUS200
+        - ESP35
+        - FRA40
+        - GER30
+        - HKG33
+        - ITA40
+        - JPN225
+        - NAS100
+        - SPX500
+        - SUI30
+#        - SWE30
+        - UK100
+        - UKOil
+        - US30
+        - USOil
+        - Copper
+        - XPTUSD
+        - USDOLLAR
+        - NGAS
+        - Bund
+        - EUSTX50
+    synthetic:
+timeframes:
+    natural:
+        - 300
+        - 3600
+        - 86400
+        - 604800
+    synthetic:
+        - 900
+        - 1800
+        - 7200
+        - 10800
+        - 14400
+db:
+    dbhost: localhost
+    dbname: fxcm
+    dbuser: fxcm
+    dbpasswd: fxcm
+tradingProviders:
+    fxcm:
+        username: GBD118836001
+        password: 5358
+        accountType: Demo
