@@ -1,4 +1,6 @@
 #!/usr/bin/perl
+# ABSTRACT: Sets the subscription status of the input symbols to subscribed so that they show up in tradestation
+# PODNAME: fx-setsubscription.pl
 
 use strict;
 use warnings;
