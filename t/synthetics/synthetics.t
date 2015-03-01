@@ -9,13 +9,11 @@ use Finance::HostedTrader::Config;
 use Data::Dumper;
 use Test::More tests=>4;
 use Test::Exception;
-use File::Find;
+use File::Basename;
 
-my $config_file;
+my $config_file = dirname($0) . "/fx.yml";
 
-find(sub { $config_file = $File::Find::name if ($_ eq "fx.yml" && $File::Find::name =~ m|synthetics/fx.yml$|) }, './');
-die("Could not find config file t/synthetics/fx.yml") if (!$config_file);
-
+die("Could not find config file $config_file") if (!$config_file);
 my $ds = Finance::HostedTrader::Datasource->new(
 	cfg => Finance::HostedTrader::Config->new(
 		files => [
