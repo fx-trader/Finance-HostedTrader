@@ -51,7 +51,7 @@ sub _around_symbols {
 
 has synthetic => (
     is     => 'ro',
-    isa    => 'Maybe[ArrayRef[Str]]',
+    isa    => 'Maybe[ArrayRef]',
     builder => '_build_synthetic',
     required=>0,
 );

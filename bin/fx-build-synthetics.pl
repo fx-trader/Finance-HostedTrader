@@ -71,6 +71,10 @@ pod2usage(1) if ($help || !$timeframe);
 $synthetics = [ split( ',', $symbols_txt ) ] if ($symbols_txt);
 
 foreach my $synthetic (@$synthetics) {
-    print "$synthetic [$timeframe]" if ($verbose);
-    $db->createSynthetic( $synthetic, $timeframe );
+    if (ref($synthetic) eq 'HASH') {
+        $db->createSynthetic2($synthetic, $timeframe);
+    } else {
+        print "$synthetic [$timeframe]" if ($verbose);
+        $db->createSynthetic( $synthetic, $timeframe );
+    }
 }
