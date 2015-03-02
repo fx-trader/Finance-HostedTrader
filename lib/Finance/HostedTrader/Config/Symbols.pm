@@ -37,11 +37,11 @@ See the description for natural symbols.
 =cut
 
 
-sub _around_symbols {
+sub _around_synthetic {
     my $orig = shift;
     my $self = shift;
 
-    return $self->$orig() if @_; #Call the Moose generated setter if this is a set call (actually because the attributes are read-only we'll never have a set call, but just in case it changes later)
+    return $self->$orig(@_) if @_; #Call the Moose generated setter if this is a set call (actually because the attributes are read-only we'll never have a set call, but just in case it changes later)
 
     # If it is a get call, call the Moose generated getter
     my $value = $self->$orig();
@@ -56,7 +56,7 @@ has synthetic => (
     required=>0,
 );
 #register method modifier so that undef values can be converted to empty lists
-around 'synthetic' => \&_around_symbols;
+around 'synthetic' => \&_around_synthetic;
 
 sub _build_synthetic {
     return [];
