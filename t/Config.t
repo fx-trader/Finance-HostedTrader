@@ -20,12 +20,11 @@ my $merge_files = Finance::HostedTrader::Config->new(
 		'files' => [
 			"$t_path/cfg1.yml",
 			"$t_path/cfg2.yml", ]);
-
 isa_ok($merge_files,'Finance::HostedTrader::Config');
 is($merge_files->db->dbhost, 'dbhost', 'Key missing in file cfg2');
 is($merge_files->db->dbname, 'dbname2', 'Key present in both files');
 is($merge_files->db->dbpasswd, undef, 'Key present in both files but undefined in cfg2');
-is_deeply($merge_files->symbols->synthetic, ['XAGJPY'], 'Key missing in file cfg2');
+is_deeply($merge_files->symbols->synthetic_names, ['GER30USD'], 'Key missing in file cfg2');
 is_deeply($merge_files->symbols->natural, ['XAGUSD2'], 'Key missing in file cfg1');
 is_deeply($merge_files->timeframes->synthetic, [], 'Key present in both files but empty list in cfg2');
 is_deeply($merge_files->timeframes->natural, [300], 'Key present in both files as list reference');
@@ -53,7 +52,7 @@ is($config->db->dbhost, 'dbhost', 'db host');
 is($config->db->dbname, 'dbname', 'db name');
 is($config->db->dbuser, 'dbuser', 'db user');
 is($config->db->dbpasswd, 'dbpasswd', 'db passwd');
-is_deeply($config->symbols->synthetic, [], 'empty synthetic symbols');
+is_deeply($config->symbols->synthetic_names, [], 'empty synthetic symbols');
 is_deeply($config->symbols->all(), [qw(AUDUSD USDJPY)], 'symbols');
 is_deeply($config->timeframes->synthetic, [], 'empty synthetic timeframes');
 is_deeply($config->timeframes->natural(), [qw(60 300)], 'ordered natural timeframes');

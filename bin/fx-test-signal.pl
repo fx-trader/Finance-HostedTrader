@@ -20,8 +20,7 @@ close > ema(close,21)
 
 =item C<--timeframe=tf>
 
-Required argument. Specifies a single timeframe for which
-synthetic data will be created.
+Required argument. Specifies a single timeframe
 
 tf can be a valid integer timeframe as defined in L<Finance::HostedTrader::Datasource>
 

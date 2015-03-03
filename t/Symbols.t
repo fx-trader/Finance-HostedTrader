@@ -21,9 +21,9 @@ is_deeply($empty_tfs->all, [], 'All symbols empty');
 
 my $non_empty_tfs = Finance::HostedTrader::Config::Symbols->new(
 	'natural' => [60],
-	'synthetic' => [120],
+	'synthetic' => [ { name => '120'} ],
 	);
 
 is_deeply($non_empty_tfs->natural, [60], 'Natural symbols non empty');
-is_deeply($non_empty_tfs->synthetic, [120], 'Synthetic symbols non empty');
+is_deeply($non_empty_tfs->synthetic_names, [120], 'Synthetic symbols non empty');
 is_deeply($non_empty_tfs->all, [60,120], 'All symbols non empty');

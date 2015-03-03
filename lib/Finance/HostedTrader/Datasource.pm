@@ -146,63 +146,6 @@ ON DUPLICATE KEY UPDATE open=values(open), low=values(low), high=values(high), c
     $self->dbh->do($sql);
 }
 
-=method C<getSyntheticComponents>
-
-Returns a data structure with the necessary information to build
-a synthetic pair from existing data.
-
-Eg1, GBPCAD can be derived by GBPUSD * USDCAD.
-
-Eg2, EURGBP can be derived by EURUSD / GBPUSD. In this case, the low/high field
-are inverted ( eg low_EURUSD / low_GBPUSD = high_EURGBP ).
-
-=cut
-sub getSyntheticComponents {
-    my ($self, $sym1, $sym2) = @_;
-
-    my $symbols = $self->{cfg}->symbols->natural;
-    my $search1 = $sym1 . 'USD';
-    my $search2 = 'USD' . $sym1;
-    my @u1      = grep( /$search1|$search2/, @$symbols );
-    $u1[0] = '' if (!defined($u1[0]));
-
-    $search1 = $sym2 . 'USD';
-    $search2 = 'USD' . $sym2;
-    my @u2 = grep( /$search1|$search2/, @$symbols );
-    $u2[0] = '' if (!defined($u1[0]));
-    my $op;
-    my ( $low, $high );
-    if ( $u1[0] =~ /USD$/ && $u2[0] =~ /^USD/ ) {
-        $op   = '*';
-        $low  = 'low';
-        $high = 'high';
-    }
-    elsif ( $u1[0] =~ /USD$/ && $u2[0] =~ /USD$/ ) {
-        $op   = '/';
-        $low  = 'high';
-        $high = 'low';
-    }
-    elsif ( $u1[0] =~ /^USD/ && $u2[0] =~ /^USD/ ) {
-        $op   = '/';
-        $low  = 'high';
-        $high = 'low';
-        my $tmp = $u1[0];
-        $u1[0] = $u2[0];
-        $u2[0] = $tmp;
-    }
-    else {
-        die("Don't know how to handle $sym1$sym2 synthetic pair");
-    }
-
-    return {
-        op      => $op,
-        low     => $low,
-        high    => $high,
-        leftop  => $u1[0],
-        rightop => $u2[0],
-    };
-}
-
 =method C<createSynthetic>
 
 Creates data for synthetic pairs, based on existing pairs, and inserts data
@@ -216,19 +159,25 @@ For example, GBPJPY can be derived from GBPUSD AND USDJPY.
 sub createSynthetic {
     my ( $self, $synthetic, $timeframe ) = @_;
 
-    #TODO hardcoded forex symbols
-    my $sym1            = substr( $synthetic, 0, 3 );
-    my $sym2            = substr( $synthetic, 3, 3 );
-    my $synthetic_info  = $self->getSyntheticComponents($sym1, $sym2);
+    my $synthetic_name  = $synthetic->{name}        || die("Synthetic name missing for symbol, fix fx.yml");
+    my $synthetic_info  = $synthetic->{components}  || die("Synthetic symbol missing components, fix fx.yml");
 
-    my $op      = $synthetic_info->{op};
-    my $low     = $synthetic_info->{low};
-    my $high    = $synthetic_info->{high};
-    my $leftop  = $synthetic_info->{leftop};
-    my $rightop = $synthetic_info->{rightop};
+    my ($low, $high);
+    my $op      = $synthetic_info->{op}         || die("op missing, fix fx.yml");
+    my $leftop  = $synthetic_info->{leftop}     || die("leftopt missing, fix fx.yml");
+    my $rightop = $synthetic_info->{rightop}    || die("rightop missing, fix fx.yml");
+    if ($op eq '*') {
+        $high   = 'high';
+        $low    = 'low';
+    } elsif ($op eq '/') {
+        $high   = 'low';
+        $low    = 'high';
+    } else {
+        die("Invalid op in components for synthetic. Fix fx.yml");
+    }
 
     my $sql =
-"insert ignore into $synthetic\_$timeframe (select T1.datetime, round(T1.open"
+"insert ignore into $synthetic_name\_$timeframe (select T1.datetime, round(T1.open"
       . $op
       . "T2.open,4) as open, round(T1.low"
       . $op
@@ -238,7 +187,7 @@ sub createSynthetic {
       . $op
       . "T2.close,4) as close from $leftop\_$timeframe as T1, $rightop\_$timeframe as T2 WHERE T1.datetime = T2.datetime)";
 #AND T1.datetime > DATE_SUB(NOW(), INTERVAL 2 WEEK))
-    $self->dbh->do($sql);
+      $self->dbh->do($sql);
 }
 
 1;
