@@ -1,7 +1,10 @@
 Revision history for Finance::HostedTrader
 
 {{$NEXT}}
-      Rename Account::getBaseUnit to Account::getMinTradeSize
+      Revamped support for synthetic symbols
+      Clean code base and remove things which i'm not using
+      New FXCM specific script: fx-setsubscription.pl
+      Address warnings in recent Moose versions
 0.021 2013-04-22 21:19:08 UTC
       Error handling in fxcm download script
       Added more symbols supported by FXCM (NGAS, EUSTX50, Bund)
