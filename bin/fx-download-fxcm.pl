@@ -206,7 +206,7 @@ while(@timeframes) {
     }
 
     foreach my $synthetic (@$syntheticSymbols) {
-        print "Creating synthetic $synthetic $timeframe\n" if ($verbose);
+        print "Creating synthetic $synthetic->name $timeframe\n" if ($verbose);
         $ds->createSynthetic( $synthetic, $timeframe );
     }
 

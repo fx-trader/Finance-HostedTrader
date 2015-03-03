@@ -7,7 +7,7 @@ use Finance::HostedTrader::Datasource;
 use Finance::HostedTrader::Config;
 
 use Data::Dumper;
-use Test::More tests=>4;
+use Test::More tests=>3;
 use Test::Exception;
 use File::Basename;
 
@@ -78,8 +78,8 @@ foreach my $test (@$testcases) {
 	my $synt_table = $test->{s}->{symbol};
 	$dbh->do("DROP TABLE IF EXISTS $synt_table\_$tf");
 	$dbh->do("CREATE TABLE $synt_table\_$tf LIKE $BASE_SYMBOL\_$tf");
-
-	$ds->createSynthetic($synt_table, $tf);
+    my @synt = grep { $_->{name} eq $synt_table } @{$cfg->symbols->{synthetic}};
+	$ds->createSynthetic($synt[0], $tf);
 
 	my $sth = $dbh->prepare("SELECT * FROM $synt_table\_$tf ORDER BY datetime") or die($DBI::errstr);
 	$sth->execute() or die($DBI::errstr);
@@ -87,5 +87,3 @@ foreach my $test (@$testcases) {
 	$sth->finish or die($DBI::errstr);
 	is_deeply($data, $test->{s}->{data}, $test->{name});
 }
-
-throws_ok { $ds->createSynthetic('BADBAD', $tf) } qr /Don't know how to handle/, 'Unrecognized pair';
