@@ -14,16 +14,17 @@ DBNAME=`fx-show-config.pl db::dbname`
 
 cd "$(dirname "$0")"
 
-rm -fR testdata
-mkdir testdata
+rm -vfR testdata
+mkdir -v testdata
 cd testdata
 
 for sym in $SYMS; do
   for tf in $TFS; do
+    echo Dumping $sym $tf
     mysql -u$DBUSER -p$DBPASSWD -e "SELECT * FROM ${sym}_${tf} WHERE datetime between '2008-01-01 00:00:00' AND '2012-12-14 00:00:00'" $DBNAME | gzip > ${sym}_${tf}.gz
   done
 done
 
 cd ..
-tar cPf ${TEST_DATA_DIR}/testdata.tar testdata
-rm -fR testdata
+tar cvPf ${TEST_DATA_DIR}/testdata.tar testdata
+rm -fvR testdata
