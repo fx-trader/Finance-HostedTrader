@@ -8,6 +8,18 @@ symbols:
         - USDJJJ
         - USDCCC
     synthetic:
-        - AAAJJJ
-        - GGGEEE
-        - CCCJJJ
+        - name: AAAJJJ
+          components:
+            op: "*"
+            leftop: AAAUSD
+            rightop: USDJJJ
+        - name: GGGEEE
+          components:
+            op: "/"
+            leftop: GGGUSD
+            rightop: EEEUSD
+        - name: CCCJJJ
+          components:
+            op: "/"
+            leftop: USDCCC
+            rightop: USDJJJ
