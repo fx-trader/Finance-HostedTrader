@@ -220,20 +220,12 @@ sub createSynthetic {
     my $sym1            = substr( $synthetic, 0, 3 );
     my $sym2            = substr( $synthetic, 3, 3 );
     my $synthetic_info  = $self->getSyntheticComponents($sym1, $sym2);
-    $synthetic_info->{name} = $synthetic;
 
-    return $self->createSynthetic2( $synthetic_info, $timeframe);
-}
-
-sub createSynthetic2 {
-    my ( $self, $synthetic_info, $timeframe) = @_;
-
-    my $synthetic=$synthetic_info->{name}       || die("name missing");
-    my $op      = $synthetic_info->{op}         || die("op missing");
-    my $low     = $synthetic_info->{low}        || die("low missing");
-    my $high    = $synthetic_info->{high}       || die("high missing");
-    my $leftop  = $synthetic_info->{leftop}     || die("leftop missing");
-    my $rightop = $synthetic_info->{rightop}    || die("rightop missing");
+    my $op      = $synthetic_info->{op};
+    my $low     = $synthetic_info->{low};
+    my $high    = $synthetic_info->{high};
+    my $leftop  = $synthetic_info->{leftop};
+    my $rightop = $synthetic_info->{rightop};
 
     my $sql =
 "insert ignore into $synthetic\_$timeframe (select T1.datetime, round(T1.open"

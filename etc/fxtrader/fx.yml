@@ -41,19 +41,6 @@ symbols:
         - Bund
         - EUSTX50
     synthetic:
-        -   name: GER30USD
-            op: "*"
-            high: high
-            low: low
-            leftop: GER30
-            rightop: EURUSD
-        -   name: BundUSD
-            op: "*"
-            high: high
-            low: low
-            leftop: Bund
-            rightop: EURUSD
-
 timeframes:
     natural:
         - 300

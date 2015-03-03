@@ -51,7 +51,7 @@ sub _around_synthetic {
 
 has synthetic => (
     is     => 'ro',
-    isa    => 'Maybe[ArrayRef]',
+    isa    => 'Maybe[ArrayRef[Str]]',
     builder => '_build_synthetic',
     required=>0,
 );
