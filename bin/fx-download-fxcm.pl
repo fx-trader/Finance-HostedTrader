@@ -45,10 +45,116 @@ use warnings;
 use Getopt::Long;
 use Date::Manip;
 use Finance::HostedTrader::Config;
-use Finance::HostedTrader::Account::FXCM::ForexConnect;
 use Finance::FXCM::Simple;
 use Pod::Usage;
 use Try::Tiny;
+
+my %symbolMap = (
+    AUDCAD => 'AUD/CAD',
+    AUDCHF => 'AUD/CHF',
+    AUDJPY => 'AUD/JPY',
+    AUDNZD => 'AUD/NZD',
+    AUDUSD => 'AUD/USD',
+    AUS200 => 'AUS200',
+    CADCHF => 'CAD/CHF',
+    CADJPY => 'CAD/JPY',
+    CHFJPY => 'CHF/JPY',
+    CHFNOK => 'CHF/NOK',
+    CHFSEK => 'CHF/SEK',
+    EURAUD => 'EUR/AUD',
+    EURCAD => 'EUR/CAD',
+    EURCHF => 'EUR/CHF',
+    EURDKK => 'EUR/DKK',
+    EURGBP => 'EUR/GBP',
+    EURJPY => 'EUR/JPY',
+    EURNOK => 'EUR/NOK',
+    EURNZD => 'EUR/NZD',
+    EURSEK => 'EUR/SEK',
+    EURTRY => 'EUR/TRY',
+    EURUSD => 'EUR/USD',
+    GBPAUD => 'GBP/AUD',
+    GBPCAD => 'GBP/CAD',
+    GBPCHF => 'GBP/CHF',
+    GBPJPY => 'GBP/JPY',
+    GBPNZD => 'GBP/NZD',
+    GBPSEK => 'GBP/SEK',
+    GBPUSD => 'GBP/USD',
+    HKDJPY => 'HKD/JPY',
+    NOKJPY => 'NOK/JPY',
+    NZDCAD => 'NZD/CAD',
+    NZDCHF => 'NZD/CHF',
+    NZDJPY => 'NZD/JPY',
+    NZDUSD => 'NZD/USD',
+    SEKJPY => 'SEK/JPY',
+    SGDJPY => 'SGD/JPY',
+    TRYJPY => 'TRY/JPY',
+    USDCAD => 'USD/CAD',
+    USDCHF => 'USD/CHF',
+    USDDKK => 'USD/DKK',
+    USDHKD => 'USD/HKD',
+    USDJPY => 'USD/JPY',
+    USDMXN => 'USD/MXN',
+    USDNOK => 'USD/NOK',
+    USDSEK => 'USD/SEK',
+    USDSGD => 'USD/SGD',
+    USDTRY => 'USD/TRY',
+    USDZAR => 'USD/ZAR',
+    XAGUSD => 'XAG/USD',
+    XAUUSD => 'XAU/USD',
+    ZARJPY => 'ZAR/JPY',
+    ESP35  => 'ESP35',
+    FRA40  => 'FRA40',
+    GER30  => 'GER30',
+    HKG33  => 'HKG33',
+    ITA40  => 'ITA40',
+    JPN225 => 'JPN225',
+    NAS100 => 'NAS100',
+    SPX500 => 'SPX500',
+    SUI30  => 'SUI30',
+    SWE30  => 'SWE30',
+    UK100  => 'UK100',
+    UKOil  => 'UKOil',
+    US30   => 'US30',
+    USOil  => 'USOil',
+    Copper => 'Copper',
+    XPTUSD => 'XPT/USD',
+    XPDUSD => 'CPD/USD',
+    USDOLLAR=> 'USDOLLAR',
+    NGAS    => 'NGAS',
+    EUSTX50 => 'EUSTX50',
+    Bund    => 'Bund',
+);
+
+my %timeframeMap = (
+    60     => 'm1',
+    300    => 'm5',
+    3600   => 'H1',
+    86400  => 'D1',
+    604800 => 'W1',
+);
+
+
+=method C<convertSymbolToFXCM>
+
+=cut
+sub convertSymbolToFXCM {
+    my ($symbol) = @_;
+
+    die("Unsupported symbol '$symbol'") if (!exists($symbolMap{$symbol}));
+    return $symbolMap{$symbol};
+}
+
+=method C<convertTimeframeToFXCM>
+
+=cut
+sub convertTimeframeToFXCM {
+    my ($timeframe) = @_;
+
+    die("Unsupported timeframe '$timeframe'") if (!exists($timeframeMap{$timeframe}));
+    return $timeframeMap{$timeframe};
+}
+
+
 
 my $numItemsToDownload = 10;
 my ( $timeframes_from_txt, $symbols_from_txt, $start_date, $end_date, $verbose, $help ) = ( undef, undef, '1900-01-01', '9998-12-31', 0, 0);
@@ -91,7 +197,7 @@ while(@timeframes) {
         my $tableToLoad = $symbol . '_' . $timeframe;
 
         try {
-            $fxcm->saveHistoricalDataToFile($tableToLoad, Finance::HostedTrader::Account::FXCM::ForexConnect::convertSymbolToFXCM($symbol), $fxcmTimeframe, $numItemsToDownload);
+            $fxcm->saveHistoricalDataToFile($tableToLoad, convertSymbolToFXCM($symbol), $fxcmTimeframe, $numItemsToDownload);
             $ds->dbh->do("LOAD DATA LOCAL INFILE '$tableToLoad' IGNORE INTO TABLE $tableToLoad FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n'") or die($!);
         } catch {
             warn "Failed to fetch $symbol $timeframe: $_";
