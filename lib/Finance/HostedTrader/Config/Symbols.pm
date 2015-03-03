@@ -12,6 +12,85 @@ package Finance::HostedTrader::Config::Symbols;
 =cut
 
 use Moose;
+with 'MooseX::Log::Log4perl';
+
+my %symbolBaseMap = (
+ AUDCAD => 'CAD',
+ AUDCHF => 'CHF',
+ AUDJPY => 'JPY',
+ AUDNZD => 'NZD',
+ AUDUSD => 'USD',
+ AUS200 => 'AUD',
+ CADCHF => 'CHF',
+ CADJPY => 'JPY',
+ CHFJPY => 'JPY',
+ CHFNOK => 'NOK',
+ CHFSEK => 'SEK',
+ EURAUD => 'AUD',
+ EURCAD => 'CAD',
+ EURCHF => 'CHF',
+ EURDKK => 'DKK',
+ EURGBP => 'GBP',
+ EURJPY => 'JPY',
+ EURNOK => 'NOK',
+ EURNZD => 'NZD',
+ EURSEK => 'SEK',
+ EURTRY => 'TRY',
+ EURUSD => 'USD',
+ GBPAUD => 'AUD',
+ GBPCAD => 'CAD',
+ GBPCHF => 'CHF',
+ GBPJPY => 'JPY',
+ GBPNZD => 'NZD',
+ GBPSEK => 'SEK',
+ GBPUSD => 'USD',
+ HKDJPY => 'JPY',
+ NOKJPY => 'JPY',
+ NZDCAD => 'CAD',
+ NZDCHF => 'CHF',
+ NZDJPY => 'JPY',
+ NZDUSD => 'USD',
+ SEKJPY => 'JPY',
+ SGDJPY => 'JPY',
+ TRYJPY => 'JPY',
+ USDCAD => 'CAD',
+ USDCHF => 'CHF',
+ USDDKK => 'DKK',
+ USDHKD => 'HKD',
+ USDJPY => 'JPY',
+ USDMXN => 'MXN',
+ USDNOK => 'NOK',
+ USDSEK => 'SEK',
+ USDSGD => 'SGD',
+ USDTRY => 'TRY',
+ USDZAR => 'ZAR',
+ XAGUSD => 'USD',
+ XAUUSD => 'USD',
+ ZARJPY => 'JPY',
+ ESP35  => 'EUR',
+ FRA40  => 'EUR',
+ GER30  => 'EUR',
+ GER30USD  => 'USD',
+ HKG33  => 'HKD',
+ ITA40  => 'EUR',
+ JPN225 => 'JPY',
+ NAS100 => 'USD',
+ SPX500 => 'USD',
+ SUI30  => 'CHF',
+ SWE30  => 'SEK',
+ UK100  => 'GBP',
+ UKOil  => 'GBP',
+ US30   => 'USD',
+ USOil  => 'USD',
+ Copper => 'USD',
+ XPTUSD => 'USD',
+ XPDUSD => 'USD',
+ USDOLLAR => 'USD',
+ NGAS   => 'USD',
+ EUSTX50=> 'EUR',
+ Bund   => 'EUR',
+);
+
 
 =attr C<natural>
 
@@ -37,7 +116,7 @@ See the description for natural symbols.
 =cut
 
 
-sub _around_synthetic {
+sub _around_synthetic_symbols {
     my $orig = shift;
     my $self = shift;
 
@@ -56,10 +135,17 @@ has synthetic => (
     required=>0,
 );
 #register method modifier so that undef values can be converted to empty lists
-around 'synthetic' => \&_around_synthetic;
+around 'synthetic' => \&_around_synthetic_symbols;
 
 sub _build_synthetic {
     return [];
+}
+
+sub synthetic_names {
+    my $self = shift;
+
+    my $synthetics = $self->synthetic;
+    return [ map { $_->{name} } @$synthetics ];
 }
 
 =method C<all>
@@ -69,9 +155,34 @@ Returns a list of all symbols, natural and synthetic.
 =cut
 sub all {
     my $self = shift;
-    return [ @{ $self->natural }, @{ $self->synthetic } ];
+    return [ @{ $self->natural }, @{ $self->synthetic_names } ];
 
 }
+
+=method C<getSymbolBase($symbol)>
+
+Returns the base currency for a symbol.
+
+This is required to calculate PL in a different currency, or
+create a synthetic symbol based in a different currency.
+
+Eg:
+ GER30      => 'EUR'
+ NAS100     => 'USD'
+ EURUSD     => 'USD'
+ USDCHF     => 'CHF'
+
+=cut
+sub getSymbolBase {
+    my ($self, $symbol) = @_;
+
+    if (!exists($symbolBaseMap{$symbol})) {
+        $self->logger->logcroak("Unsupported symbol '$symbol'");
+    }
+
+    return $symbolBaseMap{$symbol};
+}
+
 
 __PACKAGE__->meta->make_immutable;
 1;

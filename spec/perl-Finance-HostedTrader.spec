@@ -1,5 +1,5 @@
 Name:           perl-Finance-HostedTrader
-Version:        0.021
+Version:        0.022
 Release:        1%{?dist}
 Summary:        Finance::HostedTrader Perl module
 License:        MIT
@@ -9,53 +9,33 @@ Source0:        http://www.cpan.org/modules/by-module/Finance/Finance-HostedTrad
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
 BuildRequires:  perl(Config::Any)
-BuildRequires:  perl(Date::Calc)
 BuildRequires:  perl(Date::Manip)
 BuildRequires:  perl(DBI)
 BuildRequires:  perl(ExtUtils::MakeMaker)
 BuildRequires:  perl(Finance::FXCM::Simple)
 BuildRequires:  perl(Hash::Merge)
-BuildRequires:  perl(HTML::Table)
-BuildRequires:  perl(List::Compare::Functional)
-BuildRequires:  perl(List::Util)
 BuildRequires:  perl(Log::Log4perl)
-BuildRequires:  perl(Math::Round)
-BuildRequires:  perl(MIME::Lite)
 BuildRequires:  perl(Moose)
 BuildRequires:  perl(Moose::Util::TypeConstraints)
 BuildRequires:  perl(MooseX::Log::Log4perl)
 BuildRequires:  perl(Params::Validate)
 BuildRequires:  perl(Parse::RecDescent)
-BuildRequires:  perl(Scalar::Util)
-BuildRequires:  perl(Test::Differences)
 BuildRequires:  perl(Test::Exception)
 BuildRequires:  perl(Test::More)
-BuildRequires:  perl(Text::ASCIITable)
 BuildRequires:  perl(Try::Tiny)
-BuildRequires:  perl(YAML::Tiny)
 Requires:       perl(Config::Any)
-Requires:       perl(Date::Calc)
 Requires:       perl(Date::Manip)
 Requires:       perl(DBI)
 Requires:       perl(Finance::FXCM::Simple)
 Requires:       perl(Hash::Merge)
-Requires:       perl(HTML::Table)
-Requires:       perl(List::Compare::Functional)
-Requires:       perl(List::Util)
 Requires:       perl(Log::Log4perl)
-Requires:       perl(Math::Round)
-Requires:       perl(MIME::Lite)
 Requires:       perl(Moose)
 Requires:       perl(Moose::Util::TypeConstraints)
 Requires:       perl(MooseX::Log::Log4perl)
 Requires:       perl(Params::Validate)
 Requires:       perl(Parse::RecDescent)
-Requires:       perl(Scalar::Util)
-Requires:       perl(Test::Differences)
 Requires:       perl(Test::More)
-Requires:       perl(Text::ASCIITable)
 Requires:       perl(Try::Tiny)
-Requires:       perl(YAML::Tiny)
 BuildRequires:  libmysqludf_ta >= 0.1-3
 Requires:       libmysqludf_ta >= 0.1-3
 Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
@@ -71,14 +51,14 @@ Finance::HostedTrader Perl module
 make %{?_smp_mflags}
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
-make pure_install PERL_INSTALL_ROOT=$RPM_BUILD_ROOT
+make pure_install PERL_INSTALL_ROOT=%{buildroot}
 
-find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} \;
-find $RPM_BUILD_ROOT -depth -type d -exec rmdir {} 2>/dev/null \;
+find %{buildroot} -type f -name .packlist -exec rm -f {} \;
+find %{buildroot} -depth -type d -exec rmdir {} 2>/dev/null \;
 
-%{_fixperms} $RPM_BUILD_ROOT/*
+%{_fixperms} %{buildroot}/*
 
 %check
 #Don't run the tests here because the environment is not setup
@@ -86,7 +66,7 @@ find $RPM_BUILD_ROOT -depth -type d -exec rmdir {} 2>/dev/null \;
 #make test
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
@@ -97,19 +77,19 @@ rm -rf $RPM_BUILD_ROOT
 /usr/bin/fx-all-tables.pl
 /usr/bin/fx-build-synthetics.pl
 /usr/bin/fx-create-db-schema.pl
-/usr/bin/fx-data-up-2-date.pl
 /usr/bin/fx-download-fxcm.pl
 /usr/bin/fx-eval.pl
-/usr/bin/fx-report.pl
 /usr/bin/fx-score.pl
+/usr/bin/fx-setsubscription.pl
 /usr/bin/fx-show-config.pl
 /usr/bin/fx-test-data.pl
 /usr/bin/fx-test-signal.pl
-/usr/bin/fx-trader.pl
 /usr/bin/fx-update-tf.pl
 
 
 %changelog
+* Tue Mar 03 2015 João Costa <joaocosta@zonalivre.org> 0.022-1
+- New upstream version available
 * Mon Apr 22 2013 João Costa <joaocosta@zonalivre.org> 0.021-1
 - New upstream version available
 * Sat Apr 20 2013 João Costa <joaocosta@zonalivre.org> 0.020-1

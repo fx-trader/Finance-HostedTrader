@@ -1,6 +1,10 @@
 symbols:
     synthetic:
-        - XAGJPY
+        - name: GER30USD
+          components:
+            op: "*"
+            leftop: GER30
+            rightop: EURUSD
 timeframes:
     natural:
         - 60

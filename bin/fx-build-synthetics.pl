@@ -68,13 +68,10 @@ my $result = GetOptions(
     "help", \$help,
 ) || pod2usage(2);
 pod2usage(1) if ($help || !$timeframe);
-$synthetics = [ split( ',', $symbols_txt ) ] if ($symbols_txt);
+die("TODO: support command line option to set symbols") if ($symbols_txt);
+#$synthetics = [ split( ',', $symbols_txt ) ] if ($symbols_txt);
 
 foreach my $synthetic (@$synthetics) {
-    if (ref($synthetic) eq 'HASH') {
-        $db->createSynthetic2($synthetic, $timeframe);
-    } else {
-        print "$synthetic [$timeframe]" if ($verbose);
-        $db->createSynthetic( $synthetic, $timeframe );
-    }
+    print "$synthetic->{name} [$timeframe]\n" if ($verbose);
+    $db->createSynthetic( $synthetic, $timeframe );
 }

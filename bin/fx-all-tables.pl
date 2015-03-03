@@ -23,7 +23,7 @@ if (!defined($symbols_txt)) {
 } elsif ($symbols_txt eq 'natural') {
 	$symbols = $db->cfg->symbols->natural;
 } elsif ($symbols_txt eq 'synthetics') {
-	$symbols = $db->cfg->symbols->synthetic;
+	$symbols = $db->cfg->symbols->synthetic_names;
 } else {
 	$symbols = [split(',',$symbols_txt)] if ($symbols_txt);
 }
