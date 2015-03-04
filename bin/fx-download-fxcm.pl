@@ -44,7 +44,7 @@ use warnings;
 
 use Getopt::Long;
 use Date::Manip;
-use Finance::HostedTrader::Config;
+use Finance::HostedTrader::Datasource;
 use Finance::FXCM::Simple;
 use Pod::Usage;
 use Try::Tiny;
@@ -190,7 +190,7 @@ my $syntheticTfs = $cfg->timeframes->synthetic();
 while(@timeframes) {
     my $timeframe = shift(@timeframes);
     my $nextTimeframe = shift(@timeframes);
-    my $fxcmTimeframe = Finance::HostedTrader::Account::FXCM::ForexConnect::convertTimeframeToFXCM($timeframe);
+    my $fxcmTimeframe = convertTimeframeToFXCM($timeframe);
 
     foreach my $symbol (@symbols) {
         print "Fetching $symbol $timeframe\n" if ($verbose);
