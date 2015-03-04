@@ -46,6 +46,47 @@ symbols:
             op: "*"
             leftop: GER30
             rightop: EURUSD
+        - name: BundUSD
+          components:
+            op: "*"
+            leftop: Bund
+            rightop: EURUSD
+        - name: FRA40USD
+          components:
+            op: "*"
+            leftop: FRA40
+            rightop: EURUSD
+        - name: AUS200USD
+          components:
+            op: "*"
+            leftop: AUS200
+            rightop: AUDUSD
+        - name: ESP35USD
+          components:
+            op: "*"
+            leftop: ESP35
+            rightop: EURUSD
+        - name: ITA40USD
+          components:
+            op: "*"
+            leftop: ITA40
+            rightop: EURUSD
+        - name: UK100USD
+          components:
+            op: "*"
+            leftop: UK100
+            rightop: GBPUSD
+        - name: UKOilUSD
+          components:
+            op: "*"
+            leftop: UKOil
+            rightop: GBPUSD
+        - name: EUSTX50USD
+          components:
+            op: "*"
+            leftop: EUSTX50
+            rightop: EURUSD
+
 timeframes:
     natural:
         - 300
@@ -53,11 +94,16 @@ timeframes:
         - 86400
         - 604800
     synthetic:
-        - 900
-        - 1800
-        - 7200
-        - 10800
-        - 14400
+        - name: 900
+          base: 300
+        - name: 1800
+          base: 300
+        - name: 7200
+          base: 3600
+        - name: 10800
+          base: 3600
+        - name: 14400
+          base: 3600
 db:
     dbhost: localhost
     dbname: fxcm

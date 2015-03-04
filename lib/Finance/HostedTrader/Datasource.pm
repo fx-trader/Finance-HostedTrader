@@ -81,12 +81,14 @@ sub convertOHLCTimeSeries {
     my $self = shift;
     my %args = validate( @_, {
         symbol      => 1,
-        tf_src      => 1,
-        tf_dst      => 1,
+        tf_synthetic=> 1,
         start_date  => 1,
         end_date    => 1,
     });
-    my ( $symbol, $tf_src, $tf_dst, $start_date, $end_date ) = ( $args{symbol}, $args{tf_src}, $args{tf_dst}, $args{start_date}, $args{end_date} );
+
+    my ( $symbol, $start_date, $end_date ) = ( $args{symbol}, $args{start_date}, $args{end_date} );
+    my $tf_src = $args{tf_synthetic}->{base} or die("Invalid timeframe spec, fix fx.yml");
+    my $tf_dst = $args{tf_synthetic}->{name} or die("Invalid timeframe spec, fix fx.yml");
     my ( $where_clause, $start, $end, $limit ) = ( '', '', '', -1 );
     die("Cannot convert to a smaller timeframe: from $tf_src to $tf_dst") if ( $tf_dst < $tf_src );
 

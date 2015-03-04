@@ -25,7 +25,7 @@ my $syntheticTFs = $cfg->timeframes->synthetic;
 
 my $testCount = 0;
 foreach my $naturalTF (@$naturalTFs) {
-    $testCount += grep { $naturalTF <= $_  } @$syntheticTFs;
+    $testCount += grep { $naturalTF <= $_->{name}  } @$syntheticTFs;
 }
 
 plan tests => $testCount;
@@ -42,7 +42,7 @@ foreach my $tf (@{$naturalTFs}) {
     diag("Tables created");
 
 	for (my $i=0;$i<scalar(@{$syntheticTFs});$i++) {
-        my $syntheticTf = $syntheticTFs->[$i];
+        my $syntheticTf = $syntheticTFs->[$i]->{name};
         next if ($tf >= $syntheticTf);
         foreach my $TEST_TABLE ($TEST_TABLE_ONE, $TEST_TABLE_TWO) {
 			$dbh->do("DROP TABLE IF EXISTS $TEST_TABLE\_$syntheticTf") || die($DBI::errstr);
@@ -51,15 +51,13 @@ foreach my $tf (@{$naturalTFs}) {
 
         $ds->convertOHLCTimeSeries(
                                 symbol      => $TEST_TABLE_ONE,
-                                tf_src      => $tf,
-                                tf_dst      => $syntheticTf,
+                                tf_synthetic=> {name => $syntheticTf, base => $tf},
                                 start_date  =>  '0000-00-00',
                                 end_date    =>  '9999-99-99' );
 
         $ds->convertOHLCTimeSeries(
                                 symbol      => $TEST_TABLE_TWO,
-                                tf_src      => $available_timeframe,
-                                tf_dst      => $syntheticTf,
+                                tf_synthetic=> {name => $syntheticTf, base => $available_timeframe},
                                 start_date  => '0000-00-00',
                                 end_date    => '9999-99-99' );
 

@@ -184,6 +184,7 @@ my $providerCfg = $cfg->tradingProviders->{fxcm};
 
 my $fxcm = Finance::FXCM::Simple->new($providerCfg->username, $providerCfg->password, $providerCfg->accountType, $providerCfg->serverURL);
 my $syntheticSymbols = $cfg->symbols->synthetic;
+my $syntheticSymbolNames = $cfg->symbols->synthetic_names;
 my $syntheticTfs = $cfg->timeframes->synthetic();
 
 
@@ -206,20 +207,17 @@ while(@timeframes) {
     }
 
     foreach my $synthetic (@$syntheticSymbols) {
-        print "Creating synthetic $synthetic->name $timeframe\n" if ($verbose);
+        print "Creating synthetic $synthetic->{name} $timeframe\n" if ($verbose);
         $ds->createSynthetic( $synthetic, $timeframe );
     }
 
-    foreach my $dst_timeframe ( @{$syntheticTfs} ) {
-        next if ( $dst_timeframe <= $timeframe );
-        next if ( defined($nextTimeframe) && $dst_timeframe >= $nextTimeframe);
-        foreach my $symbol ( @{$syntheticSymbols}, @symbols ) { # This actually only works if @symbols == @naturalSymbols, or if there are no syntheticSymbols.
-            print "Creating synthetic timeframe $dst_timeframe from $timeframe for $symbol\n" if ($verbose);
-            $ds->convertOHLCTimeSeries( symbol => $symbol, tf_src => $timeframe, tf_dst => $dst_timeframe,
-                start_date => $start_date, end_date => $end_date );
-        }
-        #$timeframe = $dst_timeframe if ( $dst_timeframe % $timeframe == 0 ); TODO: This would speed up calculations but i can't get it to work when dst_timeframe is 3 hours and previously calculated timeframe is 2 hours
-    }
-
     unshift(@timeframes, $nextTimeframe) if ($nextTimeframe);
+}
+
+foreach my $dst_timeframe ( @{$syntheticTfs} ) {
+    foreach my $symbol ( @{$syntheticSymbolNames}, @symbols ) {
+        print "Creating synthetic timeframe $dst_timeframe->{name} from $dst_timeframe->{base} for $symbol\n" if ($verbose);
+        $ds->convertOHLCTimeSeries( symbol => $symbol, tf_synthetic => $dst_timeframe,
+            start_date => $start_date, end_date => $end_date );
+    }
 }

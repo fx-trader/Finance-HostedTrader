@@ -90,7 +90,7 @@ See the description for natural timeframes.
 
 has synthetic => (
     is     => 'ro',
-    isa    => 'Maybe[ArrayRef[TimeframeIDs]]',
+    isa    => 'Maybe[ArrayRef]',
     builder => '_build_synthetic',
     required=>0,
 );

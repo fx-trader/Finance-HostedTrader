@@ -80,7 +80,6 @@ my ( $sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst ) =
   localtime( time - 24 * 60 * 60 );
 my ( $start_date, $end_date ) = ( '1900-01-01', '9998-12-31' );
 my ( $symbols_txt, $timeframe_txt );
-my $available_timeframe = '';
 my $verbose             = 0;
 my $debug             = 0;
 my $help             = 0;
@@ -90,13 +89,11 @@ my $result = GetOptions(
     "end=s",                 \$end_date,
     "symbols=s",             \$symbols_txt,
     "timeframes=s",           \$timeframe_txt,
-    "available-timeframe=i", \$available_timeframe,
     "verbose",               \$verbose,
     "debug",               \$debug,
     "help",               \$help,
 ) || pod2usage(2);
 
-pod2usage(2) if (!$available_timeframe);
 pod2usage(1) if ($help);
 
 $start_date = UnixDate( $start_date, "%Y-%m-%d %H:%M:%S" )
@@ -124,12 +121,10 @@ my $tfs = $cfg->timeframes->synthetic();
 $tfs = [ split( ',', $timeframe_txt ) ] if ($timeframe_txt);
 
 foreach my $tf ( @{$tfs} ) {
-    next if ( $tf == $available_timeframe );
     foreach my $symbol ( @{$symbols} ) {
-        print "$symbol\t$available_timeframe\t$tf\t$start_date\t$end_date\n"
+        print "$symbol\t$tf->{name}\t$start_date\t$end_date\n"
           if ($verbose);
-        $db->convertOHLCTimeSeries( symbol => $symbol, tf_src => $available_timeframe, tf_dst => $tf,
+        $db->convertOHLCTimeSeries( symbol => $symbol, tf_synthetic => $tf,
             start_date => $start_date, end_date => $end_date );
     }
-#    $available_timeframe = $tf; #TODO: This won't work in some cases, eg: if timeframes = 7200,10800
 }
