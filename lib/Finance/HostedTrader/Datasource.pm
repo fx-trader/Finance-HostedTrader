@@ -192,6 +192,54 @@ sub createSynthetic {
       $self->dbh->do($sql);
 }
 
+sub getLastClose {
+    my $self = shift;
+    my %args = validate( @_, {
+        symbol  => 1,
+    });
+
+    my $symbol = $args{symbol};
+
+    my $cfg = $self->cfg;
+    my %available_symbols = map { $_ => 1 } @{$cfg->symbols->all};
+    my $timeframe = 300;#TODO hardcoded lowest available timeframe is 5min. Could look it up in $cfg instead.
+
+    my $sql;
+    if ($available_symbols{$symbol}) {
+        $sql = qq{
+            SELECT T1.datetime,
+            ROUND(T1.close,4) AS close
+            FROM $symbol\_$timeframe AS T1
+            ORDER BY T1.datetime DESC
+            LIMIT 1
+        };
+    } else {
+        my $synthetic_info = $cfg->symbols->nodb->{$symbol} || die("Don't know how to calculate $symbol. Add it to fx.yml");
+        my $op = $synthetic_info->{op};
+        my $leftop = $synthetic_info->{leftop};
+        my $rightop = $synthetic_info->{rightop};
+
+        $leftop.= "_$timeframe" if ($leftop ne '1');
+
+        $sql = qq{
+            SELECT T1.datetime,
+            ROUND(T1.close $op T2.close,4) AS close
+            FROM $leftop AS T1, $rightop\_$timeframe AS T2
+            WHERE T1.datetime = T2.datetime
+            ORDER BY T1.datetime DESC
+            LIMIT 1
+        };
+    }
+    my ($datetime, $close) = $self->dbh->selectrow_array($sql);
+    my %hash = (
+        symbol  => $symbol,
+        item0   => $datetime,
+        item1   => $close,
+    );
+
+    return \%hash;
+}
+
 1;
 
 =head1 SEE ALSO

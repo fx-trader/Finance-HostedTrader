@@ -134,11 +134,22 @@ has synthetic => (
     builder => '_build_synthetic',
     required=>0,
 );
+
+has nodb    => (
+    is      => 'ro',
+    isa     => 'Maybe[HashRef]',
+    builder => '_build_nodb',
+    required=> 0,
+);
 #register method modifier so that undef values can be converted to empty lists
 around 'synthetic' => \&_around_synthetic_symbols;
 
 sub _build_synthetic {
     return [];
+}
+
+sub _build_nodb {
+	return {};
 }
 
 sub synthetic_names {
