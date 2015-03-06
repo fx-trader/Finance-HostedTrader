@@ -86,6 +86,21 @@ symbols:
             op: "*"
             leftop: EUSTX50
             rightop: EURUSD
+        - name: HKG33USD
+          components:
+            op: "/"
+            leftop: HKG33
+            rightop: USDHKD
+        - name: JPN225USD
+          components:
+            op: "/"
+            leftop: JPN225
+            rightop: USDJPY
+        - name: SUI30USD
+          components:
+            op: "/"
+            leftop: SUI30
+            rightop: USDCHF
     nodb:
         GBPCAD:
             op: "*"
