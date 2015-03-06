@@ -219,17 +219,26 @@ sub getLastClose {
         my $leftop = $synthetic_info->{leftop};
         my $rightop = $synthetic_info->{rightop};
 
-        $leftop.= "_$timeframe" if ($leftop ne '1');
-
-        $sql = qq{
-            SELECT T1.datetime,
-            ROUND(T1.close $op T2.close,4) AS close
-            FROM $leftop AS T1, $rightop\_$timeframe AS T2
-            WHERE T1.datetime = T2.datetime
-            ORDER BY T1.datetime DESC
-            LIMIT 1
-        };
+        if ($leftop ne '1') {
+            $sql = qq{
+                SELECT T1.datetime,
+                ROUND(T1.close $op T2.close,4) AS close
+                FROM $leftop\_$timeframe AS T1, $rightop\_$timeframe AS T2
+                WHERE T1.datetime = T2.datetime
+                ORDER BY T1.datetime DESC
+                LIMIT 1
+            };
+        } else {
+            $sql = qq{
+                SELECT T2.datetime,
+                ROUND(1 $op T2.close,4) AS close
+                FROM $rightop\_$timeframe AS T2
+                ORDER BY T2.datetime DESC
+                LIMIT 1
+            };
+        }
     }
+
     my ($datetime, $close) = $self->dbh->selectrow_array($sql);
     my %hash = (
         symbol  => $symbol,
