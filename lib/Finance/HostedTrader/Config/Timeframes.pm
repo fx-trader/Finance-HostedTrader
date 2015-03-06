@@ -101,6 +101,14 @@ sub _build_synthetic {
     return [];
 }
 
+sub synthetic_names {
+    my $self = shift;
+
+    my $synthetics = $self->synthetic;
+    return [ map { $_->{name} } @$synthetics ];
+}
+
+
 =method C<all>
 
 Returns a list of all timeframes, natural and synthetic, sorted by granularity.
@@ -111,7 +119,7 @@ Shorter timeframes will come first, eg: 1 minute will be before 1 hour
 sub all {
     my $self = shift;
 
-   return $self->_sort_timeframes( [ @{ $self->natural }, @{ $self->synthetic } ] );
+   return $self->_sort_timeframes( [ @{ $self->natural }, @{ $self->synthetic_names } ] );
 }
 
 =method C<getTimeframeID>
