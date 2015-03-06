@@ -21,12 +21,12 @@ is_deeply($empty_tfs->all, [], 'All timeframes empty');
 
 my $tfs = Finance::HostedTrader::Config::Timeframes->new(
 	'natural' => [ qw (300 60) ], #Make sure timeframes are unordered to test if the module returns them ordered
-	'synthetic' => [ qw (7200 120) ], #Make sure timeframes are unordered to test if the module returns them ordered
+	'synthetic' => [ { name => 7200, base => 300 }, { name => 120, base => 60 } ], #Make sure timeframes are unordered to test if the module returns them ordered
 	);
 isa_ok($tfs,'Finance::HostedTrader::Config::Timeframes');
 is($tfs->getTimeframeName($tfs->getTimeframeID('min')), 'min', 'GetTimeframe{ID,Name}');
 is_deeply($tfs->natural, [60, 300], 'Natural timeframes sorted');
-is_deeply($tfs->synthetic, [120, 7200], 'Synthetic timeframes sorted');
+is_deeply($tfs->synthetic_names, [120, 7200], 'Synthetic timeframes sorted');
 is_deeply($tfs->all, [60, 120, 300, 7200], 'All timeframes sorted');
 
 
