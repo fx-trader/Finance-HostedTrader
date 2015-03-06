@@ -105,7 +105,7 @@ sub synthetic_names {
     my $self = shift;
 
     my $synthetics = $self->synthetic;
-    return [ map { $_->{name} } @$synthetics ];
+    return [ sort map { $_->{name} } @$synthetics ];
 }
 
 
