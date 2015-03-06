@@ -1,11 +1,13 @@
 #!/usr/bin/perl
+
+eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
+    if 0; # not running under some shell
 # PODNAME: fx-score.pl
 # ABSTRACT: List FX currencies sorted by relative strength
 
 use strict;
 use warnings;
 
-use Finance::HostedTrader::Config;
 use Finance::HostedTrader::ExpressionParser;
 
 use Data::Dumper;
@@ -22,12 +24,36 @@ my $result = GetOptions(
 ) || exit(1);
 
 
-my $cfg               = Finance::HostedTrader::Config->new();
 my $signal_processor = Finance::HostedTrader::ExpressionParser->new();
 my %scores;
 
-my $symbols    = $cfg->symbols->all;
-foreach my $symbol ( @{$symbols} ) {
+my %symbols = (
+    AUD => { s => 'AUDUSD', m => 1 },
+    EUR => { s => 'EURUSD', m => 1 },
+    CAD => { s => 'USDCAD', m => -1 },
+    GBP => { s => 'GBPUSD', m => 1 },
+    NZD => { s => 'NZDUSD', m => 1 },
+    CHF => { s => 'USDCHF', m => -1 },
+    JPY => { s => 'USDJPY', m => -1 },
+    OIL => { s => 'USOil',  m => 1 },
+    XAG => { s => 'XAGUSD', m => 1 },
+    XAU => { s => 'XAUUSD', m => 1 },
+    GER30 => { s => 'GER30USD', m => 1 },
+    Bund => { s => 'BundUSD', m => 1 },
+    FRA40 => { s => 'FRA40USD', m => 1 },
+    AUS200 => { s => 'AUS200USD', m => 1 },
+    ESP35 => { s => 'ESP35USD', m => 1 },
+    ITA40 => { s => 'ITA40USD', m => 1 },
+    UK100 => { s => 'UK100USD', m => 1 },
+    UKOil => { s => 'UKOilUSD', m => 1 },
+    EUSTX50 => { s => 'EUSTX50USD', m => 1 },
+    HKG33 => { s => 'HKG33USD', m => 1 },
+    JPN225 => { s => 'JPN225USD', m => 1 },
+    SUI30 => { s => 'SUI30USD', m => 1 },
+);
+
+foreach my $asset ( keys(%symbols) ) {
+    my $symbol = $symbols{$asset}->{s};
     my $data = $signal_processor->getIndicatorData(
         {
             'fields'          => 'datetime,ema(trend(close,21),13)',
@@ -37,41 +63,10 @@ foreach my $symbol ( @{$symbols} ) {
             'numItems'        => 1
         }
     );
-    $scores{$symbol} = $data->[0]->[1];
+    $scores{$asset} = $data->[0]->[1] * $symbols{$asset}->{m};
 }
+$scores{USD}=1;
 
-my @items = qw(AUD CAD CHF EUR GBP NZD JPY USD XAU XAG);
-my %i = map {$_ => 1 } @items;
-
-foreach my $item (@item_exclude) {
-delete $i{$item};
-}
-@items = keys(%i);
-
-foreach my $item (@items) {
-    print $item, "\t", getScore($item), "\n";
-}
-
-sub getScore {
-    my $item = shift;
-    my @scores2;
-    my $others = join( '|', grep { !/$item/ } @items );
-    push @scores2, grep { /$item($others)/ } keys(%scores);
-    push @scores2, grep { /($others)$item/ } keys(%scores);
-
-    #print STDERR $item,scalar(@scores2),"\n";
-    #print STDERR $item,Dumper(\@scores2),"\n" if ($item eq 'XAU');
-    my $rv = 0;
-    foreach my $pair (@scores2) {
-
-        #print STDERR $pair,"\t",$scores{$pair},"\n" if ($item eq 'XAU');
-        if ( substr( $pair, 0, 3 ) eq $item ) {
-            print "\t$pair\n" unless ( defined( $scores{$pair} ) );
-            $rv += $scores{$pair};
-        }
-        else {
-            $rv -= $scores{$pair};
-        }
-    }
-    return $rv;
+foreach my $asset (keys %scores) {
+    print $asset, " ", $scores{$asset}, "\n";
 }
