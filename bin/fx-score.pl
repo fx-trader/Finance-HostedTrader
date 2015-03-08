@@ -63,10 +63,12 @@ foreach my $asset ( keys(%symbols) ) {
             'numItems'        => 1
         }
     );
-    $scores{$asset} = $data->[0]->[1] * $symbols{$asset}->{m};
+    $scores{$asset}{score}      = $data->[0][1] * $symbols{$asset}->{m};
+    $scores{$asset}{datetime}   = $data->[0][0];  # Make datetime visible so that's it's clear if data is out of date
 }
-$scores{USD}=1;
+$scores{USD}{score}     = 1;
+$scores{USD}{datetime}  = '';
 
 foreach my $asset (keys %scores) {
-    print $asset, " ", $scores{$asset}, "\n";
+    print $asset, " ", $scores{$asset}{score}, " ", $scores{$asset}{datetime}, "\n";
 }
