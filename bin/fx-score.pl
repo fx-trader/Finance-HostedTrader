@@ -1,7 +1,5 @@
 #!/usr/bin/perl
 
-eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
-    if 0; # not running under some shell
 # PODNAME: fx-score.pl
 # ABSTRACT: List FX currencies sorted by relative strength
 
