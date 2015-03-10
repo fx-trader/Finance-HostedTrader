@@ -110,6 +110,18 @@ symbols:
             op: "/"
             leftop: 1
             rightop: EURGBP
+        USDEUR:
+            op: "/"
+            leftop: 1
+            rightop: EURUSD
+        CHFEUR:
+            op: "/"
+            leftop: 1
+            rightop: EURCHF
+        JPYEUR:
+            op: "/"
+            leftop: 1
+            rightop: EURJPY
 
 timeframes:
     natural:
