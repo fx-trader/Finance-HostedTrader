@@ -89,6 +89,17 @@ my %symbolBaseMap = (
  NGAS   => 'USD',
  EUSTX50=> 'EUR',
  Bund   => 'EUR',
+ BundUSD=> 'USD',
+ FRA40USD=> 'USD',
+ AUS200USD=> 'USD',
+ ESP35USD=> 'USD',
+ ITA40USD=> 'USD',
+ UK100USD=> 'USD',
+ UKOilUSD=> 'USD',
+ EUSTX50USD=> 'USD',
+ HKG33USD=> 'USD',
+ JPN225USD=> 'USD',
+ SUI30USD=> 'USD',
 );
 
 
@@ -170,7 +181,7 @@ sub all {
 
 }
 
-=method C<getSymbolBase($symbol)>
+=method C<getSymbolDenominator($symbol)>
 
 Returns the base currency for a symbol.
 
@@ -184,7 +195,7 @@ Eg:
  USDCHF     => 'CHF'
 
 =cut
-sub getSymbolBase {
+sub getSymbolDenominator {
     my ($self, $symbol) = @_;
 
     if (!exists($symbolBaseMap{$symbol})) {
@@ -192,6 +203,12 @@ sub getSymbolBase {
     }
 
     return $symbolBaseMap{$symbol};
+}
+
+sub get_symbols_by_denominator {
+    my ($self, $base) = @_;
+
+    return [ grep { $self->getSymbolDenominator($_) eq $base } @{$self->all} ];
 }
 
 
