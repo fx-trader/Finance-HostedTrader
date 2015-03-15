@@ -15,91 +15,91 @@ use Moose;
 with 'MooseX::Log::Log4perl';
 
 my %symbolBaseMap = (
- AUDCAD => 'CAD',
- AUDCHF => 'CHF',
- AUDJPY => 'JPY',
- AUDNZD => 'NZD',
- AUDUSD => 'USD',
- AUS200 => 'AUD',
- CADCHF => 'CHF',
- CADJPY => 'JPY',
- CHFJPY => 'JPY',
- CHFNOK => 'NOK',
- CHFSEK => 'SEK',
- EURAUD => 'AUD',
- EURCAD => 'CAD',
- EURCHF => 'CHF',
- EURDKK => 'DKK',
- EURGBP => 'GBP',
- EURJPY => 'JPY',
- EURNOK => 'NOK',
- EURNZD => 'NZD',
- EURSEK => 'SEK',
- EURTRY => 'TRY',
- EURUSD => 'USD',
- GBPAUD => 'AUD',
- GBPCAD => 'CAD',
- GBPCHF => 'CHF',
- GBPJPY => 'JPY',
- GBPNZD => 'NZD',
- GBPSEK => 'SEK',
- GBPUSD => 'USD',
- HKDJPY => 'JPY',
- NOKJPY => 'JPY',
- NZDCAD => 'CAD',
- NZDCHF => 'CHF',
- NZDJPY => 'JPY',
- NZDUSD => 'USD',
- SEKJPY => 'JPY',
- SGDJPY => 'JPY',
- TRYJPY => 'JPY',
- USDCAD => 'CAD',
- USDCHF => 'CHF',
- USDDKK => 'DKK',
- USDHKD => 'HKD',
- USDJPY => 'JPY',
- USDMXN => 'MXN',
- USDNOK => 'NOK',
- USDSEK => 'SEK',
- USDSGD => 'SGD',
- USDTRY => 'TRY',
- USDZAR => 'ZAR',
- XAGUSD => 'USD',
- XAUUSD => 'USD',
- ZARJPY => 'JPY',
- ESP35  => 'EUR',
- FRA40  => 'EUR',
- GER30  => 'EUR',
- GER30USD  => 'USD',
- HKG33  => 'HKD',
- ITA40  => 'EUR',
- JPN225 => 'JPY',
- NAS100 => 'USD',
- SPX500 => 'USD',
- SUI30  => 'CHF',
- SWE30  => 'SEK',
- UK100  => 'GBP',
- UKOil  => 'GBP',
- US30   => 'USD',
- USOil  => 'USD',
- Copper => 'USD',
- XPTUSD => 'USD',
- XPDUSD => 'USD',
- USDOLLAR => 'USD',
- NGAS   => 'USD',
- EUSTX50=> 'EUR',
- Bund   => 'EUR',
- BundUSD=> 'USD',
- FRA40USD=> 'USD',
- AUS200USD=> 'USD',
- ESP35USD=> 'USD',
- ITA40USD=> 'USD',
- UK100USD=> 'USD',
- UKOilUSD=> 'USD',
- EUSTX50USD=> 'USD',
- HKG33USD=> 'USD',
- JPN225USD=> 'USD',
- SUI30USD=> 'USD',
+ AUDCAD => { numerator => 'AUD',        denominator => 'CAD' },
+ AUDCHF => { numerator => 'AUD',        denominator => 'CHF' },
+ AUDJPY => { numerator => 'AUD',        denominator => 'JPY' },
+ AUDNZD => { numerator => 'AUD',        denominator => 'NZD' },
+ AUDUSD => { numerator => 'AUD',        denominator => 'USD' },
+ AUS200 => { numerator => 'AUS200',     denominator => 'AUD' },
+ CADCHF => { numerator => 'CAD',        denominator => 'CHF' },
+ CADJPY => { numerator => 'CAD',        denominator => 'JPY' },
+ CHFJPY => { numerator => 'CHF',        denominator => 'JPY' },
+ CHFNOK => { numerator => 'CHF',        denominator => 'NOK' },
+ CHFSEK => { numerator => 'CHF',        denominator => 'SEK' },
+ EURAUD => { numerator => 'EUR',        denominator => 'AUD' },
+ EURCAD => { numerator => 'EUR',        denominator => 'CAD' },
+ EURCHF => { numerator => 'EUR',        denominator => 'CHF' },
+ EURDKK => { numerator => 'EUR',        denominator => 'DKK' },
+ EURGBP => { numerator => 'EUR',        denominator => 'GBP' },
+ EURJPY => { numerator => 'EUR',        denominator => 'JPY' },
+ EURNOK => { numerator => 'EUR',        denominator => 'NOK' },
+ EURNZD => { numerator => 'EUR',        denominator => 'NZD' },
+ EURSEK => { numerator => 'EUR',        denominator => 'SEK' },
+ EURTRY => { numerator => 'EUR',        denominator => 'TRY' },
+ EURUSD => { numerator => 'EUR',        denominator => 'USD' },
+ GBPAUD => { numerator => 'GBP',        denominator => 'AUD' },
+ GBPCAD => { numerator => 'GBP',        denominator => 'CAD' },
+ GBPCHF => { numerator => 'GBP',        denominator => 'CHF' },
+ GBPJPY => { numerator => 'GBP',        denominator => 'JPY' },
+ GBPNZD => { numerator => 'GBP',        denominator => 'NZD' },
+ GBPSEK => { numerator => 'GBP',        denominator => 'SEK' },
+ GBPUSD => { numerator => 'GBP',        denominator => 'USD' },
+ HKDJPY => { numerator => 'HKD',        denominator => 'JPY' },
+ NOKJPY => { numerator => 'NOK',        denominator => 'JPY' },
+ NZDCAD => { numerator => 'NZD',        denominator => 'CAD' },
+ NZDCHF => { numerator => 'NZD',        denominator => 'CHF' },
+ NZDJPY => { numerator => 'NZD',        denominator => 'JPY' },
+ NZDUSD => { numerator => 'NZD',        denominator => 'USD' },
+ SEKJPY => { numerator => 'SEK',        denominator => 'JPY' },
+ SGDJPY => { numerator => 'SGD',        denominator => 'JPY' },
+ TRYJPY => { numerator => 'TRY',        denominator => 'JPY' },
+ USDCAD => { numerator => 'USD',        denominator => 'CAD' },
+ USDCHF => { numerator => 'USD',        denominator => 'CHF' },
+ USDDKK => { numerator => 'USD',        denominator => 'DKK' },
+ USDHKD => { numerator => 'USD',        denominator => 'HKD' },
+ USDJPY => { numerator => 'USD',        denominator => 'JPY' },
+ USDMXN => { numerator => 'USD',        denominator => 'MXN' },
+ USDNOK => { numerator => 'USD',        denominator => 'NOK' },
+ USDSEK => { numerator => 'USD',        denominator => 'SEK' },
+ USDSGD => { numerator => 'USD',        denominator => 'SGD' },
+ USDTRY => { numerator => 'USD',        denominator => 'TRY' },
+ USDZAR => { numerator => 'USD',        denominator => 'ZAR' },
+ XAGUSD => { numerator => 'XAG',        denominator => 'USD' },
+ XAUUSD => { numerator => 'XAU',        denominator => 'USD' },
+ ZARJPY => { numerator => 'ZAR',        denominator => 'JPY' },
+ ESP35  => { numerator => 'ESP35',      denominator => 'EUR' },
+ FRA40  => { numerator => 'FRA40',      denominator => 'EUR' },
+ GER30  => { numerator => 'GER30',      denominator => 'EUR' },
+ GER30USD  => { numerator => 'GER30',   denominator => 'USD' },
+ HKG33  => { numerator => 'HKG33',      denominator => 'HKD' },
+ ITA40  => { numerator => 'ITA40',      denominator => 'EUR' },
+ JPN225 => { numerator => 'JPN225',     denominator => 'JPY' },
+ NAS100 => { numerator => 'NAS100',     denominator => 'USD' },
+ SPX500 => { numerator => 'SPX500',     denominator => 'USD' },
+ SUI30  => { numerator => 'SUI30',      denominator => 'CHF' },
+ SWE30  => { numerator => 'SWE30',      denominator => 'SEK' },
+ UK100  => { numerator => 'UK100',      denominator => 'GBP' },
+ UKOil  => { numerator => 'UKOil',      denominator => 'GBP' },
+ US30   => { numerator => 'US30',       denominator => 'USD' },
+ USOil  => { numerator => 'USOil',      denominator => 'USD' },
+ Copper => { numerator => 'Copper',     denominator => 'USD' },
+ XPTUSD => { numerator => 'XPT',        denominator => 'USD' },
+ XPDUSD => { numerator => 'XPD',        denominator => 'USD' },
+ USDOLLAR => { numerator => 'USDOLLAR', denominator => 'USD' },
+ NGAS   => { numerator => 'NGAS',       denominator => 'USD' },
+ EUSTX50=> { numerator => 'EUSTX50',    denominator => 'EUR' },
+ Bund   => { numerator => 'Bund',       denominator => 'EUR' },
+ BundUSD=> { numerator => 'Bund',       denominator => 'USD' },
+ FRA40USD=> { numerator => 'FRA40',     denominator => 'USD' },
+ AUS200USD=> { numerator => 'AUS200',   denominator => 'USD' },
+ ESP35USD=> { numerator => 'ESP35',     denominator => 'USD' },
+ ITA40USD=> { numerator => 'ITA40',     denominator => 'USD' },
+ UK100USD=> { numerator => 'UK100',     denominator => 'USD' },
+ UKOilUSD=> { numerator => 'UKOil',     denominator => 'USD' },
+ EUSTX50USD=> { numerator => 'EUSTX50', denominator => 'USD' },
+ HKG33USD=> { numerator => 'HKG33',     denominator => 'USD' },
+ JPN225USD=> { numerator => 'JPN225',   denominator => 'USD' },
+ SUI30USD=> { numerator => 'SUI30',     denominator => 'USD' },
 );
 
 
@@ -183,16 +183,16 @@ sub all {
 
 =method C<getSymbolDenominator($symbol)>
 
-Returns the base currency for a symbol.
+Returns the asset the symbol is denominated in.
 
 This is required to calculate PL in a different currency, or
 create a synthetic symbol based in a different currency.
 
 Eg:
- GER30      => 'EUR'
- NAS100     => 'USD'
- EURUSD     => 'USD'
- USDCHF     => 'CHF'
+ GER30      => 'EUR' ( Denominated in EUR )
+ NAS100     => 'USD' ( Denominated in USD )
+ EURUSD     => 'USD' ( Denominated in USD )
+ USDCHF     => 'CHF' ( Denominated in CHF )
 
 =cut
 sub getSymbolDenominator {
@@ -202,13 +202,41 @@ sub getSymbolDenominator {
         $self->logger->logcroak("Unsupported symbol '$symbol'");
     }
 
-    return $symbolBaseMap{$symbol};
+    return $symbolBaseMap{$symbol}->{denominator};
+}
+
+=method C<getSymbolNumerator($symbol)>
+
+Returns the asset the symbol represents.
+
+Eg:
+ GER30      => 'GER30'  ( Represents in GER30 )
+ GER30USD   => 'GER30'  ( Represents in GER30 )
+ EURUSD     => 'EUR'    ( Represents EUR )
+ USDCHF     => 'USD'    ( Represents USD )
+
+=cut
+
+sub getSymbolNumerator {
+    my ($self, $symbol) = @_;
+
+    if (!exists($symbolBaseMap{$symbol})) {
+        $self->logger->logcroak("Unsupported symbol '$symbol'");
+    }
+
+    return $symbolBaseMap{$symbol}->{numerator};
 }
 
 sub get_symbols_by_denominator {
     my ($self, $base) = @_;
 
     return [ grep { $self->getSymbolDenominator($_) eq $base } @{$self->all} ];
+}
+
+sub get_symbols_by_numerator {
+    my ($self, $base) = @_;
+
+    return [ grep { $self->getSymbolNumerator($_) eq $base } @{$self->all} ];
 }
 
 

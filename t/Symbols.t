@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 9;
+use Test::More tests => 10;
 use Test::Exception;
 use Data::Dumper;
 
@@ -28,5 +28,7 @@ is_deeply($non_empty_tfs->natural, ['AUDUSD','USDJPY'], 'Natural symbols non emp
 is_deeply($non_empty_tfs->synthetic_names, ['GER30USD'], 'Synthetic symbols non empty');
 is_deeply($non_empty_tfs->all, ['AUDUSD','USDJPY','GER30USD'], 'All symbols non empty');
 
-is_deeply( $non_empty_tfs->get_symbols_by_denominator("USD"), ['AUDUSD','GER30USD'], 'All symbols with base USD');
-is_deeply( $non_empty_tfs->get_symbols_by_denominator("JPY"), ['USDJPY'], 'All symbols with base JPY');
+is_deeply( $non_empty_tfs->get_symbols_by_denominator("USD"), ['AUDUSD','GER30USD'], 'All symbols with denominator USD');
+is_deeply( $non_empty_tfs->get_symbols_by_denominator("JPY"), ['USDJPY'], 'All symbols with denominator JPY');
+
+is_deeply( $non_empty_tfs->get_symbols_by_numerator("AUD"), [qw/AUDUSD/], 'All symbols with numerator AUD');
