@@ -122,6 +122,10 @@ symbols:
             op: "/"
             leftop: 1
             rightop: EURJPY
+        GBPHKD:
+            op: "*"
+            leftop: GBPUSD
+            rightop: USDHKD
 
 timeframes:
     natural:
