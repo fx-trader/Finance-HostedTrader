@@ -1,0 +1,19 @@
+### 100 day HIGHS
+03 23 * * 1-5 OUT=`/usr/local/bin/fx-eval.pl "datetime,high,previous(max(high,100),1)" | cut -f 1,2,3,4 | awk '{if ($4 > $5) print $1,$2,$3 }'`; test -n "$OUT" && echo $OUT | mail -s "FX: 100 day highs" "joaocosta@zonalivre.org"
+### 100 day lows
+03 23 * * 1-5 OUT=`/usr/local/bin/fx-eval.pl "datetime,low,previous(min(low,100),1)" | cut -f 1,2,3,4 | awk '{if ($4 < $5) print $1,$2,$3 }'`; test -n "$OUT" && echo $OUT | mail -s "FX: 100 day lows" "joaocosta@zonalivre.org"
+
+### 4 hour RSI < 45
+#04 * * * 1-5 OUT=`/usr/local/bin/fx-eval.pl --timeframe=4hour --symbols=HKG33,XAUUSD,GER30,JPN225 "datetime,rsi(close,14)" | awk '{if ($4 < 45) print $1,$2,$3,$4}'`; test -n "$OUT" && echo $OUT | mail -s "FX: 4HOUR RSI<45" "joaocosta@zonalivre.org"
+### 4 hour RSI > 55
+#04 * * * 1-5 OUT=`/usr/local/bin/fx-eval.pl --timeframe=4hour --symbols=NZDUSD,XAUUSD,GER30,JPN225 "datetime,rsi(close,14)" | awk '{if ($4 > 55) print $1,$2,$3,$4}'`; test -n "$OUT" && echo $OUT | mail -s "FX: 4HOUR RSI>55" "joaocosta@zonalivre.org"
+
+
+### Daily RSI pullback while price way above long term average
+04 23 * * 1-5 OUT=`/usr/local/bin/fx-eval.pl --timeframe=day "datetime,rsi(close,14),close,ema(close,200) + 3*atr(14)" | awk '{if ($4 < 55 && $5 > $6) print $1,$2,$3}'`; test -n "$OUT" && echo $OUT | mail -s "FX: Big Fish Long" "joaocosta@zonalivre.org"
+04 23 * * 1-5 OUT=`/usr/local/bin/fx-eval.pl --timeframe=day "datetime,rsi(close,14),close,ema(close,200) - 3*atr(14)" | awk '{if ($4 > 45 && $5 < $6) print $1,$2,$3}'`; test -n "$OUT" && echo $OUT | mail -s "FX: Big Fish Short" "joaocosta@zonalivre.org"
+
+## Long term trends
+#35 23 * * 0 /usr/local/bin/fx-score.pl | sort -g -r -k 2 | mail -s "FX: Weekly strength" "joaocosta@zonalivre.org"
+35 23 * * 0 /usr/local/bin/fx-trend.pl | sort -g -r -k 2 | mail -s "FX: Weekly trend" "joaocosta@zonalivre.org"
+35 23 * * 0 /usr/local/bin/fx-trend.pl --average=13 | sort -g -r -k 2 | mail -s "FX: Weekly trend average" "joaocosta@zonalivre.org"
