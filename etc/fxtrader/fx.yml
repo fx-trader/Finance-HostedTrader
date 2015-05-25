@@ -34,12 +34,12 @@ symbols:
         - UKOil
         - US30
         - USOil
-        - Copper
-        - XPTUSD
+#        - Copper
+#        - XPTUSD
         - USDOLLAR
-        - NGAS
+#        - NGAS
         - Bund
-        - EUSTX50
+#        - EUSTX50
     synthetic:
         - name: GER30USD
           components:
@@ -81,11 +81,11 @@ symbols:
             op: "*"
             leftop: UKOil
             rightop: GBPUSD
-        - name: EUSTX50USD
-          components:
-            op: "*"
-            leftop: EUSTX50
-            rightop: EURUSD
+#        - name: EUSTX50USD
+#          components:
+#            op: "*"
+#            leftop: EUSTX50
+#            rightop: EURUSD
         - name: HKG33USD
           components:
             op: "/"
