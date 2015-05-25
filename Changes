@@ -1,6 +1,8 @@
 Revision history for Finance::HostedTrader
 
 {{$NEXT}}
+
+0.022 2015-05-25 19:43:00 UTC
       Revamped support for synthetic symbols
       Clean code base and remove things which i'm not using
       New FXCM specific script: fx-setsubscription.pl
