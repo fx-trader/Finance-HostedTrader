@@ -1,7 +1,7 @@
 # Use the development copy of Finance::HostedTrader instead of the system one installed in the system
 
-- export PERL5LIB=/opt/src/Finance-HostedTrader/lib:$PERL5LIB
-- export PATH=/opt/src/Finance-HostedTrader/bin:$PATH
+- export PERL5LIB=~/Finance-HostedTrader/lib:$PERL5LIB
+- export PATH=~/Finance-HostedTrader/bin:$PATH
 
 # Use the feed database at zonalivre.org instead of the limited local development database
 
