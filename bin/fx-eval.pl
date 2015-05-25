@@ -22,7 +22,7 @@ ema(close,21)
 
 =item C<--timeframe=tf>
 
-Required argument. Specifies a single timeframe
+Optional. Specifies a single timeframe. Defaults to day.
 
 tf can be a valid integer timeframe as defined in L<Finance::HostedTrader::Datasource>
 
