@@ -3,7 +3,7 @@ NEW_SYMBOL=USDHKD
 # Create the tables
 fx-create-db-schema.pl --symbols=${NEW_SYMBOL} | mysql -u`fx-show-config.pl db::dbuser` -p`fx-show-config.pl db::dbpasswd` `fx-show-config.pl db::dbname`
 
-#Edit fx.yml and add the new symbol. Commit the change to:
+#Edit etc/fxtrader/fx.yml and add the new symbol. Commit the change to:
 https://github.com/joaocosta/Finance-provisioning/blob/master/puppet/modules/fxtrader/files/etc/fxtrader/fx.yml
 
 #Load data for each natural timeframe (as defined in /etc/fxtrader/fx.yml).
