@@ -99,7 +99,7 @@ foreach my $symbol ( @$symbols ) {
 sub getSQL {
     my ($symbol, $average,$numItems) = @_;
     my $sql = qq|
-        SELECT `datetime`,`round(ta_ema(round((close - ta_sma(close,21)) / (SQRT(ta_sum(POW(close - ta_sma(close, 21), 2), 21)/21)), 2), ${average}), 4)` FROM (
+        SELECT date_format(`datetime`, '%Y-%m-%d'),`round(ta_ema(round((close - ta_sma(close,21)) / (SQRT(ta_sum(POW(close - ta_sma(close, 21), 2), 21)/21)), 2), ${average}), 4)` FROM (
         SELECT * FROM (
         SELECT datetime,round(ta_ema(round((close - ta_sma(close,21)) / (SQRT(ta_sum(POW(close - ta_sma(close, 21), 2), 21)/21)), 2), ${average}), 4)
         FROM (
