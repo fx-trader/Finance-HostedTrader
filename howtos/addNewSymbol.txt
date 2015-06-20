@@ -13,6 +13,7 @@ fx-download-fxcm.pl --symbols=${NEW_SYMBOL} --timeframes=86400 --numItems=2200
 fx-download-fxcm.pl --symbols=${NEW_SYMBOL} --timeframes=300,3600 --numItems=5000
 fx-download-fxcm.pl --symbols=${NEW_SYMBOL} --timeframes=300 --numItems=5000
 
+Update size.html in the Finance-HostedTrader-UI repo and deploy to joao@zonalivre.org:~/sites/zonalivre.org/web/size.html
 
 
 # Make sure fx.yml has been deployed, and restart apache if it's important that mod_perl apps pickup the change to fx.yml imediatelly
