@@ -6,6 +6,10 @@ fx-create-db-schema.pl --symbols=${NEW_SYMBOL} | mysql -u`fx-show-config.pl db::
 #Edit etc/fxtrader/fx.yml and add the new symbol. Commit the change to:
 https://github.com/joaocosta/Finance-provisioning/blob/master/puppet/modules/fxtrader/files/etc/fxtrader/fx.yml
 
+# Make sure fx-download-fxcm.pl has the new symbol in %symbolMap, add it if it
+# doesn't exist
+grep $NEW_SYMBOL bin/fx-download-fxcm.pl
+
 #Load data for each natural timeframe (as defined in /etc/fxtrader/fx.yml).
 # TODO the actual numItems might vary depending on how much data is needed.
 fx-download-fxcm.pl --symbols=${NEW_SYMBOL} --timeframes=604800 --numItems=1000
