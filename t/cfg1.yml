@@ -1,4 +1,6 @@
 symbols:
+    natural:
+        - XAGUSD2
     synthetic:
         - name: GER30USD
           components:
