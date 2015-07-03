@@ -17,7 +17,7 @@ use_ok ('Finance::HostedTrader::Config::Timeframes');
 my $t_path = dirname($0);
 
 my $merge_files = Finance::HostedTrader::Config->new(
-    'files' => [ "$t_path/cfg1.yml" ]);
+    'file' => "$t_path/cfg1.yml" );
 isa_ok($merge_files,'Finance::HostedTrader::Config');
 is($merge_files->db->dbhost, 'dbhost', 'dbhost');
 is($merge_files->db->dbname, 'dbname', 'dbname');

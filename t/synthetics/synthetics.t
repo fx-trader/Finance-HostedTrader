@@ -16,9 +16,7 @@ my $config_file = dirname($0) . "/fx.yml";
 die("Could not find config file $config_file") if (!$config_file);
 my $ds = Finance::HostedTrader::Datasource->new(
 	cfg => Finance::HostedTrader::Config->new(
-		files => [
-			$config_file
-		]
+		file => $config_file
 	)
 );
 my $cfg = $ds->cfg;

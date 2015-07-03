@@ -9,10 +9,8 @@ package Finance::HostedTrader::Config;
 
     ... OR ...
 
-    my $merge_files = Finance::HostedTrader::Config->new( #Builds from specified config files
-		'files' => [
-			'cfg1.yml',
-			'cfg2.yml', ]);
+    my $cfg = Finance::HostedTrader::Config->new( #Builds from specified config files
+		'file' => 'cfg1.yml' );
 
     ... OR ...
 
@@ -40,36 +38,12 @@ package Finance::HostedTrader::Config;
 =cut
 
 use Config::Any;
-use Hash::Merge;
 use Moose;
 
 use Finance::HostedTrader::Config::DB;
 use Finance::HostedTrader::Config::Symbols;
 use Finance::HostedTrader::Config::Timeframes;
 use Finance::HostedTrader::Config::TradingProvider::Factory;
-
-BEGIN {
-               Hash::Merge::specify_behavior(
-                   {
-                               'SCALAR' => {
-                                       'SCALAR' => sub { $_[0] },
-                                       'ARRAY'  => sub { $_[0] },
-                                       'HASH'   => sub { $_[0] },
-                               },
-                               'ARRAY' => {
-                                       'SCALAR' => sub { $_[0] },
-                                       'ARRAY'  => sub { $_[0] },
-                                       'HASH'   => sub { $_[0] },
-                               },
-                               'HASH' => {
-                                       'SCALAR' => sub { $_[0] },
-                                       'ARRAY'  => sub { $_[0] },
-                                       'HASH'   => sub { Hash::Merge::_merge_hashes( $_[0], $_[1] ) },
-                               },
-                       },
-                       'custom_merge',
-               );
-}
 
 
 =attr C<db>
@@ -116,11 +90,11 @@ See SYNOPSIS for available options.
 around BUILDARGS => sub {
     my $orig = shift;
     my $class = shift;
-    my @files   = ( "/etc/fxtrader/fx.yml", @_ );
+    my $cfgfile   = "/etc/fxtrader/fx.yml";
 
     if ( scalar(@_) > 1 ) {
-	if ( $_[0] eq 'files' ) {
-		@files = @{$_[1]};
+	if ( $_[0] eq 'file' ) {
+		$cfgfile = $_[1];
 	} else {
 # Direct constructor without reading any configuration file 
          return $class->$orig(@_);
@@ -129,19 +103,12 @@ around BUILDARGS => sub {
 
 
 
-    my $cfg_all = Config::Any->load_files(
-        { files => \@files, use_ext => 1, flatten_to_hash => 1 } );
-    my $cfg = {};
+    my $cfg_any = Config::Any->load_files(
+        { files => [ $cfgfile ], use_ext => 1, flatten_to_hash => 1 } );
 
-    die("No config files found.\nCreate one of these to continue:\n\t" . join("\n\t", @files) . "\n") if scalar(keys(%{$cfg_all})) == 0;
+    die("No config file found at $cfgfile.\n") if (!exists($cfg_any->{$cfgfile}));
 
-	my $merge = Hash::Merge->new('custom_merge');
-
-    foreach my $file (@files) {
-        next unless ( $cfg_all->{$file} );
-	my $new_cfg = $merge->merge($cfg_all->{$file}, $cfg);
-	$cfg=$new_cfg;
-    }
+    my $cfg = $cfg_any->{$cfgfile};
 
     my $class_args = {
         'db' => Finance::HostedTrader::Config::DB->new($cfg->{db}),
