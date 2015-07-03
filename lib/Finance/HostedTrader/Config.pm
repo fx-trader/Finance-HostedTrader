@@ -5,11 +5,11 @@ package Finance::HostedTrader::Config;
 =head1 SYNOPSIS
 
     use Finance::HostedTrader::Config;
-    my $obj = $Finance::HostedTrader::Config->new(); #Builds from merged config file(s) (/etc/fxtrader/fx.yml)
+    my $obj = $Finance::HostedTrader::Config->new(); #Builds from system config file (/etc/fxtrader/fx.yml)
 
     ... OR ...
 
-    my $cfg = Finance::HostedTrader::Config->new( #Builds from specified config files
+    my $cfg = Finance::HostedTrader::Config->new( #Builds from specified config file
 		'file' => 'cfg1.yml' );
 
     ... OR ...
