@@ -1,3 +1,9 @@
+# Run unit tests
+
+*** MAKE SURE THE SYSTEM IS USING THE LOCAL FEED DATABASE, NOT THE REAL ONE ***
+
+PERL5LIB=lib prove t
+
 # Use the development copy of Finance::HostedTrader instead of the system one installed in the system
 
 - export PERL5LIB=~/Finance-HostedTrader/lib:$PERL5LIB
