@@ -23,3 +23,26 @@ symbols:
             op: "/"
             leftop: USDCCC
             rightop: USDJJJ
+timeframes:
+    natural:
+        - 300
+        - 3600
+        - 86400
+        - 604800
+    synthetic:
+        - name: 900
+          base: 300
+        - name: 1800
+          base: 300
+        - name: 7200
+          base: 3600
+        - name: 10800
+          base: 3600
+        - name: 14400
+          base: 3600
+db:
+    dbhost: localhost
+    dbname: fxcm
+    dbuser: fxcm
+    dbpasswd: fxcm
+

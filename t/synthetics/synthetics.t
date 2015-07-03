@@ -17,7 +17,6 @@ die("Could not find config file $config_file") if (!$config_file);
 my $ds = Finance::HostedTrader::Datasource->new(
 	cfg => Finance::HostedTrader::Config->new(
 		files => [
-			'/etc/fxtrader/fx.yml',
 			$config_file
 		]
 	)
@@ -27,7 +26,6 @@ my $dbh = $ds->dbh;
 
 my $BASE_SYMBOL = "EURUSD";
 my $naturalTFs = $cfg->timeframes->natural;
-my $syntheticTFs = $cfg->timeframes->synthetic;
 
 my %existingSymbols = map { $_ => 1} @{$cfg->symbols->all()};
 
