@@ -18,7 +18,6 @@ my $ds = Finance::HostedTrader::Datasource->new(
 	cfg => Finance::HostedTrader::Config->new(
 		files => [
 			'/etc/fxtrader/fx.yml',
-			$ENV{HOME} . '/.fx.yml',
 			$config_file
 		]
 	)
