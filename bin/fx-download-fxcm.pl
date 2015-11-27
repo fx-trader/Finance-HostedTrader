@@ -148,7 +148,7 @@ sub convertTimeframeToFXCM {
 
 
 my $numItemsToDownload = 10;
-my ( $timeframes_from_txt, $symbols_from_txt, $verbose, $help ) = ( undef, undef, '1900-01-01', '9998-12-31', 0, 0);
+my ( $timeframes_from_txt, $symbols_from_txt, $verbose, $help ) = ( undef, undef, 0, 0);
 
 my $result = GetOptions(
     "symbols=s", \$symbols_from_txt,
