@@ -1,0 +1,9 @@
+fx-all-tables.pl --template "TRUNCATE TABLE TABLE_NAME;" | mysql -u`fx-show-config.pl db::dbuser` -p`fx-show-config.pl db::dbpasswd` `fx-show-config.pl db::dbname`
+SYMBOLS=`fx-all-tables.pl --symbols=natural | cut -f 1 -d _ | uniq`
+
+for NEW_SYMBOL in $SYMBOLS; do
+    fx-download-fxcm.pl --verbose --symbols=${NEW_SYMBOL} --timeframes=604800 --numItems=1000
+    fx-download-fxcm.pl --verbose --symbols=${NEW_SYMBOL} --timeframes=86400 --numItems=2200
+    fx-download-fxcm.pl --verbose --symbols=${NEW_SYMBOL} --timeframes=300,3600 --numItems=5000
+    fx-download-fxcm.pl --verbose --symbols=${NEW_SYMBOL} --timeframes=300 --numItems=5000
+done
