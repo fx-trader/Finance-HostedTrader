@@ -1,4 +1,8 @@
 #DOC OUT OF DATE, use as a reference, not absolute truth
+## A synthetic symbol is an symbol (aka instrument) which is composed from existing symbols, ie:
+# XAUEUR = EURUSD / XAUUSD
+
+# For simplicity, these are not really used at the moment and this howto is kept for historical purposes
 
 #Create MySQL tables
 createTables.pl --tableType=MEMORY --symbols=CHFJPY | mysql -ufxcm fxcm
