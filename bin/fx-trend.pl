@@ -5,7 +5,7 @@
 
 =head1 SYNOPSIS
 
-    fx-trend.pl [--timeframe=tf] [--symbols=s] [--debug] [--maxLoadedItems=i] [--numItems=i] expr
+    fx-trend.pl [--separator=' '] [--average=i] [--numItems=i]
 
 
 =head1 DESCRIPTION
@@ -28,6 +28,11 @@ Optional. If specified, average the trend values by an EMA of i periods.
 =item C<--separator=s>
 
 Optional argument. Output column separator, defaults to single space
+
+=item C<--numItems=i>
+
+Optional argument. Number of data points to output per symbol. Defaults to 1.
+
 
 =back
 
