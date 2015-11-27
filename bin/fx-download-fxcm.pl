@@ -14,14 +14,6 @@
 
 Required. A comma separated string of timeframe codes for which data is to be downloaded. See L<Finance::HostedTrader::Config::Timeframes> for available codes.
 
-=item C<--start=s>
-
-Optional.  The date at which to start calculating data for synthetic symbols/timeframes. Defaults to 1900-01-01 which always works but can be slow. Only useful for performance reasons. Can be any value accepted by L<Date::Manip>.
-
-=item C<--end=s>
-
-Optional.  The date at which to end calculating data for synthetic symbols/timeframes. Defaults to 9998-12-31 which always works but can be slow. Only useful for performance reasons. Can be any value accepted by L<Date::Manip>.
-
 =item C<--numItems=i>
 
 Optional. An integer representing how many items to download.  Defaults to 10.
@@ -43,7 +35,6 @@ use strict;
 use warnings;
 
 use Getopt::Long;
-use Date::Manip;
 use Finance::HostedTrader::Datasource;
 use Finance::FXCM::Simple;
 use Pod::Usage;
@@ -157,11 +148,9 @@ sub convertTimeframeToFXCM {
 
 
 my $numItemsToDownload = 10;
-my ( $timeframes_from_txt, $symbols_from_txt, $start_date, $end_date, $verbose, $help ) = ( undef, undef, '1900-01-01', '9998-12-31', 0, 0);
+my ( $timeframes_from_txt, $symbols_from_txt, $verbose, $help ) = ( undef, undef, '1900-01-01', '9998-12-31', 0, 0);
 
 my $result = GetOptions(
-    "start=s",      \$start_date,
-    "end=s",        \$end_date,
     "symbols=s", \$symbols_from_txt,
     "timeframes=s", \$timeframes_from_txt,
     "numItems=i", \$numItemsToDownload,
@@ -169,11 +158,6 @@ my $result = GetOptions(
     "help", \$help)  or pod2usage(1);
 
 pod2usage(1) if ( $help || !defined($timeframes_from_txt));
-
-$start_date = UnixDate( $start_date, "%Y-%m-%d %H:%M:%S" )
-  or die("Cannot parse $start_date");
-$end_date = UnixDate( $end_date, "%Y-%m-%d %H:%M:%S" )
-  or die("Cannot parse $end_date");
 
 my $ds = Finance::HostedTrader::Datasource->new();
 my $cfg = $ds->cfg;
@@ -212,12 +196,4 @@ while(@timeframes) {
     }
 
     unshift(@timeframes, $nextTimeframe) if ($nextTimeframe);
-}
-
-foreach my $dst_timeframe ( @{$syntheticTfs} ) {
-    foreach my $symbol ( @{$syntheticSymbolNames}, @symbols ) {
-        print "Creating synthetic timeframe $dst_timeframe->{name} from $dst_timeframe->{base} for $symbol\n" if ($verbose);
-        $ds->convertOHLCTimeSeries( symbol => $symbol, tf_synthetic => $dst_timeframe,
-            start_date => $start_date, end_date => $end_date );
-    }
 }
