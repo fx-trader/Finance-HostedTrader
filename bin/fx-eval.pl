@@ -83,6 +83,7 @@ my $signal_processor = Finance::HostedTrader::ExpressionParser->new();
 my $symbols = $cfg->symbols->all;
 
 $symbols = [ split( ',', $symbols_txt ) ] if ($symbols_txt);
+print "Processing in the $timeframe timeframe\n";
 foreach my $symbol ( @{$symbols} ) {
     my $data = $signal_processor->getIndicatorData(
         {
