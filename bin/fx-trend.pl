@@ -71,9 +71,9 @@ foreach my $symbol ( @$symbols ) {
     my $sql = getSQL($symbol, $average, $numItems);
     my $data = $dbh->selectall_arrayref($sql) or die($DBI::errstr);
 
-    if (!defined($data) || !defined($data->[0])) {
-        warn "No data for $symbol\n";
-        next;
+    if (!defined($data) || !defined($data->[0]) || !defined($data->[0]->[1])) {
+        warn "$sql\n";
+        die("No data for $symbol");
     }
 
     foreach my $row (@$data) {
@@ -88,9 +88,9 @@ foreach my $symbol ( @$symbols ) {
     my $sql = getSQL($symbol, $average, $numItems);
     my $data = $dbh->selectall_arrayref($sql) or die($DBI::errstr);
 
-    if (!defined($data) || !defined($data->[0])) {
-        warn "No data for $symbol\n";
-        next;
+    if (!defined($data) || !defined($data->[0]) || !defined($data->[0]->[1])) {
+        warn "$sql\n";
+        die("No data for $symbol");
     }
 
     foreach my $row (@$data) {
@@ -102,32 +102,38 @@ foreach my $symbol ( @$symbols ) {
 
 
 sub getSQL {
-    my ($symbol, $average,$numItems) = @_;
+    my ($symbol, $average, $numItems) = @_;
+
+# The inner query converts 5 minute data to weekly format, and returns at most 1000 rows of weekly data
+# See this article for more details on this technique: http://zonalivre.org/2009/10/12/simulating-firstlast-aggregate-functions-in-mysql/
+
+# The outer query calculates the trend score for the weekly data.
+# The formula for the trend score is: ema( ((close-ema(close,21) / standard deviation ?), x  )
+# where x is the smoothing factor, with x=1 meaning no smoothing
+
     my $sql = qq|
-        SELECT date_format(`datetime`, '%Y-%m-%d'),`round(ta_ema(round((close - ta_sma(close,21)) / (SQRT(ta_sum(POW(close - ta_sma(close, 21), 2), 21)/21)), 2), ${average}), 4)` FROM (
-        SELECT * FROM (
-        SELECT datetime,round(ta_ema(round((close - ta_sma(close,21)) / (SQRT(ta_sum(POW(close - ta_sma(close, 21), 2), 21)/21)), 2), ${average}), 4)
-        FROM (
-            SELECT * FROM (
+(
+    SELECT date_format(`datetime`, '%Y-%m-%d') AS `datetime`,
+            round(ta_ema(round((close - ta_sma(close,21)) / (SQRT(ta_sum(POW(close - ta_sma(close, 21), 2), 21)/21)), 2), $average), 4)
+    FROM (
 
-        SELECT date_format(date_sub(datetime, interval weekday(datetime)-5 DAY), '%Y-%m-%d 00:00:00') as datetime,
-            CAST(SUBSTRING_INDEX(GROUP_CONCAT(CAST(close AS CHAR) ORDER BY datetime DESC), ',', 1) AS DECIMAL(10,4)) as close
-        FROM ${symbol}_300
-        GROUP BY date_format(datetime, '%x-%v')
-        ORDER BY datetime DESC
-        LIMIT 1000
-
-            ) AS T_LIMIT
+            SELECT  date_format(date_sub(datetime, interval weekday(datetime)-5 DAY), '%Y-%m-%d 00:00:00') as datetime,
+                    CAST(SUBSTRING_INDEX(GROUP_CONCAT(CAST(close AS CHAR) ORDER BY datetime DESC), ',', 1) AS DECIMAL(10,4)) as close
+            FROM ${symbol}_300
+            WHERE datetime < '2015-11-28'
+            GROUP BY date_format(datetime, '%x-%v')
             ORDER BY datetime ASC
-        ) AS T_INNER
+            LIMIT 1000
 
-        WHERE datetime >= '0001-01-31'
-        ) AS DT
-        ORDER BY datetime DESC
-        LIMIT $numItems
-        ) AS O
-        ORDER BY datetime ASC
-    |;
+    ) AS T_CONVERT_5MIN_TO_WEEKLY
+    WHERE datetime >= '0001-01-31'
+    ORDER BY datetime ASC
+
+)
+ORDER BY datetime DESC
+LIMIT $numItems
+
+|;
 
     return $sql;
 }
