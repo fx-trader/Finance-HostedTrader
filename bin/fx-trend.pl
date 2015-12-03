@@ -10,12 +10,8 @@
 
 =head1 DESCRIPTION
 
-Sample expressions:
-
-rsi(close,14)
-
-ema(close,21)
-
+This script requires approximately 60000 records of 5 minute data per symbol produce valid results.
+If not enough data is available, the script will exit with an error.
 
 =head2 OPTIONS
 
@@ -120,7 +116,6 @@ sub getSQL {
             SELECT  date_format(date_sub(datetime, interval weekday(datetime)-5 DAY), '%Y-%m-%d 00:00:00') as datetime,
                     CAST(SUBSTRING_INDEX(GROUP_CONCAT(CAST(close AS CHAR) ORDER BY datetime DESC), ',', 1) AS DECIMAL(10,4)) as close
             FROM ${symbol}_300
-            WHERE datetime < '2015-11-28'
             GROUP BY date_format(datetime, '%x-%v')
             ORDER BY datetime ASC
             LIMIT 1000
