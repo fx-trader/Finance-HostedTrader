@@ -47,7 +47,7 @@ start_indicator:          statement_indicator /\Z/               {$item[1]}
 
 start_signal:          recursive_timeframe_statement_signal /\Z/               {$item[1]}
 
-statement_indicator:		expression(s /,/) {join(',', map { (/^[0-9]/ ? $_ : "`$_`") } @{$item[1]})}
+statement_indicator:		expression(s /,/) {join(',', map { (/^[0-9]/ ? $_ : "$_") } @{$item[1]})}
 
 recursive_timeframe_statement_signal:       <leftop: timeframe_statement_signal boolop timeframe_statement_signal >     { $item[1] }
 
@@ -157,6 +157,10 @@ sub getIndicatorData {
         $self->{_logger}->logconfess("invalid arg in getIndicatorData: $key") unless grep { /$key/ } @good_args;
     }
 
+    if ($args->{startPeriod}) {
+        warn("startPeriod argument ignored in call to getIndicatorData");
+    }
+
     #Handle arguments
     my $tf_name = $args->{tf} || 'day';
     my $tf = $self->{_ds}->cfg->timeframes->getTimeframeID($tf_name);
@@ -197,32 +201,41 @@ sub getIndicatorData {
     my $WHERE_FILTER = "WHERE datetime <= '$displayEndDate'";
     $WHERE_FILTER .= ' AND dayofweek(datetime) <> 1' if ( $tf != 604800 );
 
-    my $EXT_WHERE = "datetime >= '$displayStartDate'";
-
-    my $int_result = $result;
-    $int_result =~ s/`//g;
-
     my $sql = qq(
 SELECT $result FROM (
-SELECT * FROM (
-SELECT $int_result
-FROM (
-    SELECT * FROM (
-        SELECT * FROM $symbol\_$tf
-        $WHERE_FILTER
-        ORDER BY datetime DESC
-        LIMIT $maxLoadedItems
-    ) AS T_LIMIT
-    ORDER BY datetime ASC
-) AS T_INNER
-
-WHERE $EXT_WHERE
-) AS DT
-ORDER BY datetime DESC
-LIMIT $itemCount
-) AS O
+  SELECT * FROM $symbol\_$tf
+  $WHERE_FILTER
+  ORDER BY datetime DESC
+  LIMIT $maxLoadedItems
+) AS R
 ORDER BY datetime ASC
 );
+
+## This was the old query that used to work with mysql 5.1 but no longer works with either mariadb 5.5 nor 10.1
+
+#my $int_result = $result;
+#$int_result =~ s/`//g;
+#my $EXT_WHERE = "datetime >= '$displayStartDate'";
+#SELECT $result FROM (
+#SELECT * FROM (
+#SELECT $int_result
+#FROM (
+#    SELECT * FROM (
+#        SELECT * FROM $symbol\_$tf
+#        $WHERE_FILTER
+#        ORDER BY datetime DESC
+#        LIMIT $maxLoadedItems
+#    ) AS T_LIMIT
+#    ORDER BY datetime ASC
+#) AS T_INNER
+#
+#WHERE $EXT_WHERE
+#) AS DT
+#ORDER BY datetime DESC
+#LIMIT $itemCount
+#) AS O
+#ORDER BY datetime ASC
+
 
     if ($args->{debug}) {
         $self->{_logger}->debug($sql);
@@ -233,7 +246,10 @@ ORDER BY datetime ASC
     my $dbh = $self->{_ds}->dbh;
     my $data = $dbh->selectall_arrayref($sql) or $self->{_logger}->logconfess($DBI::errstr);
     my $lastItemIndex = scalar(@$data) - 1;
-    if ( 0 && defined($itemCount) && ( $lastItemIndex > $itemCount ) ) {
+    # Return only the last $itemCount elements. 
+    # Originally this was implemented as a limit clause in the SQL query, but that stopped 
+    # working after MariaDB 5.5
+    if ( defined($itemCount) && ( $lastItemIndex > $itemCount ) ) {
         my @slice =
           @{$data}[ $lastItemIndex - $itemCount + 1 .. $lastItemIndex ];
         return \@slice;
