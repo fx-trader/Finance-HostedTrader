@@ -15,8 +15,11 @@ my $expect;
 
 my $e = Finance::HostedTrader::ExpressionParser->new();
 
+SKIP: {
+        skip "Integration tests", 2 unless($ENV{FX_INTEGRATION_TESTS});
 adhoc_test('rsi(close,14) > 59', ['2012-03-29 21:00:00'], 'Above');
 adhoc_test('crossoverup(rsi(close,14), 59)', ['2012-03-29 21:00:00'], 'Crossover');
+}
 
 sub adhoc_test {
     my ($expr, $expected, $desc) = @_;

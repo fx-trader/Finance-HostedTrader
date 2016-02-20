@@ -37,8 +37,11 @@ foreach my $ds ((undef, Finance::HostedTrader::Datasource->new( ))) {
 	throws_ok { $expr->getSystemData( { enter => 'rubbish', symbol => 'EURUSD' } ) } qr/Syntax error in signal/, 'Syntax error in entry signal';
 	throws_ok { $expr->getSystemData( { enter => 'crossoverup(close, ema(close,200))', symbol => 'EURUSD' } ) } qr/No expression set for signal/, 'No expression set for signal';
 	throws_ok { $expr->getSystemData( { enter => 'crossoverup(close, ema(close,200))', exit => 'rubbish', symbol => 'EURUSD' } ) } qr/Syntax error in signal/, 'Syntax error in exit signal';
-    lives_ok { $data = $expr->getSystemData( { enter => 'crossoverup(close, ema(close,200))', exit => 'crossoverdown(close, ema(close,200))', symbol => 'EURUSD' } ) }  'Got System data';
-    is(ref($data), 'ARRAY', 'data is array');
+    SKIP: {
+        skip "Integration tests", 2 unless($ENV{FX_INTEGRATION_TESTS});
+        lives_ok { $data = $expr->getSystemData( { enter => 'crossoverup(close, ema(close,200))', exit => 'crossoverdown(close, ema(close,200))', symbol => 'EURUSD' } ) }  'Got System data';
+        is(ref($data), 'ARRAY', 'data is array');
+    }
 }
 
 }

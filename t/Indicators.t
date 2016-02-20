@@ -8,12 +8,15 @@ use Test::Exception;
 use Data::Dumper;
 
 use Finance::HostedTrader::ExpressionParser;
-
+my $e = Finance::HostedTrader::ExpressionParser->new();
 my $symbol  = 'EURUSD';
 my $tf      = 'day';
+
+SKIP: {
+    skip "Integration tests", 62 unless($ENV{FX_INTEGRATION_TESTS});
+
 my $expect;
 
-my $e = Finance::HostedTrader::ExpressionParser->new();
 throws_ok { $e->getIndicatorData( { symbol => $symbol, tf => $tf, fields => 'rsi(close,21)' }) } qr/Unknown column 'datetime' in 'order clause'/, "No datetime in expression";
 throws_ok { $e->getIndicatorData( { symbol => $symbol, tf => 'badtf', numItems => 1, fields => 'rsi(close,21)' }) } qr/Could not understand timeframe badtf/, "Invalid timeframe";
 
@@ -38,6 +41,8 @@ adhoc_test('datetime,rsi(close,21) + ema(close,21)', '30.9412', 'expr + expr');
 adhoc_test('datetime,rsi(close,21) / ema(close,21)', '23.34015104', 'expr / expr');
 adhoc_test('datetime,(2+3)*4', '20', 'operator precedence simple');
 adhoc_test('datetime,(2+ema(close,21))*atr(21)', '0.0366', 'operator precedence expr');
+
+}
 
 sub testIndicator {
     my ($name, $valid_args, $expected, $toofew_args, $toomany_args, $bad_expression) = @_;

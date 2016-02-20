@@ -20,7 +20,6 @@ my $ds = Finance::HostedTrader::Datasource->new(
 	)
 );
 my $cfg = $ds->cfg;
-my $dbh = $ds->dbh;
 
 my $BASE_SYMBOL = "EURUSD";
 my $naturalTFs = $cfg->timeframes->natural;
@@ -58,6 +57,10 @@ my $testcases = [
 
 my $tf = $naturalTFs->[0]; #Just need any available timeframe
 
+SKIP: {
+    skip "Integration tests", 3 unless($ENV{FX_INTEGRATION_TESTS});
+
+my $dbh = $ds->dbh;
 foreach my $test (@$testcases) {
 	foreach my $table_data ($test->{n1},$test->{n2}) {
 		my $table = $table_data->{symbol};
@@ -81,4 +84,6 @@ foreach my $test (@$testcases) {
 	my $data = $sth->fetchall_arrayref() or die($DBI::errstr);
 	$sth->finish or die($DBI::errstr);
 	is_deeply($data, $test->{s}->{data}, $test->{name});
+}
+
 }

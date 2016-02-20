@@ -11,11 +11,13 @@ use Test::Exception;
 
 my $cfg= Finance::HostedTrader::Config->new();
 my $ds = Finance::HostedTrader::Datasource->new();
-my $dbh = $ds->dbh;
 
 my $naturalTFs = $cfg->timeframes->natural;
 my $syntheticTFs = $cfg->timeframes->synthetic;
 
+
+SKIP: {
+    skip "Integration tests", 2 unless($ENV{FX_INTEGRATION_TESTS});
 
 throws_ok {
     $ds->convertOHLCTimeSeries(
@@ -30,3 +32,4 @@ throws_ok {
                         tf_synthetic=> { name => -1, base => -2 },
                         start_date  => '0000-00-00',
                         end_date    => '9999-99-99' ) } qr/timeframe not supported \(-1\)/, 'Convert to invalid timeframe exception';
+            }

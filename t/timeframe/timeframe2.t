@@ -10,7 +10,6 @@ use Test::More;
 
 my $cfg= Finance::HostedTrader::Config->new();
 my $ds = Finance::HostedTrader::Datasource->new();
-my $dbh = $ds->dbh;
 
 my $BASE_SYMBOL = "EURUSD";
 my $TEST_TABLE_ONE = "T2_ONE";
@@ -30,6 +29,9 @@ foreach my $naturalTF (@$naturalTFs) {
 
 plan tests => $testCount;
 
+SKIP: {
+    skip "Integration tests", $testCount unless($ENV{FX_INTEGRATION_TESTS});
+my $dbh = $ds->dbh;
 foreach my $tf (@{$naturalTFs}) {
     diag ("Testing tf = $tf");
 	my $available_timeframe = $tf;
@@ -72,4 +74,6 @@ foreach my $tf (@{$naturalTFs}) {
         my $next_timeframe = $syntheticTFs->[$i+1];
 		$available_timeframe = $syntheticTf if ($next_timeframe && !($next_timeframe % $syntheticTf));
 	}
+}
+
 }
