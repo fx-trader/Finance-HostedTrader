@@ -5,21 +5,28 @@
 # PODNAME: fx-db-client.pl
 
 =head1 SYNOPSIS
-    fx-all-tables.pl | fx-db-client.pl
-
-
+    fx-create-db-schema.pl | fx-db-client.pl
+    fx-all-tables.pl --template "OPTIMIZE TABLE TABLE_NAME;" | fx-db-client.pl
 =cut
 
 
 use strict;
 use warnings;
 
-use Finance:;HostedTrader::Datasource;
+use Finance::HostedTrader::Datasource;
 
 
-my $dbh = Finance::HostedTrader::Datasource->new()->{_dbh};
+my $dbh = Finance::HostedTrader::Datasource->new()->dbh;
+$dbh->{RaiseError} = 0;
 
+my $query_buffer='';
 while (<STDIN>) {
     chomp();
-    $dbh->do($_) or die($dbh->errstr);
+    next unless ($_);
+
+    $query_buffer .= $_;
+    if ($query_buffer =~ /;$/) {
+        $dbh->do($query_buffer) or die("Error Running Query:\n======\n$query_buffer\n=====\n\n" . $dbh->errstr);
+        $query_buffer='';
+    }
 }
