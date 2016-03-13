@@ -59,7 +59,7 @@ $symbols = [ split( ',', $symbols_txt ) ] if ($symbols_txt);
 my $dbname = $cfg->db->dbname;
 my $dbuser = $cfg->db->dbuser;
 my $dbpasswd = $cfg->db->dbpasswd;
-my $userhost = 'localhost'; #Unlikely to be anything else
+my $userhost = '%';
 
 print qq{
     use $dbname;
@@ -82,5 +82,4 @@ PRIMARY KEY ( `datetime` )
     }
 
 }
-# the GRANT ALL syntax below is no longer valid in mysql 5.5, remove for now
-# print "GRANT ALL ON `$dbname`.* TO `$dbuser`@`$userhost`" . ($dbpasswd ? " IDENTIFIED BY `$dbpasswd`": '') . ";\n";
+# print "GRANT ALL ON $dbname.* TO '$dbuser'@'$userhost'" . ($dbpasswd ? " IDENTIFIED BY '$dbpasswd'": '') . ";\n";
