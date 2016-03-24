@@ -1,35 +1,10 @@
 #!/usr/bin/perl
+
+eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
+    if 0; # not running under some shell
 # ABSTRACT: Downloads historical data from fxcm, inserts it into local database and handles dependent synthetic symbols and timeframes
 # PODNAME: fx-download-fxcm.pl
 
-=head1 SYNOPSIS
-
-    fx-download-fxcm.pl --timeframes=$TF1[,$TF2] [--verbose] [--help] [--start="15 days ago"] [--end="today] [--numItems=i]
-
-=head2 OPTIONS
-
-=over
-
-=item C<--timeframes=$TF1[,$TF2 ...]>
-
-Required. A comma separated string of timeframe codes for which data is to be downloaded. See L<Finance::HostedTrader::Config::Timeframes> for available codes.
-
-=item C<--numItems=i>
-
-Optional. An integer representing how many items to download.  Defaults to 10.
-
-=item C<--verbose>
-
-Verbose output
-
-=item C<--help>
-
-Help screen
-
-
-=back
-
-=cut
 
 use strict;
 use warnings;
@@ -125,9 +100,6 @@ my %timeframeMap = (
 );
 
 
-=method C<convertSymbolToFXCM>
-
-=cut
 sub convertSymbolToFXCM {
     my ($symbol) = @_;
 
@@ -135,9 +107,6 @@ sub convertSymbolToFXCM {
     return $symbolMap{$symbol};
 }
 
-=method C<convertTimeframeToFXCM>
-
-=cut
 sub convertTimeframeToFXCM {
     my ($timeframe) = @_;
 
@@ -176,6 +145,8 @@ while(@timeframes) {
     my $nextTimeframe = shift(@timeframes);
     my $fxcmTimeframe = convertTimeframeToFXCM($timeframe);
 
+    my $syntheticTfs = $cfg->timeframes->synthetics_by_base($timeframe);
+
     foreach my $symbol (@symbols) {
         print "Fetching $symbol $timeframe\n" if ($verbose);
         my $tableToLoad = $symbol . '_' . $timeframe;
@@ -187,12 +158,11 @@ while(@timeframes) {
             warn "Failed to fetch $symbol $timeframe: $_";
         };
         unlink($tableToLoad);
-    }
 
-    my $syntheticTfs = $cfg->timeframes->synthetics_by_base($timeframe);
-    foreach my $synthetic_tf (@$syntheticTfs) {
-        print "Creating synthetic $symbol $synthetic_tf->{name}\n" if ($verbose);
-        $ds->convertOHLCTimeSeries( symbol => $symbol, tf_synthetic => $synthetic_tf, start_date => "0001-01-01", end_date => "9999-12-13" );
+        foreach my $synthetic_tf (@$syntheticTfs) {
+            print "Creating synthetic $symbol $synthetic_tf->{name}\n" if ($verbose);
+            $ds->convertOHLCTimeSeries( symbol => $symbol, tf_synthetic => $synthetic_tf, start_date => "0001-01-01", end_date => "9999-12-13" );
+        }
     }
 
     foreach my $synthetic_symbol (@$syntheticSymbols) {
@@ -206,3 +176,63 @@ while(@timeframes) {
 
     unshift(@timeframes, $nextTimeframe) if ($nextTimeframe);
 }
+
+__END__
+
+=pod
+
+=encoding UTF-8
+
+=head1 NAME
+
+fx-download-fxcm.pl - Downloads historical data from fxcm, inserts it into local database and handles dependent synthetic symbols and timeframes
+
+=head1 VERSION
+
+version 0.022
+
+=head1 SYNOPSIS
+
+    fx-download-fxcm.pl --timeframes=$TF1[,$TF2] [--verbose] [--help] [--start="15 days ago"] [--end="today] [--numItems=i]
+
+=head2 OPTIONS
+
+=over
+
+=item C<--timeframes=$TF1[,$TF2 ...]>
+
+Required. A comma separated string of timeframe codes for which data is to be downloaded. See L<Finance::HostedTrader::Config::Timeframes> for available codes.
+
+=item C<--numItems=i>
+
+Optional. An integer representing how many items to download.  Defaults to 10.
+
+=item C<--verbose>
+
+Verbose output
+
+=item C<--help>
+
+Help screen
+
+=back
+
+=head1 METHODS
+
+=head2 C<convertSymbolToFXCM>
+
+=head2 C<convertTimeframeToFXCM>
+
+=head1 AUTHOR
+
+João Costa <joaocosta@zonalivre.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is Copyright (c) 2015 by João Costa.
+
+This is free software, licensed under:
+
+  The MIT (X11) License
+
+=cut

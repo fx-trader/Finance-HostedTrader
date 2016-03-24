@@ -109,7 +109,7 @@ sub synthetic_names {
 }
 
 # Returns synthetic timeframes based on $base
-sub synthetic_by_base {
+sub synthetics_by_base {
     my $self = shift;
     my $base = shift;
 
