@@ -108,6 +108,15 @@ sub synthetic_names {
     return [ sort map { $_->{name} } @$synthetics ];
 }
 
+# Returns synthetic timeframes based on $base
+sub synthetic_by_base {
+    my $self = shift;
+    my $base = shift;
+
+    my $synthetics = $self->synthetic;
+    return [ sort map { $_->{name} } grep { $_->{base} eq $base } @$synthetics ];
+}
+
 
 =method C<all>
 

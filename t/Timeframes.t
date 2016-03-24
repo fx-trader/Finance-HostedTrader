@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 12;
+use Test::More tests => 13;
 use Test::Exception;
 use Data::Dumper;
 
@@ -27,6 +27,7 @@ isa_ok($tfs,'Finance::HostedTrader::Config::Timeframes');
 is($tfs->getTimeframeName($tfs->getTimeframeID('min')), 'min', 'GetTimeframe{ID,Name}');
 is_deeply($tfs->natural, [60, 300], 'Natural timeframes sorted');
 is_deeply($tfs->synthetic_names, [120, 7200], 'Synthetic timeframes sorted');
+is_deeply($tfs->synthetic_by_base(60), [120], 'Synthetic timeframes based on 60');
 is_deeply($tfs->all, [60, 120, 300, 7200], 'All timeframes sorted');
 
 
