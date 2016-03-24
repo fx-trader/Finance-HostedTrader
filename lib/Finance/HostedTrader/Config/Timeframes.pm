@@ -114,7 +114,7 @@ sub synthetic_by_base {
     my $base = shift;
 
     my $synthetics = $self->synthetic;
-    return [ sort map { $_->{name} } grep { $_->{base} eq $base } @$synthetics ];
+    return [ grep { $_->{base} eq $base } @$synthetics ];
 }
 
 
