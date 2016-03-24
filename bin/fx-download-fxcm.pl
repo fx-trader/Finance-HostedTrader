@@ -169,7 +169,6 @@ my $providerCfg = $cfg->tradingProviders->{fxcm};
 my $fxcm = Finance::FXCM::Simple->new($providerCfg->username, $providerCfg->password, $providerCfg->accountType, $providerCfg->serverURL);
 my $syntheticSymbols = $cfg->symbols->synthetic;
 my $syntheticSymbolNames = $cfg->symbols->synthetic_names;
-my $syntheticTfs = $cfg->timeframes->synthetic();
 
 
 while(@timeframes) {
@@ -190,9 +189,19 @@ while(@timeframes) {
         unlink($tableToLoad);
     }
 
-    foreach my $synthetic (@$syntheticSymbols) {
-        print "Creating synthetic $synthetic->{name} $timeframe\n" if ($verbose);
-        $ds->createSynthetic( $synthetic, $timeframe );
+    my $syntheticTfs = $cfg->timeframes->synthetics_by_base($timeframe);
+    foreach my $synthetic_tf (@$syntheticTfs) {
+        print "Creating synthetic $symbol $synthetic_tf->{name}\n" if ($verbose);
+        $ds->convertOHLCTimeSeries( symbol => $symbol, tf_synthetic => $synthetic_tf, start_date => "0001-01-01", end_date => "9999-12-13" );
+    }
+
+    foreach my $synthetic_symbol (@$syntheticSymbols) {
+        print "Creating synthetic $synthetic_symbol->{name} $timeframe\n" if ($verbose);
+        $ds->createSynthetic( $synthetic_symbol, $timeframe );
+        foreach my $synthetic_tf (@$syntheticTfs) {
+            print "Creating synthetic $synthetic_symbol->{name} $synthetic_tf->{name}\n" if ($verbose);
+            $ds->convertOHLCTimeSeries( symbol => $synthetic_symbol->{name}, tf_synthetic => $synthetic_tf, start_date => "0001-01-01", end_date => "9999-12-13" );
+        }
     }
 
     unshift(@timeframes, $nextTimeframe) if ($nextTimeframe);
