@@ -6,6 +6,10 @@ use warnings;
 package main;
 
 use Log::Log4perl;
+
+use Finance::HostedTrader::ExpressionParser;
+use Finance::FXCM::Simple;
+
 # Initialize Logger
 my $log_conf = q(
 log4perl rootLogger = DEBUG, LOG1, SCREEN
@@ -21,7 +25,6 @@ log4perl.appender.LOG1.layout.ConversionPattern = %d %p %m %n
 );
 Log::Log4perl::init(\$log_conf);
 my $logger = Log::Log4perl->get_logger();
-
 
 my %rules = (
     'AUDUSD buy' => {
@@ -60,21 +63,33 @@ my %rules = (
     }
 );
 
-use Finance::HostedTrader::ExpressionParser;
+$logger->logdie("FXCM_USERNAME NOT DEFINED") if (!$ENV{FXCM_USERNAME});
+$logger->logdie("FXCM_PASSWORD NOT DEFINED") if (!$ENV{FXCM_PASSWORD});
+
 my $symbol = "AUDUSD";
+my $fxcm_symbol = "AUD/USD";
 my $signal_processor = Finance::HostedTrader::ExpressionParser->new();
 
 
 while (1) {
     last if ( -f "/tmp/sniper_disengage" );
 
-    sleep(30);
+    sleep(3);
 
     my $data = getIndicatorValue($symbol, '4hour', "macd(close, 12, 26, 9) - macdsig(close, 12, 26, 9)");
     $logger->debug("Skip") and next if ($data->[1] >= 0);
 
     $data = getIndicatorValue($symbol, '5min', "rsi(close,14)");
-    $logger->debug("Skip") and next if ($data->[1] >= 35);
+    $logger->debug("Skip") and next if ($data->[1] >= 65);
+
+    my $fxcm = Finance::FXCM::Simple->new($ENV{FXCM_USERNAME}, $ENV{FXCM_PASSWORD}, 'Real', 'http://www.fxcorporate.com/Hosts.jsp');
+    my @trades = sort { $b->{openPrice} <=> $a->{openPrice} } grep { $_->{symbol} eq $fxcm_symbol && $_->{direction} eq 'long' } @{ $fxcm->getTrades() || [] };
+
+    $logger->debug("LAST TRADE = " . $trades[0]->{openPrice}) if ($trades[0]);
+    $logger->debug("ASK = " . $fxcm->getAsk($fxcm_symbol));
+    $logger->debug("BID = " . $fxcm->getBid($fxcm_symbol));
+
+    $fxcm = undef;
 
     $logger->debug("Should we buy here ?");
 
