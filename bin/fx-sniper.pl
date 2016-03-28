@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 package main;
+$|=1;
 
 use Log::Log4perl;
 use List::Util qw(sum);
