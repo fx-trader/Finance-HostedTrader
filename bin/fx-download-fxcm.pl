@@ -145,7 +145,7 @@ while(@timeframes) {
     my $nextTimeframe = shift(@timeframes);
     my $fxcmTimeframe = convertTimeframeToFXCM($timeframe);
 
-    my $syntheticTfs = $cfg->timeframes->synthetics_by_base($timeframe);
+    my $syntheticTfs = $cfg->timeframes->synthetics_by_base($timeframe) || [];
 
     foreach my $symbol (@symbols) {
         print "Fetching $symbol $timeframe\n" if ($verbose);
