@@ -52,8 +52,10 @@ my $result = GetOptions( "symbols=s", \$symbols_txt, "timeframes=s", \$tfs_txt, 
   or pod2usage(1);
 pod2usage(1) if ($help);
 
-my $tfs = $cfg->timeframes->all();
-$tfs = [ split( ',', $tfs_txt ) ] if ($tfs_txt);
+my @tfs = sort { $a <=> $b } @{ $cfg->timeframes->all() };
+@tfs = split( ',', $tfs_txt ) if ($tfs_txt);
+my $lowerTf = shift(@tfs);
+
 my $symbols = $cfg->symbols->all();
 $symbols = [ split( ',', $symbols_txt ) ] if ($symbols_txt);
 my $dbname = $cfg->db->dbname;
@@ -66,10 +68,9 @@ print qq{
 };
 
 foreach my $symbol (@$symbols) {
-    foreach my $tf (@$tfs) {
-        print "DROP TABLE IF EXISTS `$symbol\_$tf`;\n" if ($drop_table);
-        print qq /
-CREATE TABLE IF NOT EXISTS `$symbol\_$tf` (
+    print "DROP TABLE IF EXISTS `$symbol\_$lowerTf`;\n" if ($drop_table);
+    print qq /
+CREATE TABLE IF NOT EXISTS `${symbol}_${lowerTf}` (
 `datetime` DATETIME NOT NULL ,
 `open` DECIMAL(9,4) NOT NULL ,
 `high` DECIMAL(9,4) NOT NULL ,
@@ -78,8 +79,57 @@ CREATE TABLE IF NOT EXISTS `$symbol\_$tf` (
 PRIMARY KEY ( `datetime` )
 ) ENGINE = $table_type ;
 /;
+}
 
+my %tfMap = (
+    900 => {
+        date_format => "CAST(CONCAT(year(datetime), '-', month(datetime), '-', day(datetime), ' ',  hour(datetime), ':', floor(minute(datetime) / 15) * 15, ':00') AS DATETIME)",
+    },
+    1800 => {
+        date_format => "CAST(CONCAT(year(datetime), '-', month(datetime), '-', day(datetime), ' ',  hour(datetime), ':', floor(minute(datetime) / 30) * 30, ':00') AS DATETIME)",
+    },
+    3600 => {
+        date_format => "date_format(datetime, '%Y-%m-%d %H:00:00')",
+    },
+    7200 => {
+        date_format => "CAST(CONCAT(year(datetime), '-', month(datetime), '-', day(datetime), ' ',  floor(hour(datetime) / 2) * 2, ':00:00') AS DATETIME)",
+    },
+    10800 => {
+        date_format => "CAST(CONCAT(year(datetime), '-', month(datetime), '-', day(datetime), ' ',  floor(hour(datetime) / 3) * 3, ':00:00') AS DATETIME)",
+    },
+    14400 => {
+        date_format => "CAST(CONCAT(year(datetime), '-', month(datetime), '-', day(datetime), ' ',  floor(hour(datetime) / 4) * 4, ':00:00') AS DATETIME)",
+    },
+    86400 => {
+        date_format => "date_format(datetime, '%Y-%m-%d 00:00:00')",
+        where_clause => "dayofweek(datetime) != 1",
+    },
+    604800 => {
+        date_format => "date_format(date_sub(datetime, interval weekday(datetime)+1 DAY), '%Y-%m-%d 00:00:00')",
+        date_group  => "date_format(datetime, '%x-%v')",
+    },
+);
+
+foreach my $symbol (@$symbols) {
+    foreach my $tf (@tfs) {
+        my $date_format = $tfMap{$tf}->{date_format};
+        my $date_group  = $tfMap{$tf}->{date_group} || $date_format;
+        my $where_clause= $tfMap{$tf}->{where_clause};
+        $where_clause = ( $where_clause ? "WHERE $where_clause" : "" );
+
+print qq/
+CREATE OR REPLACE VIEW ${symbol}_${tf} AS
+    SELECT
+      $date_format AS datetime,
+      CAST(SUBSTRING_INDEX(GROUP_CONCAT(CAST(open AS CHAR) ORDER BY datetime), ',', 1) AS DECIMAL(5,4)) as open,
+      MAX(high) as high,
+      MIN(low) as low,
+      CAST(SUBSTRING_INDEX(GROUP_CONCAT(CAST(close AS CHAR) ORDER BY datetime DESC), ',', 1) AS DECIMAL(5,4) )as close
+    FROM AUDUSD_300
+    $where_clause
+    GROUP BY $date_group
+    ORDER BY datetime DESC;
+/;
     }
-
 }
 # print "GRANT ALL ON $dbname.* TO '$dbuser'@'$userhost'" . ($dbpasswd ? " IDENTIFIED BY '$dbpasswd'": '') . ";\n";
