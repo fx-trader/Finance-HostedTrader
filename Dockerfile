@@ -28,6 +28,7 @@ RUN cpanm --notest  Cpanel::JSON::XS \
                     DBI \
                     DBIx::Class \
                     DBD::mysql \
+                    DateTime::Format::Strptime \
                     Finance::FXCM::Simple
 
 ## Finance::HostedTrader
