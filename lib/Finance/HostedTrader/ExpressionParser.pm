@@ -200,7 +200,7 @@ sub getIndicatorData {
     }
 
     my $WHERE_FILTER = "WHERE datetime <= '$displayEndDate'";
-    $WHERE_FILTER .= ' AND dayofweek(datetime) <> 1' if ( $tf != 604800 );
+#    $WHERE_FILTER .= ' AND dayofweek(datetime) <> 1' if ( $tf != 604800 );
 
     my $sql = qq(
 SELECT $result FROM (
