@@ -125,7 +125,7 @@ CREATE OR REPLACE VIEW ${symbol}_${tf} AS
       MAX(high) as high,
       MIN(low) as low,
       CAST(SUBSTRING_INDEX(GROUP_CONCAT(CAST(close AS CHAR) ORDER BY datetime DESC), ',', 1) AS DECIMAL(5,4) )as close
-    FROM ${symbol}_300
+    FROM ${symbol}_${lowerTf}
     $where_clause
     GROUP BY $date_group
     ORDER BY datetime DESC;
