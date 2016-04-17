@@ -8,12 +8,13 @@ RUN apt-get update && apt-get -y install \
         g++ \
         libssl-dev \
         git \
-        libmariadbclient-dev
+        libmariadbclient-dev \
+        && rm -rf /var/lib/apt/lists/*
 
 ## Finance::FXCM::Simple dependency
+ENV FXCONNECT_HOME /root/ForexConnectAPI-1.3.2-Linux-x86_64
 WORKDIR /root
 RUN curl -L http://fxcodebase.com/bin/forexconnect/1.3.2/ForexConnectAPI-1.3.2-Linux-x86_64.tar.gz | tar zxf - -C /root
-ENV FXCONNECT_HOME /root/ForexConnectAPI-1.3.2-Linux-x86_64
 
 RUN curl -L https://cpanmin.us | perl - --notest App::cpanminus
 
@@ -31,7 +32,7 @@ RUN cpanm --notest  Cpanel::JSON::XS \
                     Finance::FXCM::Simple
 
 ## Finance::HostedTrader
-ADD . Finance-HostedTrader
+COPY . Finance-HostedTrader
 
 WORKDIR /root/Finance-HostedTrader
 
@@ -40,3 +41,5 @@ RUN mkdir /etc/fxtrader && cp etc/fxtrader/fx* /etc/fxtrader/
 RUN dzil install
 
 WORKDIR /root
+
+RUN rm -fR /root/Finance-HostedTrader
