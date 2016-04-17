@@ -125,7 +125,7 @@ CREATE OR REPLACE VIEW ${symbol}_${tf} AS
       MAX(high) as high,
       MIN(low) as low,
       CAST(SUBSTRING_INDEX(GROUP_CONCAT(CAST(close AS CHAR) ORDER BY datetime DESC), ',', 1) AS DECIMAL(5,4) )as close
-    FROM AUDUSD_300
+    FROM ${symbol}_300
     $where_clause
     GROUP BY $date_group
     ORDER BY datetime DESC;
