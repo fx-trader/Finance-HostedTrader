@@ -111,6 +111,7 @@ function:
 		'trend(' expression ',' number ')' { "round(($item[2] - ta_sma($item[2],$item[4])) / (SQRT(ta_sum(POW($item[2] - ta_sma($item[2], $item[4]), 2), $item[4])/$item[4])), 2)" } |
 		'macd(' expression ',' number ',' number ',' number ')' { "round(ta_ema($item[2],$item[4]) - ta_ema($item[2],$item[6]), 4)" } |
 		'macdsig(' expression ',' number ',' number ',' number ')' { "round(ta_ema(ta_ema($item[2],$item[4]) - ta_ema($item[2],$item[6]),$item[8]),4)" } |
+		'macddiff(' expression ',' number ',' number ',' number ')' { "round((ta_ema($item[2],$item[4]) - ta_ema($item[2],$item[6])) - (ta_ema(ta_ema($item[2],$item[4]) - ta_ema($item[2],$item[6]),$item[8])),4)" } |
 		'abs(' expression ')' { "round(abs($item[2]), 4)" }
 };
 
@@ -199,7 +200,7 @@ sub getIndicatorData {
     }
 
     my $WHERE_FILTER = "WHERE datetime <= '$displayEndDate'";
-    $WHERE_FILTER .= ' AND dayofweek(datetime) <> 1' if ( $tf != 604800 );
+#    $WHERE_FILTER .= ' AND dayofweek(datetime) <> 1' if ( $tf != 604800 );
 
     my $sql = qq(
 SELECT $result FROM (
