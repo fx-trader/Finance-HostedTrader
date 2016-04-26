@@ -6,6 +6,8 @@ RUN apt-get update && apt-get -y install \
         make \
         gcc \
         g++ \
+        gdb \
+        valgrind \
         libssl-dev \
         git \
         libmariadbclient-dev \
