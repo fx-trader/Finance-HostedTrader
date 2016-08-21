@@ -8,7 +8,7 @@ RUN apt-get update && apt-get -y install \
         g++ \
         libssl-dev \
         git \
-        libmariadbclient-dev \
+        libmariadb-client-lgpl-dev \
         && rm -rf /var/lib/apt/lists/*
 
 ## Finance::FXCM::Simple dependency
