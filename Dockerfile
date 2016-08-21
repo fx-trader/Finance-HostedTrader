@@ -10,6 +10,7 @@ RUN apt-get update && apt-get -y install \
         valgrind \
         libssl-dev \
         git \
+        libmariadb-client \
         libmariadb-client-lgpl-dev \
         && rm -rf /var/lib/apt/lists/*
 
