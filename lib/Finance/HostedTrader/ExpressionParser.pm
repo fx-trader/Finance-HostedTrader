@@ -115,6 +115,9 @@ function:
 		'abs(' expression ')' { "round(abs($item[2]), 4)" }
 };
 
+# Sample function calls
+# macddiff( dataset, shortperiodema, longperiodema, signalema), macddiff(12,26,9)
+
     my $parser    = Parse::RecDescent->new($grammar);
 
     if (!Log::Log4perl->initialized()) {
