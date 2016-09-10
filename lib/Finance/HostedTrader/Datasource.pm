@@ -77,6 +77,7 @@ sub _build_cfg {
 Converts data between timeframes
 
 =cut
+
 sub convertOHLCTimeSeries {
     my $self = shift;
     my %args = validate( @_, {
@@ -158,6 +159,7 @@ in the database for the requested timeframe.
 For example, GBPJPY can be derived from GBPUSD AND USDJPY.
 
 =cut
+
 sub createSynthetic {
     my ( $self, $synthetic, $timeframe ) = @_;
 
@@ -191,6 +193,15 @@ sub createSynthetic {
 #AND T1.datetime > DATE_SUB(NOW(), INTERVAL 2 WEEK))
       $self->dbh->do($sql);
 }
+
+=method C<getLastClose>
+
+
+Returns an array consisting of two elements, the last known close price of an instrument, and the datetime of that close price
+
+my ($datetime, $close) = $self->getLastClose('EURUSD')
+
+=cut
 
 sub getLastClose {
     my $self = shift;
@@ -239,14 +250,8 @@ sub getLastClose {
         }
     }
 
-    my ($datetime, $close) = $self->dbh->selectrow_array($sql);
-    my %hash = (
-        symbol  => $symbol,
-        item0   => $datetime,
-        item1   => $close,
-    );
+    return $self->dbh->selectrow_array($sql);
 
-    return \%hash;
 }
 
 1;
