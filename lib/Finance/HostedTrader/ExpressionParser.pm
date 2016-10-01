@@ -155,6 +155,7 @@ sub getIndicatorData {
 
 
     my $sql = $self->_getIndicatorSql(%$args);
+    #print "$sql\n";
     $self->{_logger}->debug($sql);
 
     my $dbh = $self->{_ds}->dbh;
@@ -180,22 +181,10 @@ sub getSignalData {
     my $sql = $self->_getSignalSql($args);
 
     $self->{_logger}->debug($sql);
-#    print $sql, "\n";
+    #print $sql, "\n";
 
     my $dbh = $self->{_ds}->dbh;
     my $data = $dbh->selectall_arrayref($sql) or $self->{_logger}->logconfess( $DBI::errstr . $sql );
-
-    my $itemCount = $args->{numItems} || 10_000_000_000;
-
-    # Return only the last $itemCount elements. 
-    # Originally this was implemented as a limit clause in the SQL query, but that stopped 
-    # working after MariaDB 5.5
-    if ( defined($itemCount) && ( scalar(@$data) > $itemCount ) ) {
-        my @slice =
-          @{$data}[ 0 .. $itemCount - 1 ];
-        return \@slice;
-    }
-
 
     return $data;
 }
@@ -247,6 +236,8 @@ my ($self, $args) = @_;
 
     $maxLoadedItems = 10_000_000_000
       if ( !defined( $args->{maxLoadedItems} ));
+
+    my $itemCount = $args->{numItems} || $maxLoadedItems;
 
     %TIMEFRAMES = ();
     %INDICATORS = ();
@@ -328,9 +319,9 @@ FROM (
     ORDER BY datetime DESC
     LIMIT $maxLoadedItems
 ) AS T_INNER
+ORDER BY datetime ASC
 ) AS T_OUTER
 WHERE $result_str AND datetime >= '$startPeriod' AND datetime <='$endPeriod'
-ORDER BY datetime ASC
 ) AS DT
 $ORDERBY_CLAUSE
 ) AS SIGNALS_TF_$tf
@@ -364,6 +355,7 @@ $ORDERBY_CLAUSE
             }
         }
     }
+    $sql .= " ORDER BY datetime DESC limit $itemCount";
     return $sql;
 }
 
