@@ -52,7 +52,7 @@ my %symbols = (
 
 foreach my $asset ( keys(%symbols) ) {
     my $symbol = $symbols{$asset}->{s};
-    my $data = $signal_processor->getIndicatorData(
+    my $indicator_result = $signal_processor->getIndicatorData(
         {
             'fields'          => 'datetime,ema(trend(close,21),13)',
             'symbol'          => $symbol,
@@ -61,6 +61,7 @@ foreach my $asset ( keys(%symbols) ) {
             'numItems'        => 1
         }
     );
+    my $data = $indicator_result->{data};
     $scores{$asset}{score}      = $data->[0][1] * $symbols{$asset}->{m};
     $scores{$asset}{datetime}   = $data->[0][0];  # Make datetime visible so that's it's clear if data is out of date
 }

@@ -60,5 +60,5 @@ sub adhoc_test {
     
     my $got = $e->getIndicatorData( { symbol => $symbol, tf => $tf, numItems => 1, fields => $expr, startPeriod => "2011-10-02 00:00:00", endPeriod => "2012-05-31 23:00:00", maxLoadedItems => 125  });
     my $expect = ['2012-05-31 21:00:00', $expected];
-    is_deeply($got->[0], $expect, $desc);
+    is_deeply($got->{data}->[0], $expect, $desc);
 }

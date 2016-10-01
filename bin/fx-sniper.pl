@@ -88,13 +88,14 @@ sub getIndicatorValue {
     my $indicator = shift;
 
     my $signal_processor = Finance::HostedTrader::ExpressionParser->new(); # This object knows how to calculate technical indicators
-    my $data = $signal_processor->getIndicatorData( {
+    my $indicator_result = $signal_processor->getIndicatorData( {
             'fields'          => "datetime,$indicator",
             'symbol'          => $symbol,
             'tf'              => $tf,
             'maxLoadedItems'  => 50000,
             'numItems' => 1,
         });
+    my $data = $indicator_result->{data};
     $signal_processor = undef;
     $logger->logdie("Failed to retrieve indicator '$indicator'") if (!$data || !$data->[0]);
     $logger->debug("$indicator [$data->[0]->[0]] = $data->[0]->[1]");

@@ -158,7 +158,7 @@ sub getIndicatorData {
     my $dbh = $self->{_ds}->dbh;
     my $data = $dbh->selectall_arrayref($sql) or $self->{_logger}->logconfess($DBI::errstr);
 
-    return $data;
+    return { data => $data, sql => $sql };
 }
 
 =method C<getSignalData>

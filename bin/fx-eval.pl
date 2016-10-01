@@ -85,7 +85,7 @@ my $symbols = $cfg->symbols->all;
 $symbols = [ split( ',', $symbols_txt ) ] if ($symbols_txt);
 print "Processing in the $timeframe timeframe\n";
 foreach my $symbol ( @{$symbols} ) {
-    my $data = $signal_processor->getIndicatorData(
+    my $indicator_result = $signal_processor->getIndicatorData(
         {
             'fields'           => $ARGV[0],
             'symbol'          => $symbol,
@@ -94,6 +94,7 @@ foreach my $symbol ( @{$symbols} ) {
             'numItems' => $max_display_items,
         }
     );
+    my $data = $indicator_result->{data};
     foreach my $item (@$data) {
         print "$symbol\t" . join( "\t", @$item ) . "\n";
     }
