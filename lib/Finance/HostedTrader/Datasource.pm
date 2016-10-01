@@ -40,6 +40,14 @@ sub _build_dbh {
         { RaiseError => 1}
     );
 
+
+    # Derived merge optimization is explained here: https://mariadb.com/kb/en/mariadb/derived-table-merge-optimization/
+    # Using this optimization breaks the use of the UDF somehow the UDF ends up running after query values have been
+    # filtered, so it stops you evaluating UDF values in the WHERE clause.
+    # TODO: raise a bug with mariadb about this.
+    $dbh->do('set @@optimizer_switch=\'derived_merge=OFF\'');
+    # More documentation about subquery optimization available at https://mariadb.com/kb/en/mariadb/subquery-optimizations/
+
     return $dbh;
 }
 
