@@ -130,7 +130,6 @@ function:
         '_parser' => $parser,
         '_ds'       => ( $ds ? $ds : Finance::HostedTrader::Datasource->new() ),
         '_cache'    => {}, # caches parsing of expressions
-        '_result_cache' => {}, # caches actual indicator values
         '_logger'   => Log::Log4perl::get_logger(),
     };
 
@@ -145,62 +144,61 @@ tf
 fields
 symbol
 maxLoadedItems
-startPeriod
 endPeriod
 numItems
 debug
-cacheResults
 
 =cut
 sub getIndicatorData {
     my ( $self, $args ) = @_;
 
-    my @good_args = qw(tf fields symbol maxLoadedItems startPeriod endPeriod numItems debug cacheResults);
+    my $itemCount = $args->{numItems} || 10_000_000;
 
-    foreach my $key (keys %$args) {
+
+    my $sql = $self->_getIndicatorSql(%$args);
+    $self->{_logger}->debug($sql);
+
+    my $dbh = $self->{_ds}->dbh;
+    my $data = $dbh->selectall_arrayref($sql) or $self->{_logger}->logconfess($DBI::errstr);
+    my $lastItemIndex = scalar(@$data) - 1;
+    # Return only the last $itemCount elements. 
+    # Originally this was implemented as a limit clause in the SQL query, but that stopped 
+    # working after MariaDB 5.5
+    if ( defined($itemCount) && ( $lastItemIndex > $itemCount ) ) {
+        my @slice =
+          @{$data}[ $lastItemIndex - $itemCount + 1 .. $lastItemIndex ];
+        return \@slice;
+    }
+
+    return $data;
+}
+
+sub _getIndicatorSql {
+    my ($self, %args) = @_;
+    my ( $result );
+
+    my @good_args = qw(tf fields symbol maxLoadedItems endPeriod numItems debug);
+
+    foreach my $key (keys %args) {
         $self->{_logger}->logconfess("invalid arg in getIndicatorData: $key") unless grep { /$key/ } @good_args;
     }
 
-    if ($args->{startPeriod}) {
-        warn("startPeriod argument ignored in call to getIndicatorData");
-    }
-
-    #Handle arguments
-    my $tf_name = $args->{tf} || 'day';
+    my $tf_name = $args{tf} || 'day';
     my $tf = $self->{_ds}->cfg->timeframes->getTimeframeID($tf_name);
     $self->{_logger}->logconfess( "Could not understand timeframe " . ( $tf_name ) ) if (!$tf);
-    my $maxLoadedItems = $args->{maxLoadedItems};
+    my $maxLoadedItems = $args{maxLoadedItems};
     $maxLoadedItems = 10_000_000_000
-      if ( !defined( $args->{maxLoadedItems} ) );
-    my $displayEndDate   = $args->{endPeriod} || '9999-12-31';
-    my $displayStartDate = $args->{startPeriod} || '0001-01-31';
-    my $itemCount = $args->{numItems} || $maxLoadedItems;
-    my $expr      = $args->{fields}          || $self->{_logger}->logconfess("No fields set for indicator");
-    my $symbol    = $args->{symbol}          || $self->{_logger}->logconfess("No symbol set for indicator");
-    my $cacheResults = $args->{cacheResults};
-    $cacheResults = 1 if (!defined($cacheResults));
+      if ( !defined( $args{maxLoadedItems} ) );
+    my $displayEndDate   = $args{endPeriod} || '9999-12-31';
+    my $expr      = $args{fields}          || $self->{_logger}->logconfess("No fields set for indicator");
+    my $symbol    = $args{symbol}          || $self->{_logger}->logconfess("No symbol set for indicator");
 
-    my $cache_key = "$symbol-$tf-$expr-$maxLoadedItems-$itemCount";
-    my $cached_result = $self->{_result_cache}->{$cache_key};
-    if ($cached_result && $cached_result->[0] eq "$displayStartDate/$displayEndDate") {
-        return $cached_result->[1];
-    }
+    #TODO: Refactor the parser bit so that it can be called independently. This will be usefull to validate expressions before running them.
+    $result     = $self->{_parser}->start_indicator($expr);
 
-    my ( $result );
-    my $cache = $self->{_cache}->{$expr};
-    if ( defined($cache) ) {
-        $result = $cache;
-    }
-    else {
-
-#TODO: Refactor the parser bit so that it can be called independently. This will be usefull to validate expressions before running them.
-        $result     = $self->{_parser}->start_indicator($expr);
-
-#TODO: Need a more meaningfull error message describing what's wrong with the given expression
-        $self->{_logger}->logconfess("Syntax error in indicator \n\n$expr\n")
-          unless ( defined($result) );
-        $self->{_cache}->{$expr} = $result;
-    }
+    #TODO: Need a more meaningfull error message describing what's wrong with the given expression
+    $self->{_logger}->logdie("Syntax error in indicator \n\n$expr\n")
+        unless ( defined($result) );
 
     my $WHERE_FILTER = "WHERE datetime <= '$displayEndDate'";
 #    $WHERE_FILTER .= ' AND dayofweek(datetime) <> 1' if ( $tf != 604800 );
@@ -215,52 +213,6 @@ SELECT $result FROM (
 ORDER BY datetime ASC
 );
 
-## This was the old query that used to work with mysql 5.1 but no longer works with either mariadb 5.5 nor 10.1
-
-#my $int_result = $result;
-#$int_result =~ s/`//g;
-#my $EXT_WHERE = "datetime >= '$displayStartDate'";
-#SELECT $result FROM (
-#SELECT * FROM (
-#SELECT $int_result
-#FROM (
-#    SELECT * FROM (
-#        SELECT * FROM $symbol\_$tf
-#        $WHERE_FILTER
-#        ORDER BY datetime DESC
-#        LIMIT $maxLoadedItems
-#    ) AS T_LIMIT
-#    ORDER BY datetime ASC
-#) AS T_INNER
-#
-#WHERE $EXT_WHERE
-#) AS DT
-#ORDER BY datetime DESC
-#LIMIT $itemCount
-#) AS O
-#ORDER BY datetime ASC
-
-
-    if ($args->{debug}) {
-        $self->{_logger}->debug($sql);
-    } else {
-        $self->{_logger}->trace($sql);
-    }
-
-    my $dbh = $self->{_ds}->dbh;
-    my $data = $dbh->selectall_arrayref($sql) or $self->{_logger}->logconfess($DBI::errstr);
-    my $lastItemIndex = scalar(@$data) - 1;
-    # Return only the last $itemCount elements. 
-    # Originally this was implemented as a limit clause in the SQL query, but that stopped 
-    # working after MariaDB 5.5
-    if ( defined($itemCount) && ( $lastItemIndex > $itemCount ) ) {
-        my @slice =
-          @{$data}[ $lastItemIndex - $itemCount + 1 .. $lastItemIndex ];
-        return \@slice;
-    }
-
-    $self->{_result_cache}->{$cache_key} = [ "$displayStartDate/$displayEndDate", $data ] if ($cacheResults);
-    return $data;
 }
 
 =method C<getSignalData>
@@ -342,7 +294,7 @@ my ($self, $args) = @_;
     #print "results = " . Dumper(\$results);
     #exit;
 
-    $self->{_logger}->logconfess("Syntax error in signal \n\n$expr\n") unless ( defined($results) );
+    $self->{_logger}->logdie("Syntax error in signal \n\n$expr\n") unless ( defined($results) );
 
     my @all_timeframes_sql = ();
     my @timeframes_sql_glue = ();
