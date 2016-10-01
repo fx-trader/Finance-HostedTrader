@@ -99,7 +99,7 @@ foreach my $signal (@ARGV) {
 print "$signal\n----------------------\n" if ($verbose);
 foreach my $symbol ( @{$symbols} ) {
     print "Testing $symbol\n" if ($verbose);
-    my $data = $signal_processor->getSignalData(
+    my $signal_result = $signal_processor->getSignalData(
         {
             'expr'            => $signal,
             'numItems'        => $numItems,
@@ -110,6 +110,7 @@ foreach my $symbol ( @{$symbols} ) {
             'endPeriod'       => UnixDate($endPeriod, '%Y-%m-%d %H:%M:%S'),
         }
     );
+    my $data = $signal_result->{data};
     print $symbol, ' - ', Dumper(\$data) if (scalar(@$data));
 }
 }

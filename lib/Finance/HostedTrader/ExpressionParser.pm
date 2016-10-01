@@ -152,7 +152,6 @@ sub getIndicatorData {
     my ( $self, $args ) = @_;
 
     my $sql = $self->_getIndicatorSql(%$args);
-    #print "$sql\n";
     $self->{_logger}->debug($sql);
 
     my $dbh = $self->{_ds}->dbh;
@@ -169,12 +168,11 @@ sub getSignalData {
     my $sql = $self->_getSignalSql($args);
 
     $self->{_logger}->debug($sql);
-    #print $sql, "\n";
 
     my $dbh = $self->{_ds}->dbh;
-    my $data = $dbh->selectall_arrayref($sql) or $self->{_logger}->logconfess( $DBI::errstr . $sql );
+    my $data = $dbh->selectall_arrayref($sql) || $self->{_logger}->logconfess( $DBI::errstr . $sql );
 
-    return $data;
+    return { data => $data, sql => $sql };
 }
 
 =method C<getSystemData>
@@ -419,7 +417,7 @@ sub checkSignal {
 
     my $startPeriod = UnixDate(DateCalc($nowValue, '- '.$period."seconds"), '%Y-%m-%d %H:%M:%S');
     my $endPeriod = UnixDate($nowValue, '%Y-%m-%d %H:%M:%S');
-    my $data = $self->getSignalData(
+    my $signal_result = $self->getSignalData(
         {
             'expr'            => $expr,
             'symbol'          => $symbol,
@@ -430,6 +428,7 @@ sub checkSignal {
             'numItems'        => 1,
         }
     );
+    my $data = $signal_result->{data};
 
     return $data->[0] if defined($data);
 }
