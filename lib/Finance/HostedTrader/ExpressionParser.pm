@@ -380,7 +380,6 @@ sub _getIndicatorSql {
 
     my $sql = qq(
 SELECT * FROM (
-SELECT * FROM (
 SELECT $result FROM (
   SELECT * FROM $symbol\_$tf
   $WHERE_FILTER
@@ -391,8 +390,6 @@ ORDER BY datetime ASC
 ) AS LIMIT_ROWS
 ORDER BY datetime DESC
 LIMIT $itemCount
-) AS REVERSE_SORT
-ORDER BY datetime ASC
 );
 
 return $sql;
