@@ -151,24 +151,12 @@ numItems
 sub getIndicatorData {
     my ( $self, $args ) = @_;
 
-    my $itemCount = $args->{numItems} || 10_000_000;
-
-
     my $sql = $self->_getIndicatorSql(%$args);
     #print "$sql\n";
     $self->{_logger}->debug($sql);
 
     my $dbh = $self->{_ds}->dbh;
     my $data = $dbh->selectall_arrayref($sql) or $self->{_logger}->logconfess($DBI::errstr);
-    my $lastItemIndex = scalar(@$data) - 1;
-    # Return only the last $itemCount elements. 
-    # Originally this was implemented as a limit clause in the SQL query, but that stopped 
-    # working after MariaDB 5.5
-    if ( defined($itemCount) && ( $lastItemIndex > $itemCount ) ) {
-        my @slice =
-          @{$data}[ $lastItemIndex - $itemCount + 1 .. $lastItemIndex ];
-        return \@slice;
-    }
 
     return $data;
 }
@@ -378,6 +366,7 @@ sub _getIndicatorSql {
     my $displayEndDate   = $args{endPeriod} || '9999-12-31';
     my $expr      = $args{fields}          || $self->{_logger}->logconfess("No fields set for indicator");
     my $symbol    = $args{symbol}          || $self->{_logger}->logconfess("No symbol set for indicator");
+    my $itemCount = $args{numItems} || 10_000_000;
 
     #TODO: Refactor the parser bit so that it can be called independently. This will be usefull to validate expressions before running them.
     $result     = $self->{_parser}->start_indicator($expr);
@@ -390,6 +379,8 @@ sub _getIndicatorSql {
 #    $WHERE_FILTER .= ' AND dayofweek(datetime) <> 1' if ( $tf != 604800 );
 
     my $sql = qq(
+SELECT * FROM (
+SELECT * FROM (
 SELECT $result FROM (
   SELECT * FROM $symbol\_$tf
   $WHERE_FILTER
@@ -397,7 +388,14 @@ SELECT $result FROM (
   LIMIT $maxLoadedItems
 ) AS R
 ORDER BY datetime ASC
+) AS LIMIT_ROWS
+ORDER BY datetime DESC
+LIMIT $itemCount
+) AS REVERSE_SORT
+ORDER BY datetime ASC
 );
+
+return $sql;
 
 }
 
