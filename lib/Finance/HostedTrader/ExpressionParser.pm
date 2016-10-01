@@ -333,19 +333,20 @@ $ORDERBY_CLAUSE
             $self->{_logger}->logdie("missing data, internal error");
         }
 
-        foreach my $op (@timeframes_sql_glue) {
-            my $leftop = shift(@all_timeframes_sql);
+        my $leftop = shift(@all_timeframes_sql);
+        $sql .= $leftop->{sql};
+
+        while ( my $op = shift(@timeframes_sql_glue) ) {
             my $rightop = shift(@all_timeframes_sql);
-            $self->{_logger}->logdie("Unexpected undefined value leftop") if (!defined($leftop));
-            $self->{_logger}->logdie("Unexpected undefined value rightop") if (!defined($rightop));
 
             if ($op eq 'AND') {
-                $sql .= $leftop->{sql} . "\nINNER JOIN\n" . $rightop->{sql} . " ON SIGNALS_TF_$leftop->{tf}.COMMON_TIMEFRAME_PATTERN = SIGNALS_TF_$rightop->{tf}.COMMON_TIMEFRAME_PATTERN";
+                $sql .= "\nINNER JOIN\n" . $rightop->{sql} . " ON SIGNALS_TF_$leftop->{tf}.COMMON_TIMEFRAME_PATTERN = SIGNALS_TF_$rightop->{tf}.COMMON_TIMEFRAME_PATTERN";
             } elsif ($op eq 'OR') {
-                $sql .= $leftop->{sql} . "\nUNION ALL\n" . $rightop->{sql};
+                $sql .= "\nUNION ALL\n" . $rightop->{sql};
             } else {
                 $self->{_logger}->logdie("Unknown operator: $op");
             }
+
         }
     }
     $sql .= " ORDER BY datetime DESC limit $itemCount";
