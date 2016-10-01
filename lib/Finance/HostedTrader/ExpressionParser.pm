@@ -326,6 +326,13 @@ $ORDERBY_CLAUSE
         $sql = "SELECT $fields FROM $leftop->{sql}";
     } else {
         $sql = "SELECT SIGNALS_TF_$min_timeframe_requested.datetime FROM\n";
+        if (scalar(@all_timeframes_sql) < 2) {
+            # This condition should never happen. If it does,
+            # there was an error filling up the internal data structures
+            # that support signal calculations
+            $self->{_logger}->logdie("missing data, internal error");
+        }
+
         foreach my $op (@timeframes_sql_glue) {
             my $leftop = shift(@all_timeframes_sql);
             my $rightop = shift(@all_timeframes_sql);
@@ -337,7 +344,7 @@ $ORDERBY_CLAUSE
             } elsif ($op eq 'OR') {
                 $sql .= $leftop->{sql} . "\nUNION ALL\n" . $rightop->{sql};
             } else {
-                die("Unknown operator: $op");
+                $self->{_logger}->logdie("Unknown operator: $op");
             }
         }
     }
