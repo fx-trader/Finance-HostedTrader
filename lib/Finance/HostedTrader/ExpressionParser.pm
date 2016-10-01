@@ -178,10 +178,25 @@ See L</getIndicatorData> for list of arguments.
 sub getSignalData {
     my ( $self, $args ) = @_;
     my $sql = $self->_getSignalSql($args);
+
     $self->{_logger}->debug($sql);
+#    print $sql, "\n";
 
     my $dbh = $self->{_ds}->dbh;
     my $data = $dbh->selectall_arrayref($sql) or $self->{_logger}->logconfess( $DBI::errstr . $sql );
+
+    my $itemCount = $args->{numItems} || 10_000_000_000;
+
+    # Return only the last $itemCount elements. 
+    # Originally this was implemented as a limit clause in the SQL query, but that stopped 
+    # working after MariaDB 5.5
+    if ( defined($itemCount) && ( scalar(@$data) > $itemCount ) ) {
+        my @slice =
+          @{$data}[ 0 .. $itemCount - 1 ];
+        return \@slice;
+    }
+
+
     return $data;
 }
 
@@ -195,6 +210,8 @@ sub getSystemData {
     $args{expr} = delete $args{enter};
     my $exitSignal = delete $args{exit};
     $args{fields} = "'ENTRY' AS Action, datetime, close";
+
+    #TODO, limit nbitems not done here
     my $sql_entry = $self->_getSignalSql(\%args);
     $args{expr} = $exitSignal;
     $args{fields} = "'EXIT' AS Action, datetime, close";
@@ -227,7 +244,6 @@ my ($self, $args) = @_;
     my $startPeriod = $args->{startPeriod} || '0001-01-01 00:00:00';
     my $endPeriod = $args->{endPeriod} || '9999-12-31 23:59:59';
     my $fields = $args->{fields} || 'datetime';
-    my $nbItems = $args->{numItems} || 10_000_000_000;
 
     $maxLoadedItems = 10_000_000_000
       if ( !defined( $args->{maxLoadedItems} ));
@@ -236,7 +252,7 @@ my ($self, $args) = @_;
     %INDICATORS = ();
     @VALUES     = ();
     my $results = $self->{_parser}->start_signal( $args->{expr} );
-    use Data::Dumper;
+    #use Data::Dumper;
     #print "TIMEFRAMES = " . Dumper(\%TIMEFRAMES);
     #print "INDICATORS = " . Dumper(\%INDICATORS);
     #print "VALUES = " . Dumper(\@VALUES);
@@ -299,7 +315,7 @@ my ($self, $args) = @_;
         my $WHERE_FILTER = " WHERE datetime <= '$endPeriod'";
         $WHERE_FILTER .= ' AND dayofweek(datetime) <> 1' if ( $tf != 604800 );
         my $ORDERBY_CLAUSE='';
-        $ORDERBY_CLAUSE='ORDER BY datetime';
+        $ORDERBY_CLAUSE='ORDER BY datetime ASC';
 
         my $tf_sql = qq(
 (
@@ -307,18 +323,14 @@ SELECT $fields, $common_timeframe_pattern AS COMMON_TIMEFRAME_PATTERN FROM (
 SELECT $fields FROM (
 SELECT *$select_fields
 FROM (
-    SELECT * FROM (
-        SELECT * FROM $symbol\_$tf
-        $WHERE_FILTER
-        ORDER BY datetime desc
-        LIMIT $maxLoadedItems
-    ) AS T_LIMIT
-    ORDER BY datetime
+    SELECT * FROM $symbol\_$tf
+    $WHERE_FILTER
+    ORDER BY datetime DESC
+    LIMIT $maxLoadedItems
 ) AS T_INNER
 ) AS T_OUTER
 WHERE $result_str AND datetime >= '$startPeriod' AND datetime <='$endPeriod'
-ORDER BY datetime DESC
-LIMIT $nbItems
+ORDER BY datetime ASC
 ) AS DT
 $ORDERBY_CLAUSE
 ) AS SIGNALS_TF_$tf
