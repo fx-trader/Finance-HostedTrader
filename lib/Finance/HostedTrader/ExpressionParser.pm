@@ -146,7 +146,6 @@ symbol
 maxLoadedItems
 endPeriod
 numItems
-debug
 
 =cut
 sub getIndicatorData {
@@ -173,59 +172,13 @@ sub getIndicatorData {
     return $data;
 }
 
-sub _getIndicatorSql {
-    my ($self, %args) = @_;
-    my ( $result );
-
-    my @good_args = qw(tf fields symbol maxLoadedItems endPeriod numItems debug);
-
-    foreach my $key (keys %args) {
-        $self->{_logger}->logconfess("invalid arg in getIndicatorData: $key") unless grep { /$key/ } @good_args;
-    }
-
-    my $tf_name = $args{tf} || 'day';
-    my $tf = $self->{_ds}->cfg->timeframes->getTimeframeID($tf_name);
-    $self->{_logger}->logconfess( "Could not understand timeframe " . ( $tf_name ) ) if (!$tf);
-    my $maxLoadedItems = $args{maxLoadedItems};
-    $maxLoadedItems = 10_000_000_000
-      if ( !defined( $args{maxLoadedItems} ) );
-    my $displayEndDate   = $args{endPeriod} || '9999-12-31';
-    my $expr      = $args{fields}          || $self->{_logger}->logconfess("No fields set for indicator");
-    my $symbol    = $args{symbol}          || $self->{_logger}->logconfess("No symbol set for indicator");
-
-    #TODO: Refactor the parser bit so that it can be called independently. This will be usefull to validate expressions before running them.
-    $result     = $self->{_parser}->start_indicator($expr);
-
-    #TODO: Need a more meaningfull error message describing what's wrong with the given expression
-    $self->{_logger}->logdie("Syntax error in indicator \n\n$expr\n")
-        unless ( defined($result) );
-
-    my $WHERE_FILTER = "WHERE datetime <= '$displayEndDate'";
-#    $WHERE_FILTER .= ' AND dayofweek(datetime) <> 1' if ( $tf != 604800 );
-
-    my $sql = qq(
-SELECT $result FROM (
-  SELECT * FROM $symbol\_$tf
-  $WHERE_FILTER
-  ORDER BY datetime DESC
-  LIMIT $maxLoadedItems
-) AS R
-ORDER BY datetime ASC
-);
-
-}
-
 =method C<getSignalData>
 See L</getIndicatorData> for list of arguments.
 =cut
 sub getSignalData {
     my ( $self, $args ) = @_;
     my $sql = $self->_getSignalSql($args);
-    if ($args->{debug}) {
-        $self->{_logger}->debug($sql);
-    } else {
-        $self->{_logger}->trace($sql);
-    }
+    $self->{_logger}->debug($sql);
 
     my $dbh = $self->{_ds}->dbh;
     my $data = $dbh->selectall_arrayref($sql) or $self->{_logger}->logconfess( $DBI::errstr . $sql );
@@ -249,11 +202,7 @@ sub getSystemData {
 
 
     my $sql = $sql_entry . ' UNION ALL ' . $sql_exit . ' ORDER BY datetime';
-    if ($args{debug}) {
-        $self->{_logger}->debug($sql);
-    } else {
-        $self->{_logger}->trace($sql);
-    }
+    $self->{_logger}->debug($sql);
 
     my $dbh = $self->{_ds}->dbh;
     my $data = $dbh->selectall_arrayref($sql) or $self->{_logger}->logconfess( $DBI::errstr . $sql );
@@ -263,7 +212,7 @@ sub getSystemData {
 sub _getSignalSql {
 my ($self, $args) = @_;
 
-    my @good_args = qw(tf expr symbol maxLoadedItems startPeriod endPeriod numItems fields debug);
+    my @good_args = qw(tf expr symbol maxLoadedItems startPeriod endPeriod numItems fields);
 
     foreach my $key (keys %$args) {
         $self->{_logger}->logconfess("invalid arg in _getSignalSql: $key") unless grep { /$key/ } @good_args;
@@ -406,13 +355,57 @@ $ORDERBY_CLAUSE
     return $sql;
 }
 
+sub _getIndicatorSql {
+    my ($self, %args) = @_;
+    my ( $result );
+
+    my @good_args = qw(tf fields symbol maxLoadedItems endPeriod numItems);
+
+    foreach my $key (keys %args) {
+        $self->{_logger}->logconfess("invalid arg in getIndicatorData: $key") unless grep { /$key/ } @good_args;
+    }
+
+    my $tf_name = $args{tf} || 'day';
+    my $tf = $self->{_ds}->cfg->timeframes->getTimeframeID($tf_name);
+    $self->{_logger}->logconfess( "Could not understand timeframe " . ( $tf_name ) ) if (!$tf);
+    my $maxLoadedItems = $args{maxLoadedItems};
+    $maxLoadedItems = 10_000_000_000
+      if ( !defined( $args{maxLoadedItems} ) );
+    my $displayEndDate   = $args{endPeriod} || '9999-12-31';
+    my $expr      = $args{fields}          || $self->{_logger}->logconfess("No fields set for indicator");
+    my $symbol    = $args{symbol}          || $self->{_logger}->logconfess("No symbol set for indicator");
+
+    #TODO: Refactor the parser bit so that it can be called independently. This will be usefull to validate expressions before running them.
+    $result     = $self->{_parser}->start_indicator($expr);
+
+    #TODO: Need a more meaningfull error message describing what's wrong with the given expression
+    $self->{_logger}->logdie("Syntax error in indicator \n\n$expr\n")
+        unless ( defined($result) );
+
+    my $WHERE_FILTER = "WHERE datetime <= '$displayEndDate'";
+#    $WHERE_FILTER .= ' AND dayofweek(datetime) <> 1' if ( $tf != 604800 );
+
+    my $sql = qq(
+SELECT $result FROM (
+  SELECT * FROM $symbol\_$tf
+  $WHERE_FILTER
+  ORDER BY datetime DESC
+  LIMIT $maxLoadedItems
+) AS R
+ORDER BY datetime ASC
+);
+
+}
+
+
+
 =method C<checkSignal>
 Check wether a given signal occurred in a given period of time
 =cut
 sub checkSignal {
     my ( $self, $args ) = @_;
 
-    my @good_args = qw( expr symbol tf maxLoadedItems debug period simulatedNowValue);
+    my @good_args = qw( expr symbol tf maxLoadedItems period simulatedNowValue);
 
     foreach my $key (keys %$args) {
         $self->{_logger}->logconfess("invalid arg in checkSignal: $key") unless grep { /$key/ } @good_args;
@@ -422,7 +415,6 @@ sub checkSignal {
     my $symbol = $args->{symbol} || $self->{_logger}->logconfess("symbol argument missing in checkSignal");
     my $timeframe = $args->{tf} || $self->{_logger}->logconfess("timeframe argument missing in checkSignal");
     my $maxLoadedItems = $args->{maxLoadedItems} || -1;
-    my $debug = $args->{debug} || 0;
     my $period = $args->{period} || 3600;
     my $nowValue = $args->{simulatedNowValue} || 'now';
 
@@ -437,7 +429,6 @@ sub checkSignal {
             'startPeriod'     => $startPeriod,
             'endPeriod'       => $endPeriod,
             'numItems'        => 1,
-            'debug'           => $debug,
         }
     );
 

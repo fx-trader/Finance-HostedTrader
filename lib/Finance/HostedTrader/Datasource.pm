@@ -14,18 +14,7 @@ use Data::Dumper;
 use Moose;
 use Params::Validate qw(:all);
 
-=attr C<debug>
-
-Optional If set to a true value, prints SQL queries to stdout.
-
-Defaults to false.
-=cut
-has debug => (
-    is       => 'ro',
-    isa      => 'Bool',
-    default  => 0,
-    required => 0,
-);
+#TODO, add log4perl to this module and output sql queries in debug mode (not critical, can do the same thing with DBI_TRACE=1)
 
 =attr C<dbh>
 
@@ -145,7 +134,7 @@ GROUP BY $date_group
 ON DUPLICATE KEY UPDATE open=values(open), low=values(low), high=values(high), close=values(close)
 |;
 
-    print "\n----------\n$sql\n----------\n" if ($self->debug);
+    #print "\n----------\n$sql\n----------\n";
     $self->dbh->do($sql);
 }
 

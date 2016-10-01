@@ -35,7 +35,7 @@ Display usage information.
 
 =item C<--debug>
 
-Debug output.
+Debug output. TODO, set log4perl to debug and output to STDERR.
 
 =item C<--maxLoadedItems=i>
 
@@ -108,7 +108,6 @@ foreach my $symbol ( @{$symbols} ) {
             'maxLoadedItems'  => $max_loaded_items,
             'startPeriod'     => UnixDate($startPeriod, '%Y-%m-%d %H:%M:%S'),
             'endPeriod'       => UnixDate($endPeriod, '%Y-%m-%d %H:%M:%S'),
-            'debug'           => $debug,
         }
     );
     print $symbol, ' - ', Dumper(\$data) if (scalar(@$data));

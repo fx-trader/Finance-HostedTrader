@@ -55,7 +55,7 @@ Verbose output.
 
 =item C<--debug>
 
-Sets the debug flag in the Finance::HostedTrader::Datasource object which causes it to output sql queries to STDOUT.
+TODO, set log4perl to debug and output to stderr
 
 
 =back
@@ -101,7 +101,7 @@ $start_date = UnixDate( $start_date, "%Y-%m-%d %H:%M:%S" )
 $end_date = UnixDate( $end_date, "%Y-%m-%d %H:%M:%S" )
   or die("Cannot parse $end_date");
 
-my $db = Finance::HostedTrader::Datasource->new(debug => $debug);
+my $db = Finance::HostedTrader::Datasource->new();
 my $cfg = $db->cfg;
 my $symbols;
 if ( !defined($symbols_txt) || $symbols_txt eq 'all' ) {

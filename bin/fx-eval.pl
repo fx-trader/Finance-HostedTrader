@@ -37,7 +37,7 @@ Display usage information.
 
 =item C<--debug>
 
-Debug output.
+Debug output. TODO, set log4perl to debug and output to stderr.
 
 =item C<--maxLoadedItems=i>
 
@@ -92,7 +92,6 @@ foreach my $symbol ( @{$symbols} ) {
             'tf'              => $timeframe,
             'maxLoadedItems'  => $max_loaded_items,
             'numItems' => $max_display_items,
-            'debug'         => $debug,
         }
     );
     foreach my $item (@$data) {
