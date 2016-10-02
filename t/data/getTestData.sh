@@ -1,12 +1,12 @@
 #!/bin/sh
 #simple script to export data needed by the tests
 
-set -e
+set -eu
 
 TEST_DATA_DIR=${1:-.}
 
 SYMS="XAUUSD XAGUSD AUDJPY EURUSD USDJPY GBPJPY GBPUSD EURGBP USDCAD"
-TFS="300 900 3600 7200 14400 86400"
+TFS="300"
 
 DBUSER=`fx-show-config.pl db::dbuser`
 DBPASSWD=`fx-show-config.pl db::dbpasswd`
@@ -21,7 +21,7 @@ cd testdata
 for sym in $SYMS; do
   for tf in $TFS; do
     echo Dumping $sym $tf
-    mysql -u$DBUSER -p$DBPASSWD -e "SELECT * FROM ${sym}_${tf} WHERE datetime between '2008-01-01 00:00:00' AND '2012-12-14 00:00:00'" $DBNAME | gzip > ${sym}_${tf}.gz
+    mysql -h fxdata -u$DBUSER -p$DBPASSWD -e "SELECT * FROM ${sym}_${tf} WHERE datetime between '2016-02-26 00:00:00' AND '2016-10-02 00:00:00'" $DBNAME | gzip > ${sym}_${tf}.gz
   done
 done
 
