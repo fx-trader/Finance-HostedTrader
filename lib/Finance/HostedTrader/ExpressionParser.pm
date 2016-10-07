@@ -51,19 +51,19 @@ statement_indicator:		expression(s /,/) {join(',', map { (/^[0-9]/ ? $_ : "$_") 
 
 recursive_timeframe_statement_signal:       <leftop: timeframe_statement_signal boolop timeframe_statement_signal >     { $item[1] }
 
-timeframe_statement_signal:     'daily' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 86400); $item[3] }
-                              | '4hourly' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 14400); $item[3] }
-                              | '3hourly' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 10800); $item[3] }
-                              | '2hourly' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 7200); $item[3] }
-                              | 'hourly' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 3600); $item[3] }
-                              | '30minutely' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 1800); $item[3] }
-                              | '15minutely' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 900); $item[3] }
-                              | '5minutely' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 300); $item[3] }
-                              | '2minutely' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 120); $item[3] }
-                              | 'minutely' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 60); $item[3] }
-                              | '30seconds' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 30); $item[3] }
-                              | '15seconds' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 15); $item[3] }
-                              | '5seconds' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 5); $item[3] }
+timeframe_statement_signal:     'day' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 86400); $item[3] }
+                              | '4hour' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 14400); $item[3] }
+                              | '3hour' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 10800); $item[3] }
+                              | '2hour' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 7200); $item[3] }
+                              | 'hour' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 3600); $item[3] }
+                              | '30minute' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 1800); $item[3] }
+                              | '15minute' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 900); $item[3] }
+                              | '5minute' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 300); $item[3] }
+                              | '2minute' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 120); $item[3] }
+                              | 'minute' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 60); $item[3] }
+                              | '30second' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 30); $item[3] }
+                              | '15second' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 15); $item[3] }
+                              | '5second' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 5); $item[3] }
                               | 'second' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 1); $item[3] }
                               | statement_signal
 
@@ -71,7 +71,7 @@ statement_signal:		<leftop: signal boolop signal > { $item[1] }
 
 statement: statement_indicator | statement_signal
 
-boolop:	'AND' | 'OR'
+boolop:	'and' | 'or'
 
 signal:
 			    'crossoverup' '(' expression ',' number ')' { my $key = Finance::HostedTrader::ExpressionParser::getID("crossoverup","ta_previous($item[3],1)", $item[5], $item[3], $item[5]); $key }
@@ -216,6 +216,7 @@ my ($self, $args) = @_;
     my $default_tf = $self->{_ds}->cfg->timeframes->getTimeframeID($tf_name);
     $self->{_logger}->logconfess( "Could not understand timeframe " . ( $tf_name ) ) if (!$default_tf);
     my $expr   = $args->{expr}   || $self->{_logger}->logconfess("No expression set for signal");
+    $expr = lc($expr);
     my $symbol = $args->{symbol} || $self->{_logger}->logconfess("No symbol set");
     my $maxLoadedItems = $args->{maxLoadedItems};
     my $startPeriod = $args->{startPeriod} || '0001-01-01 00:00:00';
@@ -373,6 +374,7 @@ sub _getIndicatorSql {
       if ( !defined( $args{maxLoadedItems} ) );
     my $displayEndDate   = $args{endPeriod} || '9999-12-31';
     my $expr      = $args{fields}          || $self->{_logger}->logconfess("No fields set for indicator");
+    $expr = lc($expr);
     my $symbol    = $args{symbol}          || $self->{_logger}->logconfess("No symbol set for indicator");
     my $itemCount = $args{numItems} || 10_000_000;
 
