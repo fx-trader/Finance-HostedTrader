@@ -2,6 +2,7 @@ symbols:
     natural:
         - AUDUSD
         - AUDJPY
+        - AUDNZD
         - CHFJPY
         - EURCAD
         - EURCHF
@@ -25,11 +26,10 @@ symbols:
         - FRA40
         - GER30
         - HKG33
-        - ITA40
         - JPN225
         - NAS100
         - SPX500
-        - SUI30
+#        - SUI30
 #        - SWE30
         - UK100
         - UKOil
@@ -42,67 +42,50 @@ symbols:
         - Bund
 #        - EUSTX50
     synthetic:
-        - name: GER30USD
-          components:
+        GER30USD:
             op: "*"
             leftop: GER30
             rightop: EURUSD
-        - name: BundUSD
-          components:
+        BundUSD:
             op: "*"
             leftop: Bund
             rightop: EURUSD
-        - name: FRA40USD
-          components:
+        FRA40USD:
             op: "*"
             leftop: FRA40
             rightop: EURUSD
-        - name: AUS200USD
-          components:
+        AUS200USD:
             op: "*"
             leftop: AUS200
             rightop: AUDUSD
-        - name: ESP35USD
-          components:
+        ESP35USD:
             op: "*"
             leftop: ESP35
             rightop: EURUSD
-        - name: ITA40USD
-          components:
-            op: "*"
-            leftop: ITA40
-            rightop: EURUSD
-        - name: UK100USD
-          components:
+        UK100USD:
             op: "*"
             leftop: UK100
             rightop: GBPUSD
-        - name: UKOilUSD
-          components:
+        UKOilUSD:
             op: "*"
             leftop: UKOil
             rightop: GBPUSD
-#        - name: EUSTX50USD
-#          components:
+#        EUSTX50USD:
 #            op: "*"
 #            leftop: EUSTX50
 #            rightop: EURUSD
-        - name: HKG33USD
-          components:
+        HKG33USD:
             op: "/"
             leftop: HKG33
             rightop: USDHKD
-        - name: JPN225USD
-          components:
+        JPN225USD:
             op: "/"
             leftop: JPN225
             rightop: USDJPY
-        - name: SUI30USD
-          components:
-            op: "/"
-            leftop: SUI30
-            rightop: USDCHF
-    nodb:
+#        SUI30USD:
+#            op: "/"
+#            leftop: SUI30
+#            rightop: USDCHF
         GBPCAD:
             op: "*"
             leftop: GBPUSD
@@ -131,20 +114,15 @@ symbols:
 timeframes:
     natural:
         - 300
+        - 900
+        - 1800
         - 3600
+        - 7200
+        - 10800
+        - 14400
         - 86400
         - 604800
     synthetic:
-        - name: 900
-          base: 300
-        - name: 1800
-          base: 300
-        - name: 7200
-          base: 3600
-        - name: 10800
-          base: 3600
-        - name: 14400
-          base: 3600
 db:
     dbhost: localhost
     dbname: fxcm
