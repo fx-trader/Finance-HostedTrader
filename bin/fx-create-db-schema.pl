@@ -96,20 +96,20 @@ foreach my $symbol (keys %$symbols_synthetic) {
         $sql = qq{
             SELECT T1.datetime,
             ROUND(T1.open $op T2.open,4) AS open,
-            ROUND(T1.low  $op T2.${low},4) AS low,
             ROUND(T1.high $op T2.${high},4) AS high,
+            ROUND(T1.low  $op T2.${low},4) AS low,
             ROUND(T1.close $op T2.close,4) AS close
             FROM ${leftop}_${lowerTf} AS T1, ${rightop}_${lowerTf} AS T2
-            WHERE T1.datetime = T2.datetime"
+            WHERE T1.datetime = T2.datetime
         };
 
     } else {
 
         $sql = qq{
             SELECT T2.datetime,
-            ROUND(1 $op T2.open,4) AS open
-            ROUND(1 $op T2.${high},4) AS high
-            ROUND(1 $op T2.${low},4) AS low
+            ROUND(1 $op T2.open,4) AS open,
+            ROUND(1 $op T2.${high},4) AS high,
+            ROUND(1 $op T2.${low},4) AS low,
             ROUND(1 $op T2.close,4) AS close
             FROM $rightop\_$lowerTf AS T2
             ORDER BY T2.datetime DESC
