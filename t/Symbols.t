@@ -16,12 +16,12 @@ my $empty_tfs = Finance::HostedTrader::Config::Symbols->new(
 	);
 
 is_deeply($empty_tfs->natural, [], 'Natural symbols empty');
-is_deeply($empty_tfs->synthetic, [], 'Synthetic symbols empty');
+is_deeply($empty_tfs->synthetic, {}, 'Synthetic symbols empty');
 is_deeply($empty_tfs->all, [], 'All symbols empty');
 
 my $non_empty_tfs = Finance::HostedTrader::Config::Symbols->new(
 	'natural' => [ 'AUDUSD', 'USDJPY' ],
-	'synthetic' => [ { name => 'GER30USD'} ],
+	'synthetic' => { 'GER30USD' => {} } ,
 	);
 
 is_deeply($non_empty_tfs->natural, ['AUDUSD','USDJPY'], 'Natural symbols non empty');
