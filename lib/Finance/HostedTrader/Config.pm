@@ -112,11 +112,11 @@ around BUILDARGS => sub {
 
     my $class_args = {
         'db' => Finance::HostedTrader::Config::DB->new($cfg->{db}),
-	'symbols' => Finance::HostedTrader::Config::Symbols->new($cfg->{symbols}),
-	'timeframes' => Finance::HostedTrader::Config::Timeframes->new($cfg->{timeframes}),
+        'symbols' => Finance::HostedTrader::Config::Symbols->new($cfg->{symbols}),
+        'timeframes' => Finance::HostedTrader::Config::Timeframes->new($cfg->{timeframes}),
         'tradingProviders' => {
-		map { $_ => Finance::HostedTrader::Config::TradingProvider::Factory->new()->create_instance($_, $cfg->{tradingProviders}->{$_}) }  keys %{$cfg->{tradingProviders}}
-	},
+            map { $_ => Finance::HostedTrader::Config::TradingProvider::Factory->new()->create_instance($_, $cfg->{tradingProviders}->{$_}) }  keys %{$cfg->{tradingProviders}}
+        },
     };
 
     return $class->$orig($class_args);

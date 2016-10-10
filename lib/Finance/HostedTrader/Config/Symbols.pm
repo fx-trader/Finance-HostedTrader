@@ -131,43 +131,34 @@ sub _around_synthetic_symbols {
     my $orig = shift;
     my $self = shift;
 
-    return $self->$orig(@_) if @_; #Call the Moose generated setter if this is a set call (actually because the attributes are read-only we'll never have a set call, but just in case it changes later)
+    return $self->$orig(@_) if @_; #Call the Moose generated setter if this is a set call (actually because the attributes are read-only we'll never 
 
     # If it is a get call, call the Moose generated getter
     my $value = $self->$orig();
     return $value if (defined($value));
-    return [];
+    return {};
 }
 
 has synthetic => (
     is     => 'ro',
-    isa    => 'Maybe[ArrayRef]',
+    isa    => 'Maybe[HashRef]',
     builder => '_build_synthetic',
     required=>0,
 );
 
-has nodb    => (
-    is      => 'ro',
-    isa     => 'Maybe[HashRef]',
-    builder => '_build_nodb',
-    required=> 0,
-);
+sub _build_synthetic {
+    return {};
+}
+
 #register method modifier so that undef values can be converted to empty lists
 around 'synthetic' => \&_around_synthetic_symbols;
 
-sub _build_synthetic {
-    return [];
-}
-
-sub _build_nodb {
-	return {};
-}
 
 sub synthetic_names {
     my $self = shift;
 
     my $synthetics = $self->synthetic;
-    return [ map { $_->{name} } @$synthetics ];
+    return [ keys %$synthetics ];
 }
 
 =method C<all>

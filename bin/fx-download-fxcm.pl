@@ -2,7 +2,7 @@
 
 eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
     if 0; # not running under some shell
-# ABSTRACT: Downloads historical data from fxcm, inserts it into local database and handles dependent synthetic symbols and timeframes
+# ABSTRACT: Downloads historical data from fxcm, inserts it into local database.
 # PODNAME: fx-download-fxcm.pl
 
 
@@ -136,16 +136,12 @@ my @timeframes  = sort split(',', $timeframes_from_txt);
 my $providerCfg = $cfg->tradingProviders->{fxcm};
 
 my $fxcm = Finance::FXCM::Simple->new($providerCfg->username, $providerCfg->password, $providerCfg->accountType, $providerCfg->serverURL);
-my $syntheticSymbols = $cfg->symbols->synthetic;
-my $syntheticSymbolNames = $cfg->symbols->synthetic_names;
 
 
 while(@timeframes) {
     my $timeframe = shift(@timeframes);
     my $nextTimeframe = shift(@timeframes);
     my $fxcmTimeframe = convertTimeframeToFXCM($timeframe);
-
-    my $syntheticTfs = $cfg->timeframes->synthetics_by_base($timeframe) || [];
 
     foreach my $symbol (@symbols) {
         print "Fetching $symbol $timeframe\n" if ($verbose);
@@ -158,20 +154,6 @@ while(@timeframes) {
             warn "Failed to fetch $symbol $timeframe: $_";
         };
         unlink($tableToLoad);
-
-        foreach my $synthetic_tf (@$syntheticTfs) {
-            print "Creating synthetic $symbol $synthetic_tf->{name}\n" if ($verbose);
-            $ds->convertOHLCTimeSeries( symbol => $symbol, tf_synthetic => $synthetic_tf, start_date => "0001-01-01", end_date => "9999-12-13" );
-        }
-    }
-
-    foreach my $synthetic_symbol (@$syntheticSymbols) {
-        print "Creating synthetic $synthetic_symbol->{name} $timeframe\n" if ($verbose);
-        $ds->createSynthetic( $synthetic_symbol, $timeframe );
-        foreach my $synthetic_tf (@$syntheticTfs) {
-            print "Creating synthetic $synthetic_symbol->{name} $synthetic_tf->{name}\n" if ($verbose);
-            $ds->convertOHLCTimeSeries( symbol => $synthetic_symbol->{name}, tf_synthetic => $synthetic_tf, start_date => "0001-01-01", end_date => "9999-12-13" );
-        }
     }
 
     unshift(@timeframes, $nextTimeframe) if ($nextTimeframe);
@@ -185,7 +167,7 @@ __END__
 
 =head1 NAME
 
-fx-download-fxcm.pl - Downloads historical data from fxcm, inserts it into local database and handles dependent synthetic symbols and timeframes
+fx-download-fxcm.pl - Downloads historical data from fxcm, inserts it into local database.
 
 =head1 VERSION
 

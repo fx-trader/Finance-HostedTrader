@@ -2,8 +2,7 @@ symbols:
     natural:
         - XAGUSD2
     synthetic:
-        - name: GER30USD
-          components:
+        GER30USD:
             op: "*"
             leftop: GER30
             rightop: EURUSD
