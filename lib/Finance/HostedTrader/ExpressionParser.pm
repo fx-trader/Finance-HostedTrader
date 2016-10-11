@@ -256,6 +256,20 @@ $ORDERBY_CLAUSE
 
     #print Dumper(\@all_timeframes_sql);
     #print Dumper(\@timeframes_sql_glue);
+    my %unique_timeframes_sql_glue = map { $_ => 1 } @timeframes_sql_glue;
+    if (scalar(keys(%unique_timeframes_sql_glue)) > 1) {
+        # When using a signal expression with more than one timeframe,
+        # This is valid:
+        #   4hour(close > ema(close,21)) and 2hour(close > ema(close,21)) and hour(close > ema(close,21))
+        # This is not:
+        #   4hour(close > ema(close,21)) and 2hour(close > ema(close,21)) or hour(close > ema(close,21))
+
+        # In other words, currently, if a signal expression has multiple timeframes, the all need to be 'and' or 'or'.
+        # I haven't figured out how to write a query to mix and match them.
+        # This validates for that condition and returns an appropriate error.
+
+        $self->{_logger}->logdie("In a multiple timeframe signal expression, all boolean operators between timeframe functions need to be the same. This is a limitation of the API.");
+    }
 
     my $sql;
     if (!@timeframes_sql_glue) {
@@ -276,12 +290,13 @@ $ORDERBY_CLAUSE
         while ( my $op = shift(@timeframes_sql_glue) ) {
             my $rightop = shift(@all_timeframes_sql);
 
-            if ($op eq 'AND') {
+            if ($op eq 'and') {
                 $sql .= "\nINNER JOIN\n" . $rightop->{sql} . " ON SIGNALS_TF_$leftop->{tf}.COMMON_TIMEFRAME_PATTERN = SIGNALS_TF_$rightop->{tf}.COMMON_TIMEFRAME_PATTERN";
-            } elsif ($op eq 'OR') {
+            } elsif ($op eq 'or') {
                 $sql .= "\nUNION ALL\n" . $rightop->{sql};
             } else {
-                $self->{_logger}->logdie("Unknown operator: $op");
+                # This can't really be reached because the grammar only allows operators 'and', 'or'.
+                $self->{_logger}->logconfess("Unknown operator: $op");
             }
 
         }
