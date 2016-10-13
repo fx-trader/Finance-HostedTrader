@@ -67,9 +67,6 @@ return \@sorted;
 =attr C<natural>
 
 Returns a list of natural timeframes.
-Natural timeframes originate from the datasource, as opposed to synthetic timeframes which are calculated based on natural timeframes
-
-Eg: The 2 hour timeframe can be derived from the 1 hour timeframe.
 
 =cut
 has natural => (
@@ -80,56 +77,38 @@ has natural => (
 #register method modifier so the passed timeframe values can be sorted
 around 'natural' => \&_around_timeframes;   
 
-=attr C<synthetic>
-
-Returns a list of synthetic timeframes.  If not defined (either by omission or by explicitly setting it to undef), returns an empty list when accessed.
-
-See the description for natural timeframes.
-
-=cut
-
-has synthetic => (
-    is     => 'ro',
-    isa    => 'Maybe[ArrayRef]',
-    builder => '_build_synthetic',
-    required=>0,
-);
-#register method modifier so the passed timeframe values can be sorted and undef values converted to empty lists
-around 'synthetic' => \&_around_timeframes;
-
-sub _build_synthetic {
-    return [];
-}
-
-sub synthetic_names {
-    my $self = shift;
-
-    my $synthetics = $self->synthetic;
-    return [ sort map { $_->{name} } @$synthetics ];
-}
-
-# Returns synthetic timeframes based on $base
-sub synthetics_by_base {
-    my $self = shift;
-    my $base = shift;
-
-    my $synthetics = $self->synthetic;
-    return [ grep { $_->{base} eq $base } @$synthetics ];
-}
-
 
 =method C<all>
 
-Returns a list of all timeframes, natural and synthetic, sorted by granularity.
+Returns a list of all timeframes, sorted by granularity.
 
 Shorter timeframes will come first, eg: 1 minute will be before 1 hour
 
 =cut
+
 sub all {
     my $self = shift;
 
-   return $self->_sort_timeframes( [ @{ $self->natural }, @{ $self->synthetic_names } ] );
+   return $self->_sort_timeframes( [ @{ $self->natural } ] );
 }
+
+=method C<all_by_name>
+
+Returns a list of all timeframe names, sorted by granularity.
+
+Shorter timeframes will come first, eg: 1 minute will be before 1 hour
+
+=cut
+
+sub all_by_name {
+    my $self = shift;
+
+    my $timeframes = $self->all();
+    my @timeframe_names = map { $self->getTimeframeName($_) } @$timeframes;
+    return \@timeframe_names;
+}
+
+
 
 =method C<getTimeframeID>
 

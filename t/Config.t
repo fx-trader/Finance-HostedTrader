@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 25;
+use Test::More tests => 23;
 use Data::Dumper;
 use File::Basename;
 
@@ -24,7 +24,6 @@ is($merge_files->db->dbname, 'dbname', 'dbname');
 is($merge_files->db->dbpasswd, 'dbpasswd', 'dbpasswd');
 is_deeply($merge_files->symbols->synthetic_names, ['GER30USD'], 'Key missing in file cfg2');
 is_deeply($merge_files->symbols->natural, ['XAGUSD2'], 'Key missing in file cfg1');
-is_deeply($merge_files->timeframes->synthetic, [300], 'Key present in both files but empty list in cfg2');
 is_deeply($merge_files->timeframes->natural, [60], 'Key present in both files as list reference');
 
 my $db = Finance::HostedTrader::Config::DB->new(
@@ -52,7 +51,6 @@ is($config->db->dbuser, 'dbuser', 'db user');
 is($config->db->dbpasswd, 'dbpasswd', 'db passwd');
 is_deeply($config->symbols->synthetic_names, [], 'empty synthetic symbols');
 is_deeply($config->symbols->all(), [qw(AUDUSD USDJPY)], 'symbols');
-is_deeply($config->timeframes->synthetic, [], 'empty synthetic timeframes');
 is_deeply($config->timeframes->natural(), [qw(60 300)], 'ordered natural timeframes');
 is_deeply($config->timeframes->all(), [qw(60 300)], 'ordered all timeframes');
 
