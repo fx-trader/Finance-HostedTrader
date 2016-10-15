@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 15;
+use Test::More tests => 31;
 use Test::Exception;
 use Data::Dumper;
 use Finance::HostedTrader::Datasource;
@@ -28,21 +28,20 @@ foreach my $ds ((undef, Finance::HostedTrader::Datasource->new( ))) {
 }
 
 
-# TODO, systems not working at the moment
-##test getSystemData
-#{
-#    my $data;
-#	throws_ok { $expr->getSystemData( { rubbish => 1 } ) } qr/invalid arg in _getSignalSql: rubbish/, 'Invalid argument in getSystemData';
-#	throws_ok { $expr->getSystemData( { } ) } qr/No expression set for signal/, 'No entry signal set';
-#	throws_ok { $expr->getSystemData( { enter => 'rubbish' } ) } qr/No symbol set/, 'No instruments set';
-#	throws_ok { $expr->getSystemData( { enter => 'rubbish', symbol => 'EURUSD' } ) } qr/Syntax error in signal/, 'Syntax error in entry signal';
-#	throws_ok { $expr->getSystemData( { enter => 'crossoverup(close, ema(close,200))', symbol => 'EURUSD' } ) } qr/No expression set for signal/, 'No expression set for signal';
-#	throws_ok { $expr->getSystemData( { enter => 'crossoverup(close, ema(close,200))', exit => 'rubbish', symbol => 'EURUSD' } ) } qr/Syntax error in signal/, 'Syntax error in exit signal';
-#    SKIP: {
-#        skip "Integration tests", 2 unless($ENV{FX_INTEGRATION_TESTS});
-#        lives_ok { $data = $expr->getSystemData( { enter => 'crossoverup(close, ema(close,200))', exit => 'crossoverdown(close, ema(close,200))', symbol => 'EURUSD' } ) }  'Got System data';
-#        is(ref($data), 'ARRAY', 'data is array');
-#    }
-#}
+#test getSystemData
+{
+    my $data;
+	throws_ok { $expr->getSystemData( { rubbish => 1 } ) } qr/invalid arg in _getSignalSql: rubbish/, 'Invalid argument in getSystemData';
+	throws_ok { $expr->getSystemData( { } ) } qr/No expression set for signal/, 'No entry signal set';
+	throws_ok { $expr->getSystemData( { enter => 'rubbish' } ) } qr/No symbol set/, 'No symbol set';
+	throws_ok { $expr->getSystemData( { enter => 'rubbish', symbol => 'EURUSD' } ) } qr/Syntax error in signal/, 'Syntax error in entry signal';
+	throws_ok { $expr->getSystemData( { enter => 'crossoverup(close, ema(close,200))', symbol => 'EURUSD' } ) } qr/No expression set for signal/, 'No expression set for signal';
+	throws_ok { $expr->getSystemData( { enter => 'crossoverup(close, ema(close,200))', exit => 'rubbish', symbol => 'EURUSD' } ) } qr/Syntax error in signal/, 'Syntax error in exit signal';
+    SKIP: {
+        skip "Integration tests", 2 unless($ENV{FX_INTEGRATION_TESTS});
+        lives_ok { $data = $expr->getSystemData( { enter => 'crossoverup(close, ema(close,200))', exit => 'crossoverdown(close, ema(close,200))', symbol => 'EURUSD' } ) }  'Got System data';
+        is(ref($data), 'ARRAY', 'data is array');
+    }
+}
 
 }
