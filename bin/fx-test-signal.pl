@@ -1,10 +1,10 @@
 #!/usr/bin/perl
-# ABSTRACT: Outputs the value of a signal against all known symbols
+# ABSTRACT: Outputs the value of a signal against all known instruments
 # PODNAME: fx-test-signal.pl
 
 =head1 SYNOPSIS
 
-    fx-test-signal.pl [--timeframe=tf] [--verbose] [--symbols=s] [--debug] [--maxLoadedItems=i] [--numItems=i] expr
+    fx-test-signal.pl [--timeframe=tf] [--verbose] [--instruments=s] [--debug] [--maxLoadedItems=i] [--numItems=i] expr
 
 
 =head1 DESCRIPTION
@@ -24,9 +24,9 @@ Required argument. Specifies a single timeframe
 
 tf can be a valid integer timeframe as defined in L<Finance::HostedTrader::Datasource>
 
-=item C<--symbols=s>
+=item C<--instruments=s>
 
-Comma separated list of symbols for which to run the indicator against.
+Comma separated list of instruments for which to run the indicator against.
 If not supplied, defaults to the list entry in the config file item "symbols.synthetic" and "symbols.natural".
 
 =item C<--help>
@@ -72,7 +72,7 @@ use Date::Manip;
 use Getopt::Long;
 use Pod::Usage;
 
-my ( $timeframe, $max_loaded_items, $symbols_txt, $debug, $help, $startPeriod, $endPeriod, $numItems, $verbose ) =
+my ( $timeframe, $max_loaded_items, $instruments, $debug, $help, $startPeriod, $endPeriod, $numItems, $verbose ) =
   ( 'day', undef, '', 0, 0, '90 days ago', 'today', undef, 0 );
 
 GetOptions(
@@ -80,7 +80,7 @@ GetOptions(
     "numItems=i"         => \$numItems,
     "debug"               => \$debug,
     "verbose"               => \$verbose,
-    "symbols=s"           => \$symbols_txt,
+    "instruments=s"           => \$instruments,
     "maxLoadedItems=i"  => \$max_loaded_items,
     "start=s" => \$startPeriod,
     "end=s" => \$endPeriod,
@@ -90,20 +90,16 @@ pod2usage(1) if ($help);
 my $cfg               = Finance::HostedTrader::Config->new();
 my $signal_processor = Finance::HostedTrader::ExpressionParser->new();
 
-my $symbols = $cfg->symbols->natural;
-
-$symbols = [ split( ',', $symbols_txt ) ] if ($symbols_txt);
+$instruments = join(",", @{ $cfg->symbols->natural }) unless($instruments);
 
 
 foreach my $signal (@ARGV) {
-print "$signal\n----------------------\n" if ($verbose);
-foreach my $symbol ( @{$symbols} ) {
-    print "Testing $symbol\n" if ($verbose);
+    print "$signal\n----------------------\n" if ($verbose);
     my $signal_result = $signal_processor->getSignalData(
         {
             'expr'            => $signal,
             'numItems'        => $numItems,
-            'symbol'          => $symbol,
+            'instruments'     => $instruments,
             'tf'              => $timeframe,
             'maxLoadedItems'  => $max_loaded_items,
             'startPeriod'     => UnixDate($startPeriod, '%Y-%m-%d %H:%M:%S'),
@@ -111,6 +107,8 @@ foreach my $symbol ( @{$symbols} ) {
         }
     );
     my $data = $signal_result->{data};
-    print $symbol, ' - ', Dumper(\$data) if (scalar(@$data));
-}
+
+    foreach my $instrument (sort keys(%$data)) {
+        print $instrument, ' - ', Dumper($data->{$instrument}) if (scalar(@{$data->{$instrument}}));
+    }
 }

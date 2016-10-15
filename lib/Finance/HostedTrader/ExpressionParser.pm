@@ -100,15 +100,27 @@ See L</getIndicatorData> for list of arguments.
 =cut
 sub getSignalData {
     my ( $self, $args ) = @_;
-    my $sql = $self->_getSignalSql($args);
+    my $template_sql = $self->_getSignalSql($args);
 
-    $self->{_logger}->debug($sql);
+    $self->{_logger}->debug($template_sql);
+    my $instruments = $args->{instruments} || $self->{_logger}->logconfess("No instruments set");
+    my @sqls;
+    foreach my $instrument (split(",", $instruments)) {
+        my $instrument_sql = $template_sql;
+        $instrument_sql =~ s/INSTRUMENT_PLACEHOLDER/$instrument/g;
+        push @sqls, $instrument_sql;
+    }
+    my $sql = join(" union all ", @sqls);
 
     my $dbh = $self->{_ds}->dbh;
     my $data = $dbh->selectall_arrayref($sql) || $self->{_logger}->logconfess( $DBI::errstr . $sql );
+    my %results;
+    foreach my $row (@$data) {
+        push @{ $results{$row->[0]} }, $row->[1];
+    }
 
     #return { data => $data, sql => $sql };
-    return { data => $data, };
+    return { data => \%results, };
 }
 
 =method C<getSystemData>
@@ -140,18 +152,19 @@ sub getSystemData {
 sub _getSignalSql {
 my ($self, $args) = @_;
 
-    my @good_args = qw(tf expr symbol maxLoadedItems startPeriod endPeriod numItems fields);
+    my @good_args = qw(tf expr instruments maxLoadedItems startPeriod endPeriod numItems fields);
 
     foreach my $key (keys %$args) {
         $self->{_logger}->logconfess("invalid arg in _getSignalSql: $key") unless grep { /$key/ } @good_args;
     }
+
+    $self->{_logger}->logdie("No instruments set") unless($args->{instruments});
 
     my $tf_name = $args->{tf} || 'day';
     my $default_tf = $self->{_ds}->cfg->timeframes->getTimeframeID($tf_name);
     $self->{_logger}->logconfess( "Could not understand timeframe " . ( $tf_name ) ) if (!$default_tf);
     my $expr   = $args->{expr}   || $self->{_logger}->logconfess("No expression set for signal");
     $expr = lc($expr);
-    my $symbol = $args->{symbol} || $self->{_logger}->logconfess("No symbol set");
     my $maxLoadedItems = $args->{maxLoadedItems};
     my $startPeriod = $args->{startPeriod} || '0001-01-01 00:00:00';
     my $endPeriod = $args->{endPeriod} || '9999-12-31 23:59:59';
@@ -237,7 +250,7 @@ SELECT $fields, $common_timeframe_pattern AS COMMON_TIMEFRAME_PATTERN FROM (
 SELECT $fields FROM (
 SELECT *$select_fields
 FROM (
-    SELECT * FROM $symbol\_$tf
+    SELECT * FROM INSTRUMENT_PLACEHOLDER_$tf
     $WHERE_FILTER
     ORDER BY datetime DESC
     LIMIT $maxLoadedItems
@@ -274,9 +287,9 @@ $ORDERBY_CLAUSE
     my $sql;
     if (!@timeframes_sql_glue) {
         my $leftop = shift(@all_timeframes_sql);
-        $sql = "SELECT $fields FROM $leftop->{sql}";
+        $sql = "SELECT * FROM ( SELECT 'INSTRUMENT_PLACEHOLDER' as instrument, $fields FROM $leftop->{sql}";
     } else {
-        $sql = "SELECT SIGNALS_TF_$min_timeframe_requested.datetime FROM\n";
+        $sql = "SELECT * FROM ( SELECT 'INSTRUMENT_PLACEHOLDER' as instrument, SIGNALS_TF_$min_timeframe_requested.datetime FROM\n";
         if (scalar(@all_timeframes_sql) < 2) {
             # This condition should never happen. If it does,
             # there was an error filling up the internal data structures
@@ -301,7 +314,7 @@ $ORDERBY_CLAUSE
 
         }
     }
-    $sql .= " ORDER BY datetime DESC limit $itemCount";
+    $sql .= " ORDER BY datetime desc limit $itemCount) AS T_INSTRUMENT_PLACEHOLDER \n";
     return $sql;
 }
 
