@@ -105,7 +105,7 @@ sub getSignalData {
     $self->{_logger}->debug($sql);
 
     my $dbh = $self->{_ds}->dbh;
-    my $data = $dbh->selectall_arrayref($sql) || $self->{_logger}->logconfess( $DBI::errstr . $sql );
+    my $data = $dbh->selectcol_arrayref($sql) || $self->{_logger}->logconfess( $DBI::errstr . $sql );
 
     #return { data => $data, sql => $sql };
     return { data => $data, };
