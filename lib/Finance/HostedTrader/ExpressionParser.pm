@@ -272,11 +272,14 @@ $ORDERBY_CLAUSE
     }
 
     my $sql;
+    my $where_clause;
     if (!@timeframes_sql_glue) {
         my $leftop = shift(@all_timeframes_sql);
         $sql = "SELECT $fields FROM $leftop->{sql}";
+        $where_clause = "WHERE datetime >= '$startPeriod'";
     } else {
         $sql = "SELECT SIGNALS_TF_$min_timeframe_requested.datetime FROM\n";
+        $where_clause = "WHERE SIGNALS_TF_$min_timeframe_requested.datetime >= '$startPeriod'";
         if (scalar(@all_timeframes_sql) < 2) {
             # This condition should never happen. If it does,
             # there was an error filling up the internal data structures
@@ -301,7 +304,7 @@ $ORDERBY_CLAUSE
 
         }
     }
-    $sql .= " WHERE datetime >= '$startPeriod'  ORDER BY datetime DESC limit $itemCount";
+    $sql .= " $where_clause ORDER BY datetime DESC limit $itemCount";
     return $sql;
 }
 
