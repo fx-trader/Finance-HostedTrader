@@ -91,7 +91,7 @@ sub getIndicatorData {
     my $dbh = $self->{_ds}->dbh;
     my $data = $dbh->selectall_arrayref($sql) or $self->{_logger}->logconfess($DBI::errstr);
 
-    #return { data => $data, sql => $sql };
+    return { data => $data, sql => $sql } if ($args->{sqldebug});
     return { data => $data };
 }
 
@@ -107,7 +107,7 @@ sub getSignalData {
     my $dbh = $self->{_ds}->dbh;
     my $data = $dbh->selectcol_arrayref($sql) || $self->{_logger}->logconfess( $DBI::errstr . $sql );
 
-    #return { data => $data, sql => $sql };
+    return { data => $data, sql => $sql } if ($args->{sqldebug});
     return { data => $data, };
 }
 
@@ -244,7 +244,7 @@ FROM (
 ) AS T_INNER
 ORDER BY datetime ASC
 ) AS T_OUTER
-WHERE $result_str AND datetime >= '$startPeriod' AND datetime <='$endPeriod'
+WHERE $result_str AND datetime <='$endPeriod'
 ) AS DT
 $ORDERBY_CLAUSE
 ) AS SIGNALS_TF_$tf
@@ -301,7 +301,7 @@ $ORDERBY_CLAUSE
 
         }
     }
-    $sql .= " ORDER BY datetime DESC limit $itemCount";
+    $sql .= " WHERE datetime >= '$startPeriod'  ORDER BY datetime DESC limit $itemCount";
     return $sql;
 }
 
