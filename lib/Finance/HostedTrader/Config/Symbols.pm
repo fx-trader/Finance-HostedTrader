@@ -62,6 +62,7 @@ my %symbolBaseMap = (
  USDCHF => { numerator => 'USD',        denominator => 'CHF' },
  USDDKK => { numerator => 'USD',        denominator => 'DKK' },
  USDHKD => { numerator => 'USD',        denominator => 'HKD' },
+ USDEUR => { numerator => 'USD',        denominator => 'EUR' },
  USDJPY => { numerator => 'USD',        denominator => 'JPY' },
  USDMXN => { numerator => 'USD',        denominator => 'MXN' },
  USDNOK => { numerator => 'USD',        denominator => 'NOK' },
