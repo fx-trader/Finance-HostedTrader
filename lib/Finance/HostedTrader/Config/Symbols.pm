@@ -14,6 +14,7 @@ package Finance::HostedTrader::Config::Symbols;
 use Moose;
 with 'MooseX::Log::Log4perl';
 
+#TODO, should these be in the configuration file (/etc/fxtrader/fx.yml) instead ?
 my %symbolBaseMap = (
  AUDCAD => { numerator => 'AUD',        denominator => 'CAD' },
  AUDCHF => { numerator => 'AUD',        denominator => 'CHF' },
@@ -23,6 +24,7 @@ my %symbolBaseMap = (
  AUS200 => { numerator => 'AUS200',     denominator => 'AUD' },
  CADCHF => { numerator => 'CAD',        denominator => 'CHF' },
  CADJPY => { numerator => 'CAD',        denominator => 'JPY' },
+ CHFEUR => { numerator => 'CHF',        denominator => 'EUR' },
  CHFJPY => { numerator => 'CHF',        denominator => 'JPY' },
  CHFNOK => { numerator => 'CHF',        denominator => 'NOK' },
  CHFSEK => { numerator => 'CHF',        denominator => 'SEK' },
@@ -40,10 +42,13 @@ my %symbolBaseMap = (
  GBPAUD => { numerator => 'GBP',        denominator => 'AUD' },
  GBPCAD => { numerator => 'GBP',        denominator => 'CAD' },
  GBPCHF => { numerator => 'GBP',        denominator => 'CHF' },
+ GBPEUR => { numerator => 'GBP',        denominator => 'EUR' },
  GBPJPY => { numerator => 'GBP',        denominator => 'JPY' },
  GBPNZD => { numerator => 'GBP',        denominator => 'NZD' },
+ GBPHKD => { numerator => 'GBP',        denominator => 'HKD' },
  GBPSEK => { numerator => 'GBP',        denominator => 'SEK' },
  GBPUSD => { numerator => 'GBP',        denominator => 'USD' },
+ JPYEUR => { numerator => 'JPY',        denominator => 'EUR' },
  HKDJPY => { numerator => 'HKD',        denominator => 'JPY' },
  NOKJPY => { numerator => 'NOK',        denominator => 'JPY' },
  NZDCAD => { numerator => 'NZD',        denominator => 'CAD' },
@@ -190,7 +195,7 @@ sub getSymbolDenominator {
     my ($self, $symbol) = @_;
 
     if (!exists($symbolBaseMap{$symbol})) {
-        $self->logger->logcroak("Unsupported symbol '$symbol'");
+        $self->logger->logconfess("Symbol '$symbol' does not exist in ".__PACKAGE__."::\$symbolBaseMap");
     }
 
     return $symbolBaseMap{$symbol}->{denominator};
