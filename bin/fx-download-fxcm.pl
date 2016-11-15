@@ -136,16 +136,14 @@ my @symbols = ( $symbols_from_txt ? split(',', $symbols_from_txt) : @{ $cfg->sym
 my @timeframes  = sort split(',', $timeframes_from_txt);
 my $providerCfg = $cfg->tradingProviders->{fxcm};
 
-my $sleep_interval = $ENV{"FXCM-DOWNLOAD-INTERVAL"} // 300;
+my $sleep_interval = $ENV{"FXCM_DOWNLOAD_INTERVAL"} // 300;
 my $fxcm = Finance::FXCM::Simple->new($providerCfg->username, $providerCfg->password, $providerCfg->accountType, $providerCfg->serverURL);
 
 while (1) {
 
 if (download_data()) {
 
-    while(@timeframes) {
-        my $timeframe = shift(@timeframes);
-        my $nextTimeframe = shift(@timeframes);
+    foreach my $timeframe (@timeframes) {
         my $fxcmTimeframe = convertTimeframeToFXCM($timeframe);
 
         foreach my $symbol (@symbols) {
@@ -160,8 +158,6 @@ if (download_data()) {
             };
             unlink($tableToLoad);
         }
-
-        unshift(@timeframes, $nextTimeframe) if ($nextTimeframe);
     }
 
 } else {
