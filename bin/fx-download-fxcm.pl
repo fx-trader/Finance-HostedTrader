@@ -141,31 +141,51 @@ my $fxcm = Finance::FXCM::Simple->new($providerCfg->username, $providerCfg->pass
 
 while (1) {
 
-while(@timeframes) {
-    my $timeframe = shift(@timeframes);
-    my $nextTimeframe = shift(@timeframes);
-    my $fxcmTimeframe = convertTimeframeToFXCM($timeframe);
+if (download_data()) {
 
-    foreach my $symbol (@symbols) {
-        print "Fetching $symbol $timeframe\n" if ($verbose);
-        my $tableToLoad = $symbol . '_' . $timeframe;
+    while(@timeframes) {
+        my $timeframe = shift(@timeframes);
+        my $nextTimeframe = shift(@timeframes);
+        my $fxcmTimeframe = convertTimeframeToFXCM($timeframe);
 
-        try {
-            $fxcm->saveHistoricalDataToFile($tableToLoad, convertSymbolToFXCM($symbol), $fxcmTimeframe, $numItemsToDownload);
-            $ds->dbh->do("LOAD DATA LOCAL INFILE '$tableToLoad' IGNORE INTO TABLE $tableToLoad FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n'") or die($!);
-        } catch {
-            warn "Failed to fetch $symbol $timeframe: $_";
-        };
-        unlink($tableToLoad);
+        foreach my $symbol (@symbols) {
+            print "Fetching $symbol $timeframe\n" if ($verbose);
+            my $tableToLoad = $symbol . '_' . $timeframe;
+
+            try {
+                $fxcm->saveHistoricalDataToFile($tableToLoad, convertSymbolToFXCM($symbol), $fxcmTimeframe, $numItemsToDownload);
+                $ds->dbh->do("LOAD DATA LOCAL INFILE '$tableToLoad' IGNORE INTO TABLE $tableToLoad FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n'") or die($!);
+            } catch {
+                warn "Failed to fetch $symbol $timeframe: $_";
+            };
+            unlink($tableToLoad);
+        }
+
+        unshift(@timeframes, $nextTimeframe) if ($nextTimeframe);
     }
 
-    unshift(@timeframes, $nextTimeframe) if ($nextTimeframe);
+} else {
+
+    print "Skip download data\n" if ($verbose);
+
 }
 
 last unless ($service);
 
+print "Waiting $sleep_interval seconds\n" if ($verbose);
 sleep($sleep_interval);
 
+
+}
+
+# Returns false when outside market hours and there is no new data to download
+sub download_data {
+my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = gmtime(time);
+
+return 0 if ($wday == 6); # Saturday
+return 0 if ($wday == 5 && $hour >= 22); # Friday after 22H00
+return 0 if ($wday == 0 && $hour <= 20); # Sunday before 21H00
+return 1;
 }
 
 __END__
