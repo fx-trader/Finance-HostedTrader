@@ -117,13 +117,14 @@ sub convertTimeframeToFXCM {
 
 
 my $numItemsToDownload = 10;
-my ( $timeframes_from_txt, $symbols_from_txt, $verbose, $help ) = ( undef, undef, 0, 0);
+my ( $timeframes_from_txt, $symbols_from_txt, $verbose, $help, $service ) = ( undef, undef, 0, 0, 0);
 
 my $result = GetOptions(
     "symbols=s", \$symbols_from_txt,
     "timeframes=s", \$timeframes_from_txt,
     "numItems=i", \$numItemsToDownload,
     "verbose", \$verbose,
+    "service", \$service,
     "help", \$help)  or pod2usage(1);
 
 pod2usage(1) if ( $help || !defined($timeframes_from_txt));
@@ -135,8 +136,10 @@ my @symbols = ( $symbols_from_txt ? split(',', $symbols_from_txt) : @{ $cfg->sym
 my @timeframes  = sort split(',', $timeframes_from_txt);
 my $providerCfg = $cfg->tradingProviders->{fxcm};
 
+my $sleep_interval = $ENV{"FXCM-DOWNLOAD-INTERVAL"} // 300;
 my $fxcm = Finance::FXCM::Simple->new($providerCfg->username, $providerCfg->password, $providerCfg->accountType, $providerCfg->serverURL);
 
+while (1) {
 
 while(@timeframes) {
     my $timeframe = shift(@timeframes);
@@ -157,6 +160,12 @@ while(@timeframes) {
     }
 
     unshift(@timeframes, $nextTimeframe) if ($nextTimeframe);
+}
+
+last unless ($service);
+
+sleep($sleep_interval);
+
 }
 
 __END__
