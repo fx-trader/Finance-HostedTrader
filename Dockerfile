@@ -24,12 +24,7 @@ RUN cpanm --notest  Cpanel::JSON::XS \
                     JSON::MaybeXS \
                     Try::Tiny \
                     YAML::XS \
-                    Dist::Zilla \
-                    Dist::Zilla::Plugin::PodWeaver \
-                    Dist::Zilla::PluginBundle::Git \
-                    Pod::Elemental::Transformer::List \
                     DBI \
-                    DBIx::Class \
                     DBD::mysql \
                     DateTime::Format::Strptime \
                     Finance::FXCM::Simple
@@ -39,10 +34,9 @@ COPY . Finance-HostedTrader
 
 WORKDIR /root/Finance-HostedTrader
 
-RUN dzil authordeps | cpanm --notest
+ENV PATH="/root/Finance-HostedTrader/bin:${PATH}"
+ENV PERL5LIB="/root/Finance-HostedTrader/lib:${PERL5LIB}"
+
 RUN mkdir /etc/fxtrader && cp etc/fxtrader/fx* /etc/fxtrader/
-RUN dzil install --install-command "cpanm --notest ."
 
 WORKDIR /root
-
-RUN rm -fR /root/Finance-HostedTrader
