@@ -137,12 +137,12 @@ my @timeframes  = sort split(',', $timeframes_from_txt);
 my $providerCfg = $cfg->tradingProviders->{fxcm};
 
 my $sleep_interval = $ENV{"FXCM_DOWNLOAD_INTERVAL"} // 300;
-my $fxcm = Finance::FXCM::Simple->new($providerCfg->username, $providerCfg->password, $providerCfg->accountType, $providerCfg->serverURL);
 
 while (1) {
 
 if (download_data()) {
 
+    my $fxcm = Finance::FXCM::Simple->new($providerCfg->username, $providerCfg->password, $providerCfg->accountType, $providerCfg->serverURL);
     foreach my $timeframe (@timeframes) {
         my $fxcmTimeframe = convertTimeframeToFXCM($timeframe);
 
@@ -159,6 +159,8 @@ if (download_data()) {
             unlink($tableToLoad);
         }
     }
+
+    $fxcm = undef;
 
 } else {
 
