@@ -10,8 +10,7 @@ package Finance::HostedTrader::Config::Timeframes;
                 );
 =cut
 
-use Moose;
-use Moose::Util::TypeConstraints;
+use Moo;
 
 #List of available timeframes this module understands
 #TODO finish missing date/time formats
@@ -34,8 +33,6 @@ my %timeframes = (
     '2day'  => [172800, undef],
     'week'  => [604800, "date_format(date_sub(datetime, interval weekday(datetime)+1 DAY), '%Y-%m-%d 00:00:00')"],
 );
-
-enum 'TimeframeIDs' => [qw(0 1 5 15 30 60 120 300 900 1800 3600 7200 10800 14400 86400 172800 604800)];
 
 #These two subs are used to make sure timeframe data is returned sorted
 sub _around_timeframes {
@@ -71,7 +68,6 @@ Returns a list of natural timeframes.
 =cut
 has natural => (
     is     => 'ro',
-    isa    => 'ArrayRef[TimeframeIDs]',
     required=>1,
 );
 #register method modifier so the passed timeframe values can be sorted

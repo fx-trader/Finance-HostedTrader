@@ -13,7 +13,7 @@ package Finance::HostedTrader::Config::DB;
 
 =cut
 
-use Moose;
+use Moo;
 
 =attr C<dbhost>
 
@@ -22,7 +22,6 @@ MySQL database server to connect to
 =cut
 has dbhost => (
     is     => 'ro',
-    isa    => 'Str',
     required=>1,
 );
 
@@ -34,7 +33,6 @@ database name where data is stored
 =cut
 has dbname => (
     is     => 'ro',
-    isa    => 'Str',
     required=>1,
 );
 
@@ -46,7 +44,6 @@ database user name used to connect
 =cut
 has dbuser => (
     is     => 'ro',
-    isa    => 'Str',
     required=>1,
 );
 
@@ -58,7 +55,6 @@ database password used to connect
 =cut
 has dbpasswd => (
     is     => 'ro',
-    isa    => 'Maybe[Str]',
     required=>0,
 );
 

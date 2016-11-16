@@ -11,7 +11,7 @@ package Finance::HostedTrader::Config::Symbols;
                 );
 =cut
 
-use Moose;
+use Moo;
 with 'MooseX::Log::Log4perl';
 
 #TODO, should these be in the configuration file (/etc/fxtrader/fx.yml) instead ?
@@ -120,7 +120,6 @@ Eg: AUDJPY can be synthetically calculated based on AUDUSD and USDJPY
 
 has natural => (
     is     => 'ro',
-    isa    => 'ArrayRef[Str]',
     required=>1,
 );
 
@@ -147,7 +146,6 @@ sub _around_synthetic_symbols {
 
 has synthetic => (
     is     => 'ro',
-    isa    => 'Maybe[HashRef]',
     builder => '_build_synthetic',
     required=>0,
 );

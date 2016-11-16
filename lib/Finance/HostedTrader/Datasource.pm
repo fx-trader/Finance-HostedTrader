@@ -10,8 +10,7 @@ package Finance::HostedTrader::Datasource;
 
 use DBI;
 use Finance::HostedTrader::Config;
-use Data::Dumper;
-use Moose;
+use Moo;
 use Params::Validate qw(:all);
 
 #TODO, add log4perl to this module and output sql queries in debug mode (not critical, can do the same thing with DBI_TRACE=1)
@@ -24,7 +23,7 @@ If not present, a new DBI handle is created from the settings in the config file
 =cut
 has dbh => (
     is       => 'ro',
-    isa      => 'DBI::db',
+    isa      => sub { die("invalid type") unless ($_[0]->isa("DBI::db")) },
     builder  => '_build_dbh',
     lazy     => 1,
     required => 1,
@@ -60,7 +59,7 @@ This object contains a list of available timeframes and symbols in this data sou
 =cut
 has cfg => (
     is       => 'ro',
-    isa      => 'Finance::HostedTrader::Config',
+    isa      => sub { die("invalid type") unless ($_[0]->isa("Finance::HostedTrader::Config")) },
     builder  => '_build_cfg',
     required => 1,
 );

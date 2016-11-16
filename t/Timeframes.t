@@ -33,5 +33,5 @@ $tfs = Finance::HostedTrader::Config::Timeframes->new(
 isa_ok($tfs,'Finance::HostedTrader::Config::Timeframes');
 
 
-throws_ok {Finance::HostedTrader::Config::Timeframes->new()} qr /Attribute \(natural\) is required/, 'natural timeframes required';
+throws_ok {Finance::HostedTrader::Config::Timeframes->new()} qr /Missing required arguments: natural/, 'natural timeframes required';
 

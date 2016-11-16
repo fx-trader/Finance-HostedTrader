@@ -6,10 +6,6 @@ package Finance::HostedTrader::Config::TradingProvider;
 
 =cut
 
-use Moose;
-
-
-__PACKAGE__->meta->make_immutable;
 1;
 
 =head1 SEE ALSO

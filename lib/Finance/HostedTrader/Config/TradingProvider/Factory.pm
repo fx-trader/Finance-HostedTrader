@@ -6,7 +6,7 @@ package Finance::HostedTrader::Config::TradingProvider::Factory;
 
 =cut
 
-use Moose;
+use Moo;
 
 sub create_instance {
     my $self = shift;
@@ -20,8 +20,6 @@ sub create_instance {
         die("Unknown Trading provider found in config file: $subclass\n");
     }
 };
-
-__PACKAGE__->meta->make_immutable;
 
 1;
 

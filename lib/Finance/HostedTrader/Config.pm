@@ -38,7 +38,7 @@ package Finance::HostedTrader::Config;
 =cut
 
 use Config::Any;
-use Moose;
+use Moo;
 
 use Finance::HostedTrader::Config::DB;
 use Finance::HostedTrader::Config::Symbols;
@@ -51,7 +51,7 @@ use Finance::HostedTrader::Config::TradingProvider::Factory;
 =cut
 has db => (
     is       => 'ro',
-    isa      => 'Finance::HostedTrader::Config::DB',
+    isa      => sub { die("invalid type") unless ($_[0]->isa("Finance::HostedTrader::Config::DB")) },
     required => 1,
 );
 
@@ -60,7 +60,7 @@ has db => (
 =cut
 has symbols => (
     is       => 'ro',
-    isa      => 'Finance::HostedTrader::Config::Symbols',
+    isa      => sub { die("invalid type") unless ($_[0]->isa("Finance::HostedTrader::Config::Symbols")) },
     required => 1,
 );
 
@@ -69,7 +69,7 @@ has symbols => (
 =cut
 has timeframes => (
     is       => 'ro',
-    isa      => 'Finance::HostedTrader::Config::Timeframes',
+    isa      => sub { die("invalid type") unless ($_[0]->isa("Finance::HostedTrader::Config::Timeframes")) },
     required => 1,
 );
 
@@ -78,7 +78,6 @@ has timeframes => (
 =cut
 has tradingProviders => (
     is       => 'ro',
-    isa      => 'HashRef[Finance::HostedTrader::Config::TradingProvider]',
     required => 0,
 );
 

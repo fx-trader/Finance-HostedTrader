@@ -6,8 +6,7 @@ package Finance::HostedTrader::Config::TradingProvider::FXCM;
 
 =cut
 
-use Moose;
-use Moose::Util::TypeConstraints;
+use Moo;
 
 extends 'Finance::HostedTrader::Config::TradingProvider';
 
@@ -20,7 +19,6 @@ Username to connect to the trading provider
 
 has username => (
     is     => 'ro',
-    isa    => 'Str',
     required=>1,
 );
 
@@ -33,7 +31,6 @@ Password to connect to the trading provider
 
 has password => (
     is     => 'ro',
-    isa    => 'Str',
     required=>1,
 );
 
@@ -46,7 +43,6 @@ FXCM account type. Either 'Demo' or 'Real'.
 
 has accountType => (
     is     => 'ro',
-    isa    => 'Str',
     required=>1,
 );
 
@@ -59,13 +55,10 @@ ForexConnect server URL. Tipically http://www.fxcorporate.com/Hosts.jsp
 
 has serverURL => (
     is     => 'ro',
-    isa    => 'Str',
     default=> 'http://www.fxcorporate.com/Hosts.jsp',
     required=>1,
 );
 
-
-__PACKAGE__->meta->make_immutable;
 1;
 
 =head1 SEE ALSO
