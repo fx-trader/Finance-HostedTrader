@@ -41,7 +41,7 @@ WORKDIR /root/Finance-HostedTrader
 
 RUN dzil authordeps | cpanm --notest
 RUN mkdir /etc/fxtrader && cp etc/fxtrader/fx* /etc/fxtrader/
-RUN dzil install
+RUN dzil install --install-command "cpanm --notest ."
 
 WORKDIR /root
 
