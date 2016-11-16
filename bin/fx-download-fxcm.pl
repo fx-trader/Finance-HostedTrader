@@ -8,6 +8,7 @@ eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
 
 use strict;
 use warnings;
+$|=1;
 
 use Getopt::Long;
 use Finance::HostedTrader::Datasource;
