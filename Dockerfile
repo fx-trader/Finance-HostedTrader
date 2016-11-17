@@ -15,6 +15,9 @@ RUN apt-get update && apt-get -y install \
         libtry-tiny-perl \
         libjson-maybexs-perl \
         libcpanel-json-xs-perl \
+        libmoosex-log-log4perl-perl \
+        libmoo-perl \
+        libdate-manip-perl \
         cpanminus \
         && rm -rf /var/lib/apt/lists/*
 
