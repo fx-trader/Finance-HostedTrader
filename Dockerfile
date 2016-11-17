@@ -11,6 +11,13 @@ RUN apt-get update && apt-get -y install \
         libssl-dev \
         git \
         libmysqlclient-dev \
+        libdatetime-format-strptime-perl \
+        libdbd-mysql-perl \
+        libyaml-libyaml-perl \
+        libtry-tiny-perl \
+        libjson-maybexs-perl \
+        libcpanel-json-xs-perl \
+        cpanminus \
         && rm -rf /var/lib/apt/lists/*
 
 ## Finance::FXCM::Simple dependency
@@ -18,16 +25,7 @@ ENV FXCONNECT_HOME /root/ForexConnectAPI-1.3.2-Linux-x86_64
 WORKDIR /root
 RUN curl -L http://fxcodebase.com/bin/forexconnect/1.3.2/ForexConnectAPI-1.3.2-Linux-x86_64.tar.gz | tar zxf - -C /root
 
-RUN curl -L https://cpanmin.us | perl - --notest App::cpanminus
-
-RUN cpanm --notest  Cpanel::JSON::XS \
-                    JSON::MaybeXS \
-                    Try::Tiny \
-                    YAML::XS \
-                    DBI \
-                    DBD::mysql \
-                    DateTime::Format::Strptime \
-                    Finance::FXCM::Simple
+RUN cpanm --notest Finance::FXCM::Simple
 
 ## Finance::HostedTrader
 COPY . Finance-HostedTrader
