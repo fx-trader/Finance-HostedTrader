@@ -8,9 +8,7 @@ RUN apt-get update && apt-get -y install \
         g++ \
         gdb \
         valgrind \
-        libssl-dev \
         git \
-        libmysqlclient-dev \
         libdatetime-format-strptime-perl \
         libdbd-mysql-perl \
         libyaml-libyaml-perl \
