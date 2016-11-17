@@ -20,6 +20,7 @@ RUN apt-get update && apt-get -y install \
         libdate-manip-perl \
         cpanminus \
         libconfig-general-perl \
+        libparse-recdescent-perl \
         && rm -rf /var/lib/apt/lists/*
 
 ## Finance::FXCM::Simple dependency
