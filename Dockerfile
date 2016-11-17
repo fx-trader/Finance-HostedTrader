@@ -19,7 +19,6 @@ RUN apt-get update && apt-get -y install \
         libmoo-perl \
         libdate-manip-perl \
         cpanminus \
-        libconfig-general-perl \
         libparse-recdescent-perl \
         && rm -rf /var/lib/apt/lists/*
 
@@ -28,7 +27,7 @@ ENV FXCONNECT_HOME /root/ForexConnectAPI-1.3.2-Linux-x86_64
 WORKDIR /root
 RUN curl -L http://fxcodebase.com/bin/forexconnect/1.3.2/ForexConnectAPI-1.3.2-Linux-x86_64.tar.gz | tar zxf - -C /root
 
-RUN cpanm --notest Finance::FXCM::Simple
+RUN cpanm --notest Finance::FXCM::Simple Config::Any::YAML
 
 ## Finance::HostedTrader
 COPY . Finance-HostedTrader
