@@ -19,6 +19,7 @@ RUN apt-get update && apt-get -y install \
         libmoo-perl \
         libdate-manip-perl \
         cpanminus \
+        libconfig-general-perl \
         && rm -rf /var/lib/apt/lists/*
 
 ## Finance::FXCM::Simple dependency
