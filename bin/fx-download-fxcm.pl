@@ -141,7 +141,7 @@ my $sleep_interval = $ENV{"FXCM_DOWNLOAD_INTERVAL"} // 300;
 
 while (1) {
 
-if (download_data()) {
+if (!$service || download_data()) {
 
     my $fxcm = Finance::FXCM::Simple->new($providerCfg->username, $providerCfg->password, $providerCfg->accountType, $providerCfg->serverURL);
     foreach my $timeframe (@timeframes) {
@@ -177,7 +177,7 @@ sleep($sleep_interval);
 
 }
 
-# Returns false when outside market hours and there is no new data to download
+# Returns false when outside market hours
 sub download_data {
 my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = gmtime(time);
 
