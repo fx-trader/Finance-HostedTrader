@@ -65,10 +65,10 @@ foreach my $symbol (@$symbols) {
     print qq /
 CREATE TABLE IF NOT EXISTS `${symbol}_${lowerTf}` (
 `datetime` DATETIME NOT NULL ,
-`open` DECIMAL(9,4) NOT NULL ,
-`high` DECIMAL(9,4) NOT NULL ,
-`low` DECIMAL(9,4) NOT NULL ,
-`close` DECIMAL(9,4) NOT NULL ,
+`open` DECIMAL(9,9) NOT NULL ,
+`high` DECIMAL(9,9) NOT NULL ,
+`low` DECIMAL(9,9) NOT NULL ,
+`close` DECIMAL(9,9) NOT NULL ,
 PRIMARY KEY ( `datetime` )
 ) ENGINE = $table_type ;
 /;
@@ -95,10 +95,10 @@ foreach my $symbol (keys %$symbols_synthetic) {
     if ($leftop ne '1') {
         $sql = qq{
             SELECT T1.datetime,
-            ROUND(T1.open $op T2.open,4) AS open,
-            ROUND(T1.high $op T2.${high},4) AS high,
-            ROUND(T1.low  $op T2.${low},4) AS low,
-            ROUND(T1.close $op T2.close,4) AS close
+            ROUND(T1.open $op T2.open,9) AS open,
+            ROUND(T1.high $op T2.${high},9) AS high,
+            ROUND(T1.low  $op T2.${low},9) AS low,
+            ROUND(T1.close $op T2.close,9) AS close
             FROM ${leftop}_${lowerTf} AS T1, ${rightop}_${lowerTf} AS T2
             WHERE T1.datetime = T2.datetime
         };
@@ -107,10 +107,10 @@ foreach my $symbol (keys %$symbols_synthetic) {
 
         $sql = qq{
             SELECT T2.datetime,
-            ROUND(1 $op T2.open,4) AS open,
-            ROUND(1 $op T2.${high},4) AS high,
-            ROUND(1 $op T2.${low},4) AS low,
-            ROUND(1 $op T2.close,4) AS close
+            ROUND(1 $op T2.open,9) AS open,
+            ROUND(1 $op T2.${high},9) AS high,
+            ROUND(1 $op T2.${low},9) AS low,
+            ROUND(1 $op T2.close,9) AS close
             FROM $rightop\_$lowerTf AS T2
             ORDER BY T2.datetime DESC
         };
@@ -164,10 +164,10 @@ print qq/
 CREATE OR REPLACE VIEW ${symbol}_${tf} AS
     SELECT
       $date_format AS datetime,
-      CAST(SUBSTRING_INDEX(GROUP_CONCAT(CAST(open AS CHAR) ORDER BY datetime), ',', 1) AS DECIMAL(9,4)) as open,
+      CAST(SUBSTRING_INDEX(GROUP_CONCAT(CAST(open AS CHAR) ORDER BY datetime), ',', 1) AS DECIMAL(9,9)) as open,
       MAX(high) as high,
       MIN(low) as low,
-      CAST(SUBSTRING_INDEX(GROUP_CONCAT(CAST(close AS CHAR) ORDER BY datetime DESC), ',', 1) AS DECIMAL(9,4) )as close
+      CAST(SUBSTRING_INDEX(GROUP_CONCAT(CAST(close AS CHAR) ORDER BY datetime DESC), ',', 1) AS DECIMAL(9,9) )as close
     FROM ${symbol}_${lowerTf}
     $where_clause
     GROUP BY $date_group
