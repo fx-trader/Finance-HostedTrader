@@ -225,6 +225,40 @@ sub getSymbolNumerator {
     return $symbolBaseMap{$symbol}->{numerator};
 }
 
+=method C<getMeta1($symbol)>
+
+Returns information about symbol. This information is used to calculate position sizes.
+I don't know exactly what the information is, this documentation needs improving.
+
+=cut
+
+sub getSymbolMeta1 {
+    my ($self, $symbol) = @_;
+
+    if (!exists($symbolBaseMap{$symbol})) {
+        $self->logger->logcroak("Unsupported symbol '$symbol'");
+    }
+
+    return $symbolBaseMap{$symbol}->{meta1};
+}
+
+=method C<getMeta2($symbol)>
+
+Returns information about symbol. This information is used to calculate position sizes.
+I don't know exactly what the information is, this documentation needs improving.
+
+=cut
+
+sub getSymbolMeta2 {
+    my ($self, $symbol) = @_;
+
+    if (!exists($symbolBaseMap{$symbol})) {
+        $self->logger->logcroak("Unsupported symbol '$symbol'");
+    }
+
+    return $symbolBaseMap{$symbol}->{meta2};
+}
+
 sub get_symbols_by_denominator {
     my ($self, $base) = @_;
 
