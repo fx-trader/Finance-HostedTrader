@@ -57,8 +57,8 @@ sub new {
     my $parser    = Finance::HostedTrader::ExpressionParser::Grammar->new();
 
     if (!Log::Log4perl->initialized()) {
-        if ( -r "/etc/fxtrader/hostedtrader.log.conf" ) {
-            Log::Log4perl->init("/etc/fxtrader/hostedtrader.log.conf");
+        if ( -r "/etc/fxtrader/fxtrader.log.conf" ) {
+            Log::Log4perl->init("/etc/fxtrader/fxtrader.log.conf");
         }
     }
 
@@ -350,27 +350,44 @@ $ORDERBY_CLAUSE
     return $sql;
 }
 
+sub log_obsolete_argument_names {
+    use Devel::StackTrace;
+    my ($self, $obsolete_arg_names, $args) = @_;
+
+    my $l = $self->{_logger};
+    my $trace = Devel::StackTrace->new();
+
+    foreach my $arg_name (@$obsolete_arg_names) {
+
+        if ( exists ($args->{$arg_name}) ) {
+            $l->warn("OBSOLETE ARGUMENT USED: $arg_name");
+            $l->info($trace->as_string);
+        }
+
+    }
+}
+
 sub _getIndicatorSql {
     my ($self, %args) = @_;
     my ( $result );
 
-    my @good_args = qw(tf fields symbol maxLoadedItems endPeriod numItems);
+    my @obsolete_arg_names  = qw(tf fields maxLoadedItems endPeriod numItems);
+    $self->log_obsolete_argument_names(\@obsolete_arg_names, \%args);
+    my @good_args           = qw(timeframe expression symbol max_loaded_items end_period item_count);
 
     foreach my $key (keys %args) {
-        $self->{_logger}->logconfess("invalid arg in getIndicatorData: $key") unless grep { /$key/ } @good_args;
+        $self->{_logger}->logconfess("invalid arg in getIndicatorData: $key") unless grep { /$key/ } @good_args, @obsolete_arg_names;
     }
 
-    my $tf_name = $args{tf} || 'day';
+    my $tf_name = $args{timeframe} || $args{tf} || 'day';
     my $tf = $self->{_ds}->cfg->timeframes->getTimeframeID($tf_name);
     $self->{_logger}->logconfess( "Could not understand timeframe " . ( $tf_name ) ) if (!$tf);
-    my $maxLoadedItems = $args{maxLoadedItems};
-    $maxLoadedItems = 10_000_000_000
-      if ( !defined( $args{maxLoadedItems} ) );
-    my $displayEndDate   = $args{endPeriod} || '9999-12-31';
-    my $expr      = $args{fields}          || $self->{_logger}->logconfess("No fields set for indicator");
+    my $maxLoadedItems = $args{max_loaded_items} || $args{maxLoadedItems} || 10_000_000_000;;
+    my $displayEndDate   = $args{end_period} || $args{endPeriod} || '9999-12-31';
+    my $expr      = $args{expression} || $args{fields}          || $self->{_logger}->logconfess("No indicator expression set");
     $expr = lc($expr);
     my $symbol    = $args{symbol}          || $self->{_logger}->logconfess("No symbol set for indicator");
-    my $itemCount = $args{numItems} || 10_000_000;
+    my $itemCount = $args{item_count} || $args{numItems} || 10_000_000;
 
     #TODO: Refactor the parser bit so that it can be called independently. This will be usefull to validate expressions before running them.
     $result     = $self->{_parser}->start_indicator($expr);

@@ -23,6 +23,7 @@ RUN apt-get update && apt-get -y install \
         libparse-recdescent-perl \
         libredis-perl \
         libstatistics-descriptive-perl \
+        libdevel-stacktrace-perl \
         && rm -rf /var/lib/apt/lists/*
 
 ## Finance::FXCM::Simple dependency
