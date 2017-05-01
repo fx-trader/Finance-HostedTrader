@@ -22,6 +22,7 @@ RUN apt-get update && apt-get -y install \
         libconfig-any-perl \
         libparse-recdescent-perl \
         libredis-perl \
+        libstatistics-descriptive-perl \
         && rm -rf /var/lib/apt/lists/*
 
 ## Finance::FXCM::Simple dependency
