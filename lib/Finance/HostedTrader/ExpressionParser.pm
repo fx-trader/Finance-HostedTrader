@@ -6,7 +6,9 @@ package Finance::HostedTrader::ExpressionParser;
 
 use strict;
 use warnings;
+
 use Date::Manip;
+use Statistics::Descriptive;
 use Log::Log4perl qw(:easy);
 use List::Util;
 use Finance::HostedTrader::Datasource;
@@ -68,6 +70,45 @@ sub new {
     };
 
     return bless( $self, $class );
+}
+
+=method C<getStatisticsData>
+
+    Returns descriptive statistic about returns.
+    See https://miltonfmr.com/applied-statistics-futures-markets/
+=cut
+
+sub getStatisticsData {
+    my ($self, $args) = @_;
+
+    my @good_args = qw(tf symbol maxLoadedItems startPeriod endPeriod numItems);
+    foreach my $key (keys %$args) {
+        $self->{_logger}->logconfess("invalid arg in getStatisticsData: $key") unless grep { /$key/ } @good_args;
+    }
+
+    my %stat_args = %{ $args };
+    $stat_args{fields} = "datetime,(close-open)/open";
+
+    my $data    = $self->getIndicatorData( \%stat_args );
+    my $stat    = Statistics::Descriptive::Full->new();
+    my @period_returns  = map {  $_->[1] } @{ $data->{data} };
+    $stat->add_data( @period_returns );
+
+    return {
+        data => {
+            count               => $stat->count,
+            mean                => $stat->mean,
+            sum                 => $stat->sum,
+            variance            => $stat->variance,
+            standard_deviation  => $stat->standard_deviation,
+            min                 => $stat->min,
+            max                 => $stat->max,
+            skewness            => $stat->skewness,
+            kurtosis            => $stat->kurtosis,
+            median              => $stat->median,
+        },
+    };
+
 }
 
 =method C<getIndicatorData>
