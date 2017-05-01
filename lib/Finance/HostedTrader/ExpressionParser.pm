@@ -72,13 +72,13 @@ sub new {
     return bless( $self, $class );
 }
 
-=method C<getStatisticsData>
+=method C<getDescriptiveStatisticsData>
 
     Returns descriptive statistic about returns.
     See https://miltonfmr.com/applied-statistics-futures-markets/
 =cut
 
-sub getStatisticsData {
+sub getDescriptiveStatisticsData {
     my ($self, $args) = @_;
 
     my @good_args = qw(tf symbol maxLoadedItems startPeriod endPeriod numItems);

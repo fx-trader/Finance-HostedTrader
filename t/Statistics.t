@@ -17,7 +17,7 @@ my $tf      = 'day';
 SKIP: {
     skip "Integration tests", 1 unless($ENV{FX_INTEGRATION_TESTS});
 
-    my $data = $e->getStatisticsData({
+    my $data = $e->getDescriptiveStatisticsData({
         symbol  => $symbol,
         tf      => $tf,
     });
