@@ -87,11 +87,11 @@ print "Processing in the $timeframe timeframe\n";
 foreach my $symbol ( @{$symbols} ) {
     my $indicator_result = $signal_processor->getIndicatorData(
         {
-            'fields'           => $ARGV[0],
+            'expression'      => $ARGV[0],
             'symbol'          => $symbol,
-            'tf'              => $timeframe,
-            'maxLoadedItems'  => $max_loaded_items,
-            'numItems' => $max_display_items,
+            'timeframe'       => $timeframe,
+            'max_loaded_items'=> $max_loaded_items,
+            'item_count'      => $max_display_items,
         }
     );
     my $data = $indicator_result->{data};
