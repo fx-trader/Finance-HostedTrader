@@ -54,11 +54,11 @@ foreach my $asset ( keys(%symbols) ) {
     my $symbol = $symbols{$asset}->{s};
     my $indicator_result = $signal_processor->getIndicatorData(
         {
-            'fields'          => 'datetime,ema(trend(close,21),13)',
+            'expression'      => 'datetime,ema(trend(close,21),13)',
             'symbol'          => $symbol,
-            'tf'              => $timeframe,
-            'maxLoadedItems'  => $max_loaded_items,
-            'numItems'        => 1
+            'timeframe'       => $timeframe,
+            'max_loaded_items'=> $max_loaded_items,
+            'item_count'      => 1,
         }
     );
     my $data = $indicator_result->{data};
