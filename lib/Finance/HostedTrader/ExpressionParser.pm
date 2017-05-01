@@ -361,7 +361,7 @@ sub log_obsolete_argument_names {
 
         if ( exists ($args->{$arg_name}) ) {
             $l->warn("OBSOLETE ARGUMENT USED: $arg_name");
-            $l->info($trace->as_string);
+            $l->warn($trace->as_string);
         }
 
     }
