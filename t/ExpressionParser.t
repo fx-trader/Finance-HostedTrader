@@ -23,8 +23,8 @@ foreach my $ds ((undef, Finance::HostedTrader::Datasource->new( ))) {
 {
 	throws_ok { $expr->getIndicatorData( { rubbish => 1 } ) } qr/invalid arg in getIndicatorData: rubbish/, 'Invalid argument in getIndicatorData';
 	throws_ok { $expr->getIndicatorData( { } ) } qr/No fields set for indicator/, 'Missing "fields" argument in getIndicatorData';
-	throws_ok { $expr->getIndicatorData( { fields => 'datetime,close' } ) } qr/No symbol set for indicator/, 'Missing "symbol" argument in getIndicatorData';
-	throws_ok { $expr->getIndicatorData( { fields => 'rubbish', symbol => 'EURUSD' } ) } qr/Syntax error in indicator/, 'Indicator syntax error in getIndicatorData';
+	throws_ok { $expr->getIndicatorData( { expression => 'datetime,close' } ) } qr/No symbol set for indicator/, 'Missing "symbol" argument in getIndicatorData';
+	throws_ok { $expr->getIndicatorData( { expression => 'rubbish', symbol => 'EURUSD' } ) } qr/Syntax error in indicator/, 'Indicator syntax error in getIndicatorData';
 }
 
 

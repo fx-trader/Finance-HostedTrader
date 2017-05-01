@@ -81,13 +81,13 @@ sub new {
 sub getDescriptiveStatisticsData {
     my ($self, $args) = @_;
 
-    my @good_args = qw(tf symbol maxLoadedItems startPeriod endPeriod numItems);
+    my @good_args = qw(timeframe symbol max_loaded_items start_period end_period item_count);
     foreach my $key (keys %$args) {
         $self->{_logger}->logconfess("invalid arg in getStatisticsData: $key") unless grep { /$key/ } @good_args;
     }
 
     my %stat_args = %{ $args };
-    $stat_args{fields} = "datetime,(close-open)/open";
+    $stat_args{expression} = "datetime,(close-open)/open";
 
     my $data    = $self->getIndicatorData( \%stat_args );
     my $stat    = Statistics::Descriptive::Full->new();

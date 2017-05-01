@@ -17,8 +17,8 @@ SKIP: {
 
 my $expect;
 
-throws_ok { $e->getIndicatorData( { symbol => $symbol, tf => $tf, fields => 'rsi(close,21)' }) } qr/Unknown column 'datetime' in 'order clause'/, "No datetime in expression";
-throws_ok { $e->getIndicatorData( { symbol => $symbol, tf => 'badtf', numItems => 1, fields => 'rsi(close,21)' }) } qr/Could not understand timeframe badtf/, "Invalid timeframe";
+throws_ok { $e->getIndicatorData( { symbol => $symbol, timeframe => $tf, expression => 'rsi(close,21)' }) } qr/Unknown column 'datetime' in 'order clause'/, "No datetime in expression";
+throws_ok { $e->getIndicatorData( { symbol => $symbol, timeframe => 'badtf', item_count => 1, expression => 'rsi(close,21)' }) } qr/Could not understand timeframe badtf/, "Invalid timeframe";
 
 testIndicator('ema', 'close,21', '1.2712', 'close', 'close,21,22', 'bad,21');
 testIndicator('sma', 'close,21', '1.2776', 'close', 'close,21,22', 'bad,21');
@@ -50,15 +50,15 @@ sub testIndicator {
 
     my $expr = "datetime, $name($valid_args)";
     adhoc_test($expr, $expected, "$name value");
-    throws_ok { $e->getIndicatorData( { symbol => $symbol, tf => $tf, numItems => 1, fields => "datetime, $name($toofew_args)", startPeriod => "2011-10-02 00:00:00", endPeriod => "2011-12-31 23:00:00" }) } qr/Syntax error in indicator/, "$name too few arguments" if (defined($toofew_args));
-    throws_ok { $e->getIndicatorData( { symbol => $symbol, tf => $tf, numItems => 1, fields => "datetime, $name($toomany_args)", startPeriod => "2011-10-02 00:00:00", endPeriod => "2011-12-31 23:00:00"  }) } qr/Syntax error in indicator/, "$name too many arguments" if (defined($toomany_args));
-    throws_ok { $e->getIndicatorData( { symbol => $symbol, tf => $tf, numItems => 1, fields => "datetime, $name($bad_expression)", startPeriod => "2011-10-02 00:00:00", endPeriod => "2011-12-31 23:00:00"  }) } qr/Syntax error in indicator/, "$name bad arguments expression" if (defined($bad_expression));
+    throws_ok { $e->getIndicatorData( { symbol => $symbol, timeframe => $tf, item_count => 1, expression => "datetime, $name($toofew_args)", start_period => "2011-10-02 00:00:00", end_period => "2011-12-31 23:00:00" }) } qr/Syntax error in indicator/, "$name too few arguments" if (defined($toofew_args));
+    throws_ok { $e->getIndicatorData( { symbol => $symbol, timeframe => $tf, item_count => 1, expression => "datetime, $name($toomany_args)", start_period => "2011-10-02 00:00:00", end_period => "2011-12-31 23:00:00"  }) } qr/Syntax error in indicator/, "$name too many arguments" if (defined($toomany_args));
+    throws_ok { $e->getIndicatorData( { symbol => $symbol, timeframe => $tf, item_count => 1, expression => "datetime, $name($bad_expression)", start_period => "2011-10-02 00:00:00", end_period => "2011-12-31 23:00:00"  }) } qr/Syntax error in indicator/, "$name bad arguments expression" if (defined($bad_expression));
 }
 
 sub adhoc_test {
     my ($expr, $expected, $desc) = @_;
-    
-    my $got = $e->getIndicatorData( { symbol => $symbol, tf => $tf, numItems => 1, fields => $expr, startPeriod => "2011-10-02 00:00:00", endPeriod => "2012-05-31 23:00:00", maxLoadedItems => 125  });
+
+    my $got = $e->getIndicatorData( { symbol => $symbol, timeframe => $tf, item_count => 1, expression => $expr, start_period => "2011-10-02 00:00:00", end_period => "2012-05-31 23:00:00", max_loaded_items => 125  });
     my $expect = ['2012-05-31 21:00:00', $expected];
     is_deeply($got->{data}->[0], $expect, $desc);
 }
