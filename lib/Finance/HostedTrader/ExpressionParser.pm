@@ -103,6 +103,7 @@ sub getDescriptiveStatisticsData {
             standard_deviation  => $stat->standard_deviation,
             min                 => $stat->min,
             max                 => $stat->max,
+            range               => $stat->max - $stat->min,
             skewness            => $stat->skewness,
             kurtosis            => $stat->kurtosis,
             median              => $stat->median,
