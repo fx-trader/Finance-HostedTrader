@@ -116,14 +116,15 @@ sub getDescriptiveStatisticsData {
 
 args
 
-tf
-fields
+timefram
+expression
 symbol
-maxLoadedItems
-endPeriod
-numItems
+max_loaded_items
+end_period
+item_count
 
 =cut
+
 sub getIndicatorData {
     my ( $self, $args ) = @_;
 
@@ -182,32 +183,31 @@ sub getSystemData {
 sub _getSignalSql {
 my ($self, $args) = @_;
 
-    my @good_args = qw(tf expr symbol maxLoadedItems startPeriod endPeriod numItems fields);
+    my @obsolete_arg_names  = qw(tf expr maxLoadedItems startPeriod endPeriod numItems fields);
+    $self->log_obsolete_argument_names(\@obsolete_arg_names, $args);
+    my @good_args           = qw(timeframe expression symbol max_loaded_items start_period end_period item_count fields);
 
     foreach my $key (keys %$args) {
-        $self->{_logger}->logconfess("invalid arg in _getSignalSql: $key") unless grep { /$key/ } @good_args;
+        $self->{_logger}->logconfess("invalid arg in _getSignalSql: $key") unless grep { /$key/ } @good_args, @obsolete_arg_names;
     }
 
-    my $tf_name = $args->{tf} || 'day';
+    my $tf_name = $args->{timeframe} || $args->{tf} || 'day';
     my $default_tf = $self->{_ds}->cfg->timeframes->getTimeframeID($tf_name);
     $self->{_logger}->logconfess( "Could not understand timeframe " . ( $tf_name ) ) if (!$default_tf);
-    my $expr   = $args->{expr}   || $self->{_logger}->logconfess("No expression set for signal");
+    my $expr   = $args->{expression} || $args->{expr}   || $self->{_logger}->logconfess("No expression set for signal");
     $expr = lc($expr);
     my $symbol = $args->{symbol} || $self->{_logger}->logconfess("No symbol set");
-    my $maxLoadedItems = $args->{maxLoadedItems};
-    my $startPeriod = $args->{startPeriod} || '0001-01-01 00:00:00';
-    my $endPeriod = $args->{endPeriod} || '9999-12-31 23:59:59';
+    my $maxLoadedItems = $args->{max_loaded_items} || $args->{maxLoadedItems} || 10_000_000_000;
+    my $startPeriod = $args->{start_period} || $args->{startPeriod} || '0001-01-01 00:00:00';
+    my $endPeriod = $args->{end_period} || $args->{endPeriod} || '9999-12-31 23:59:59';
     my $fields = $args->{fields} || 'datetime';
 
-    $maxLoadedItems = 10_000_000_000
-      if ( !defined( $args->{maxLoadedItems} ));
-
-    my $itemCount = $args->{numItems} || $maxLoadedItems;
+    my $itemCount = $args->{item_count} || $args->{numItems} || $maxLoadedItems;
 
     %TIMEFRAMES = ();
     %INDICATORS = ();
     @VALUES     = ();
-    my $results = $self->{_parser}->start_signal( $args->{expr} );
+    my $results = $self->{_parser}->start_signal( $expr );
     #use Data::Dumper;
     #print "TIMEFRAMES = " . Dumper(\%TIMEFRAMES);
     #print "INDICATORS = " . Dumper(\%INDICATORS);
