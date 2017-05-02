@@ -4,7 +4,7 @@
 
 =head1 SYNOPSIS
 
-    fx-eval.pl [--timeframe=tf] [--instruments=s] [--debug] [--maxLoadedItems=i] [--numItems=i] expr
+    fx-eval.pl [--timeframe=tf] [--instruments=s] [--debug] [--max_loaded_items=i] [--item_count=i] expr
 
 
 =head1 DESCRIPTION
@@ -38,11 +38,11 @@ Display usage information.
 
 Debug output. TODO, set log4perl to debug and output to stderr.
 
-=item C<--maxLoadedItems=i>
+=item C<--max_loaded_items=i>
 
 Number of database records to load. Defaults to 1000 which should be enough to calculate any indicator.
 
-=item C<--numItems=i>
+=item C<--item_count=i>
 
 Number of indicator periods to display. Defaults to one (eg: only display the indicator value today)
 
@@ -71,8 +71,8 @@ GetOptions(
     "timeframe=s"         => \$timeframe,
     "debug"               => \$debug,
     "instruments=s"       => \$instruments_txt,
-    "maxLoadedItems=i"  => \$max_loaded_items,
-    "numItems=i" => \$max_display_items,
+    "max_loaded_items=i"  => \$max_loaded_items,
+    "item_count=i" => \$max_display_items,
 ) || pod2usage(2);
 pod2usage(1) if ($help);
 
