@@ -1,10 +1,10 @@
 #!/usr/bin/perl
-# ABSTRACT: Outputs the value of an indicator against all known symbols
+# ABSTRACT: Outputs the value of an indicator against all known instruments
 # PODNAME: fx-eval.pl
 
 =head1 SYNOPSIS
 
-    fx-eval.pl [--timeframe=tf] [--symbols=s] [--debug] [--maxLoadedItems=i] [--numItems=i] expr
+    fx-eval.pl [--timeframe=tf] [--instruments=s] [--debug] [--maxLoadedItems=i] [--numItems=i] expr
 
 
 =head1 DESCRIPTION
@@ -26,10 +26,9 @@ Optional. Specifies a single timeframe. Defaults to day.
 
 tf can be a valid integer timeframe as defined in L<Finance::HostedTrader::Datasource>
 
-=item C<--symbols=s>
+=item C<--instruments=s>
 
-Comma separated list of symbols for which to run the indicator against.
-If not supplied, defaults to the list entry in the config file item "symbols.synthetic" and "symbols.natural".
+Comma separated list of instruments for which to run the indicator against.
 
 =item C<--help>
 
@@ -65,13 +64,13 @@ use Data::Dumper;
 use Getopt::Long;
 use Pod::Usage;
 
-my ( $timeframe, $max_loaded_items, $max_display_items, $symbols_txt, $debug, $help ) =
+my ( $timeframe, $max_loaded_items, $max_display_items, $instruments_txt, $debug, $help ) =
   ( 'day', 5000, 1, '', 0, 0 );
 
 GetOptions(
     "timeframe=s"         => \$timeframe,
     "debug"               => \$debug,
-    "symbols=s"           => \$symbols_txt,
+    "instruments=s"       => \$instruments_txt,
     "maxLoadedItems=i"  => \$max_loaded_items,
     "numItems=i" => \$max_display_items,
 ) || pod2usage(2);
@@ -80,11 +79,11 @@ pod2usage(1) if ($help);
 my $cfg               = Finance::HostedTrader::Config->new();
 my $signal_processor = Finance::HostedTrader::ExpressionParser->new();
 
-my $symbols = $cfg->symbols->all;
+my $instruments = $cfg->symbols->all;
 
-$symbols = [ split( ',', $symbols_txt ) ] if ($symbols_txt);
+$instruments = [ split( ',', $instruments_txt ) ] if ($instruments_txt);
 print "Processing in the $timeframe timeframe\n";
-foreach my $symbol ( @{$symbols} ) {
+foreach my $symbol ( @{$instruments} ) {
     my $indicator_result = $signal_processor->getIndicatorData(
         {
             'expression'      => $ARGV[0],
