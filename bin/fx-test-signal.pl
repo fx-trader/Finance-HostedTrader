@@ -101,12 +101,12 @@ foreach my $symbol ( @{$symbols} ) {
     print "Testing $symbol\n" if ($verbose);
     my $signal_args = 
         {
-            'expr'            => $signal,
-            'numItems'        => $numItems,
-            'symbol'          => $symbol,
-            'tf'              => $timeframe,
-            'maxLoadedItems'  => $max_loaded_items,
-            'startPeriod'     => UnixDate($startPeriod, '%Y-%m-%d %H:%M:%S'),
+            'expression'        => $signal,
+            'item_count'        => $numItems,
+            'symbol'            => $symbol,
+            'timeframe'         => $timeframe,
+            'max_loaded_items'  => $max_loaded_items,
+            'start_period'      => UnixDate($startPeriod, '%Y-%m-%d %H:%M:%S'),
         };
     $signal_args->{endPeriod} = UnixDate($endPeriod, '%Y-%m-%d %H:%M:%S') if (defined($endPeriod));
     my $signal_result = $signal_processor->getSignalData( $signal_args );

@@ -26,7 +26,7 @@ adhoc_test('4hourly(close < ema(close,200)) AND 2hourly(rsi(close,14) > 55) AND 
 sub adhoc_test {
     my ($expr, $expected, $desc) = @_;
 
-    my $got = $e->getSignalData( { symbol => $symbol, tf => $tf, numItems => 1, expr => $expr, startPeriod => "2011-10-02 00:00:00", endPeriod => "2016-10-02 00:00:00", maxLoadedItems => 10000  });
+    my $got = $e->getSignalData( { symbol => $symbol, timeframe => $tf, item_count => 1, expression => $expr, start_period => "2011-10-02 00:00:00", end_period => "2016-10-02 00:00:00", max_loaded_items => 10000  });
     is_deeply($got->{data}->[0], $expected, $desc);
 }
 
