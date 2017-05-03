@@ -18,8 +18,8 @@ SKIP: {
     skip "Integration tests", 1 unless($ENV{FX_INTEGRATION_TESTS});
 
     my $data = $e->getDescriptiveStatisticsData({
-        symbol  => $symbol,
-        tf      => $tf,
+        symbol      => $symbol,
+        timeframe   => $tf,
     });
 
     print Dumper($data);

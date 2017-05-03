@@ -87,15 +87,14 @@ sub getDescriptiveStatisticsData {
     }
 
     my %stat_args = %{ $args };
-    $stat_args{expression} = "datetime,(close-open)/open";
+    $stat_args{expression} = "datetime,open,close,(close-open)/open";
 
     my $data    = $self->getIndicatorData( \%stat_args );
     my $stat    = Statistics::Descriptive::Full->new();
-    my @period_returns  = map {  $_->[1] } @{ $data->{data} };
+    my @period_returns  = map {  $_->[3] } @{ $data->{data} };
     $stat->add_data( @period_returns );
 
-    return {
-        data => {
+    $data->{stats}  = {
             count               => $stat->count,
             mean                => $stat->mean,
             sum                 => $stat->sum,
@@ -107,9 +106,9 @@ sub getDescriptiveStatisticsData {
             skewness            => $stat->skewness,
             kurtosis            => $stat->kurtosis,
             median              => $stat->median,
-        },
-    };
+        };
 
+    return $data;
 }
 
 =method C<getIndicatorData>
