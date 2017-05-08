@@ -121,12 +121,12 @@ my $numItemsToDownload = 10;
 my ( $timeframes_from_txt, $symbols_from_txt, $verbose, $help, $service ) = ( undef, undef, 0, 0, 0);
 
 my $result = GetOptions(
-    "symbols=s", \$symbols_from_txt,
+    "symbols=s",    \$symbols_from_txt,
     "timeframes=s", \$timeframes_from_txt,
-    "numItems=i", \$numItemsToDownload,
-    "verbose", \$verbose,
-    "service", \$service,
-    "help", \$help)  or pod2usage(1);
+    "numItems=i",   \$numItemsToDownload,
+    "verbose",      \$verbose,
+    "service",      \$service,
+    "help",         \$help)  or pod2usage(1);
 
 pod2usage(1) if ( $help || !defined($timeframes_from_txt));
 
@@ -203,7 +203,7 @@ version 0.022
 
 =head1 SYNOPSIS
 
-    fx-download-fxcm.pl --timeframes=$TF1[,$TF2] [--verbose] [--help] [--start="15 days ago"] [--end="today] [--numItems=i]
+    fx-download-fxcm.pl --timeframes=$TF1[,$TF2] [--symbols=SYM,...] [--verbose] [--help] [--start="15 days ago"] [--end="today] [--numItems=i]
 
 =head2 OPTIONS
 
@@ -212,6 +212,10 @@ version 0.022
 =item C<--timeframes=$TF1[,$TF2 ...]>
 
 Required. A comma separated string of timeframe codes for which data is to be downloaded. See L<Finance::HostedTrader::Config::Timeframes> for available codes.
+
+=item C<--symbols=$SYM1[,$SYM2 ...]>
+
+Required. A comma separated string of symbol codes for which data is to be downloaded. See L<Finance::HostedTrader::Config::Symbols> for available codes.  Defaults to download every natural (as opposed to synthetic) symbol.
 
 =item C<--numItems=i>
 
