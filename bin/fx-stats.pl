@@ -30,3 +30,4 @@ my $result = $signal_processor->getDescriptiveStatisticsData($params);
 
 print Dumper($result->{stats});
 print Dumper($result->{percentiles});
+print Dumper($result->{average_returns});
