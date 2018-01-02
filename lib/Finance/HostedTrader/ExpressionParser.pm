@@ -119,6 +119,10 @@ sub getDescriptiveStatisticsData {
         $cumulative_distributions{$item}  = $cumulative_total;
     }
     $data->{cumulative_frequency_distributions} = \%cumulative_distributions;
+    $data->{percentiles} = {
+        50  => scalar($stat->percentile(50)),
+        90  => scalar($stat->percentile(90)),
+    };
 
     return $data;
 }

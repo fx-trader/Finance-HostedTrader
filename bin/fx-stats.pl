@@ -28,4 +28,5 @@ my $params = {
 
 my $result = $signal_processor->getDescriptiveStatisticsData($params);
 
-print Dumper($result);
+print Dumper($result->{stats});
+print Dumper($result->{percentiles});
