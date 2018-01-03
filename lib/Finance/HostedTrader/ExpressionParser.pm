@@ -76,6 +76,7 @@ sub new {
 
     Returns descriptive statistic about returns.
     See https://miltonfmr.com/applied-statistics-futures-markets/
+
 =cut
 
 sub getDescriptiveStatisticsData {
@@ -107,6 +108,29 @@ sub getDescriptiveStatisticsData {
             kurtosis            => $stat->kurtosis,
             median              => $stat->median,
         };
+
+    my @bins = qw/-0.03 -0.025 -0.02 -0.015 -0.01 -0.005 0 0.005 0.01 0.015 0.02 0.025 0.3/;
+    $data->{frequency_distributions} = $stat->frequency_distribution_ref( \@bins );
+
+    my %cumulative_distributions;
+    my $cumulative_total = 0;
+    foreach my $item ( sort { $a <=> $b } keys %{ $data->{frequency_distributions } } ) {
+        $cumulative_total += $data->{frequency_distributions}{$item};
+        $cumulative_distributions{$item}  = $cumulative_total;
+    }
+    $data->{cumulative_frequency_distributions} = \%cumulative_distributions;
+    $data->{percentiles} = {
+        50  => scalar($stat->percentile(50)),
+        90  => scalar($stat->percentile(90)),
+    };
+
+    $data->{average_returns}{overall}   = $data->{stats}{mean};
+    my $stat_negative_returns = Statistics::Descriptive::Full->new();
+    $stat_negative_returns->add_data( grep { $_ < 0 } @period_returns );
+    my $stat_positive_returns = Statistics::Descriptive::Full->new();
+    $stat_positive_returns->add_data( grep { $_ > 0 } @period_returns );
+    $data->{average_returns}{positive}  = $stat_positive_returns->mean;
+    $data->{average_returns}{negative}  = $stat_negative_returns->mean;
 
     return $data;
 }
