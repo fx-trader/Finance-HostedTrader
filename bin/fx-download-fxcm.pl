@@ -11,6 +11,7 @@ use warnings;
 $|=1;
 
 use Getopt::Long;
+use Finance::HostedTrader::Config;
 use Finance::HostedTrader::Datasource;
 use Finance::FXCM::Simple;
 use Pod::Usage;
@@ -130,14 +131,18 @@ my $result = GetOptions(
 
 pod2usage(1) if ( $help || !defined($timeframes_from_txt));
 
-my $ds = Finance::HostedTrader::Datasource->new();
-my $cfg = $ds->cfg;
-
+my $cfg = Finance::HostedTrader::Config->new();
 my @symbols = ( $symbols_from_txt ? split(',', $symbols_from_txt) : @{ $cfg->symbols->natural } );
 my @timeframes  = sort split(',', $timeframes_from_txt);
 my $providerCfg = $cfg->tradingProviders->{fxcm};
 
 my $sleep_interval = $ENV{"FXCM_DOWNLOAD_INTERVAL"} // 300;
+
+
+# If the number of items being downloaded is small (and fast to download), keep a globally scoped database connection open
+# Otherwise, the download can take minutes and it's preferable to only open the connection once we're ready to load the data
+# as the database connection sometimes drops while the data is being downloaded from the provider
+my $global_ds = ($numItemsToDownload < 500 ? Finance::HostedTrader::Datasource->new() : undef);
 
 while (1) {
 
@@ -153,11 +158,12 @@ if (!$service || download_data()) {
 
             try {
                 $fxcm->saveHistoricalDataToFile($tableToLoad, convertSymbolToFXCM($symbol), $fxcmTimeframe, $numItemsToDownload);
+                my $ds = (defined($global_ds) ? $global_ds :  Finance::HostedTrader::Datasource->new());
                 $ds->dbh->do("LOAD DATA LOCAL INFILE '$tableToLoad' IGNORE INTO TABLE $tableToLoad FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n'") or die($!);
+                unlink($tableToLoad);
             } catch {
                 warn "Failed to fetch $symbol $timeframe: $_";
             };
-            unlink($tableToLoad);
         }
     }
 
