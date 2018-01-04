@@ -4,7 +4,7 @@
 
 =head1 SYNOPSIS
 
-    fx-create-db-schema.pl [--tableType=s] [--dropTables] [--help]
+    fx-create-db-schema.pl [--tableType=s] [--mode=s] [--dropTables] [--help]
 
 =head1 DESCRIPTION
 
@@ -15,6 +15,11 @@
 =item C<--tableType=s>
 
 A valid MariaDB table type. Defaults to MYISAM.
+
+=item C<--mode=s>
+
+views - Create table structure with views based on the lower timeframe.
+simple - Create tables for all symbols/timeframes, including synthetic symbols.
 
 =item C<--dropTables>
 
@@ -39,15 +44,18 @@ use Finance::HostedTrader::Config;
 use Pod::Usage;
 
 my ( $drop_table, $help );
-my ($table_type) = ('MYISAM');
+my ($mode, $table_type) = ('simple','MYISAM');
 my $cfg = Finance::HostedTrader::Config->new();
 
-my $result = GetOptions( "tableType=s", \$table_type, "help", \$help, "dropTables", \$drop_table)
-  or pod2usage(1);
+my $result = GetOptions(
+    "tableType=s",\$table_type,
+    "mode=s",\$mode,
+    "help", \$help,
+    "dropTables", \$drop_table,
+) or pod2usage(1);
 pod2usage(1) if ($help);
 
 my @tfs = sort { $a <=> $b } @{ $cfg->timeframes->all() };
-my $lowerTf = shift(@tfs);
 
 my $symbols = $cfg->symbols->natural();
 my $symbols_synthetic = $cfg->symbols->synthetic();
@@ -59,6 +67,30 @@ my $userhost = '%';
 print qq{
     use $dbname;
 };
+
+if ($mode eq 'simple') {
+
+    foreach my $symbol (@$symbols, keys %$symbols_synthetic) {
+        foreach my $tf (@tfs) {
+            print "DROP TABLE IF EXISTS `$symbol\_$tf`;\n" if ($drop_table);
+            print qq /
+CREATE TABLE IF NOT EXISTS `${symbol}_${tf}` (
+`datetime` DATETIME NOT NULL ,
+`open` DECIMAL(9,4) NOT NULL ,
+`high` DECIMAL(9,4) NOT NULL ,
+`low` DECIMAL(9,4) NOT NULL ,
+`close` DECIMAL(9,4) NOT NULL ,
+PRIMARY KEY ( `datetime` )
+) ENGINE = $table_type ;/;
+        }
+    }
+
+    exit 0;
+}
+
+
+my $lowerTf = shift(@tfs);
+
 
 foreach my $symbol (@$symbols) {
     print "DROP TABLE IF EXISTS `$symbol\_$lowerTf`;\n" if ($drop_table);
