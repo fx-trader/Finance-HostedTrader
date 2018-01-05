@@ -117,7 +117,7 @@ sub get_synthetic_timeframe {
     if ($incremental_base_table) {
         my $incremental_sql_filter = _get_incremental_where_clause($incremental_base_table);
 
-        $where_clause = ( $where_clause ? " AND $incremental_sql_filter " : $incremental_sql_filter);
+        $where_clause = ( $where_clause ? "$where_clause AND $incremental_sql_filter " : $incremental_sql_filter);
     }
 
     $where_clause = ( $where_clause ? "WHERE $where_clause" : "" );
