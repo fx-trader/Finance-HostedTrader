@@ -120,7 +120,7 @@ sub convertTimeframeToFXCM {
 
 
 my $numItemsToDownload = 10;
-my ( $timeframes_from_txt, $symbols_from_txt, $verbose, $help, $service, $mode ) = ( undef, undef, 0, 0, 0, 'views' );
+my ( $timeframes_from_txt, $symbols_from_txt, $verbose, $help, $service, $mode ) = ( undef, undef, 0, 0, 0, 'simple' );
 
 my $result = GetOptions(
     "symbols=s",    \$symbols_from_txt,
