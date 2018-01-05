@@ -4,7 +4,7 @@
 
 =head1 SYNOPSIS
 
-    fx-create-db-schema.pl [--tableType=s] [--mode=s] [--dropTables] [--help]
+    fx-create-db-schema.pl [--tableType=s] [--mode=simple|views] [--dropTables] [--help]
 
 =head1 DESCRIPTION
 
@@ -18,8 +18,8 @@ A valid MariaDB table type. Defaults to MYISAM.
 
 =item C<--mode=s>
 
+simple - Create tables for all symbols/timeframes, including synthetic symbols (default).
 views - Create table structure with views based on the lower timeframe.
-simple - Create tables for all symbols/timeframes, including synthetic symbols.
 
 =item C<--dropTables>
 
@@ -41,6 +41,7 @@ use strict;
 use warnings;
 use Getopt::Long;
 use Finance::HostedTrader::Config;
+use Finance::HostedTrader::Synthetics;
 use Pod::Usage;
 
 my ( $drop_table, $help );
@@ -109,45 +110,7 @@ PRIMARY KEY ( `datetime` )
 foreach my $symbol (keys %$symbols_synthetic) {
 
     my $synthetic_info = $cfg->symbols->synthetic->{$symbol} || die("Don't know how to calculate $symbol. Add it to fx.yml");
-    my $op = $synthetic_info->{op};
-    my $leftop = $synthetic_info->{leftop};
-    my $rightop = $synthetic_info->{rightop};
-    my ($sql, $high, $low);
-
-    if ( $op eq '*' ) {
-        $high   = 'high';
-        $low    = 'low';
-    } elsif ( $op eq '/' ) {
-        $high   = 'low';
-        $low    = 'high';
-    } else {
-        die("Invalid op component for synthetic $symbol . Fix fx.yml.");
-    }
-
-    if ($leftop ne '1') {
-        $sql = qq{
-            SELECT T1.datetime,
-            ROUND(T1.open $op T2.open,4) AS open,
-            ROUND(T1.high $op T2.${high},4) AS high,
-            ROUND(T1.low  $op T2.${low},4) AS low,
-            ROUND(T1.close $op T2.close,4) AS close
-            FROM ${leftop}_${lowerTf} AS T1, ${rightop}_${lowerTf} AS T2
-            WHERE T1.datetime = T2.datetime
-        };
-
-    } else {
-
-        $sql = qq{
-            SELECT T2.datetime,
-            ROUND(1 $op T2.open,4) AS open,
-            ROUND(1 $op T2.${high},4) AS high,
-            ROUND(1 $op T2.${low},4) AS low,
-            ROUND(1 $op T2.close,4) AS close
-            FROM $rightop\_$lowerTf AS T2
-            ORDER BY T2.datetime DESC
-        };
-
-    }
+    my $sql = Finance::HostedTrader::Synthetics::get_synthetic_symbol(symbol => $symbol, timeframe => $lowerTf, synthetic_info => $synthetic_info);
 
     print qq /
 CREATE OR REPLACE VIEW ${symbol}_${lowerTf} AS
@@ -155,59 +118,13 @@ ${sql};
 /;
 }
 
-
-my %tfMap = (
-    300 => {
-        date_format => "CAST(CONCAT(year(datetime), '-', month(datetime), '-', day(datetime), ' ',  hour(datetime), ':', floor(minute(datetime) / 5) * 5, ':00') AS DATETIME)",
-    },
-    900 => {
-        date_format => "CAST(CONCAT(year(datetime), '-', month(datetime), '-', day(datetime), ' ',  hour(datetime), ':', floor(minute(datetime) / 15) * 15, ':00') AS DATETIME)",
-    },
-    1800 => {
-        date_format => "CAST(CONCAT(year(datetime), '-', month(datetime), '-', day(datetime), ' ',  hour(datetime), ':', floor(minute(datetime) / 30) * 30, ':00') AS DATETIME)",
-    },
-    3600 => {
-        date_format => "date_format(datetime, '%Y-%m-%d %H:00:00')",
-    },
-    7200 => {
-        date_format => "CAST(CONCAT(year(datetime), '-', month(datetime), '-', day(datetime), ' ',  floor(hour(datetime) / 2) * 2, ':00:00') AS DATETIME)",
-    },
-    10800 => {
-        date_format => "CAST(CONCAT(year(datetime), '-', month(datetime), '-', day(datetime), ' ',  floor(hour(datetime) / 3) * 3, ':00:00') AS DATETIME)",
-    },
-    14400 => {
-        date_format => "CAST(CONCAT(year(datetime), '-', month(datetime), '-', day(datetime), ' ',  floor(hour(datetime) / 4) * 4, ':00:00') AS DATETIME)",
-    },
-    86400 => {
-        date_format => "date_format(datetime, '%Y-%m-%d 00:00:00')",
-        where_clause => "dayofweek(datetime) != 1",
-    },
-    604800 => {
-        date_format => "date_format(date_sub(datetime, interval weekday(datetime)+1 DAY), '%Y-%m-%d 00:00:00')",
-        date_group  => "date_format(datetime, '%x-%v')",
-    },
-);
-
 foreach my $symbol (@$symbols, keys %$symbols_synthetic) {
     foreach my $tf (@tfs) {
-        my $date_format = $tfMap{$tf}->{date_format};
-        my $date_group  = $tfMap{$tf}->{date_group} || $date_format;
-        my $where_clause= $tfMap{$tf}->{where_clause};
-        $where_clause = ( $where_clause ? "WHERE $where_clause" : "" );
+        my $sql = Finance::HostedTrader::Synthetics::get_synthetic_timeframe(symbol => $symbol, timeframe => $tf);
 
 print qq/
 CREATE OR REPLACE VIEW ${symbol}_${tf} AS
-    SELECT
-      $date_format AS datetime,
-      CAST(SUBSTRING_INDEX(GROUP_CONCAT(CAST(open AS CHAR) ORDER BY datetime), ',', 1) AS DECIMAL(9,4)) as open,
-      MAX(high) as high,
-      MIN(low) as low,
-      CAST(SUBSTRING_INDEX(GROUP_CONCAT(CAST(close AS CHAR) ORDER BY datetime DESC), ',', 1) AS DECIMAL(9,4) )as close
-    FROM ${symbol}_${lowerTf}
-    $where_clause
-    GROUP BY $date_group
-    ORDER BY datetime DESC;
-/;
+$sql/;
     }
 }
 # print "GRANT ALL ON $dbname.* TO '$dbuser'@'$userhost'" . ($dbpasswd ? " IDENTIFIED BY '$dbpasswd'": '') . ";\n";

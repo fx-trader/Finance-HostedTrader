@@ -14,6 +14,7 @@ use Getopt::Long;
 use Finance::HostedTrader::Config;
 use Finance::HostedTrader::Datasource;
 use Finance::FXCM::Simple;
+use Finance::HostedTrader::Synthetics;
 use Pod::Usage;
 use Try::Tiny;
 
@@ -119,7 +120,7 @@ sub convertTimeframeToFXCM {
 
 
 my $numItemsToDownload = 10;
-my ( $timeframes_from_txt, $symbols_from_txt, $verbose, $help, $service ) = ( undef, undef, 0, 0, 0);
+my ( $timeframes_from_txt, $symbols_from_txt, $verbose, $help, $service, $mode ) = ( undef, undef, 0, 0, 0, 'views' );
 
 my $result = GetOptions(
     "symbols=s",    \$symbols_from_txt,
@@ -127,6 +128,7 @@ my $result = GetOptions(
     "numItems=i",   \$numItemsToDownload,
     "verbose",      \$verbose,
     "service",      \$service,
+    "mode=s",       \$mode,
     "help",         \$help)  or pod2usage(1);
 
 pod2usage(1) if ( $help || !defined($timeframes_from_txt));
@@ -169,6 +171,38 @@ if (!$service || download_data()) {
 
     $fxcm = undef;
 
+    if ($mode eq 'simple') {
+        my $symbols = $cfg->symbols->natural();
+        my $symbols_synthetic = $cfg->symbols->synthetic();
+        my @tfs = sort { $a <=> $b } @{ $cfg->timeframes->all() };
+        my $lowerTf = shift (@tfs);
+
+        my $ds = (defined($global_ds) ? $global_ds :  Finance::HostedTrader::Datasource->new());
+        foreach my $symbol (keys %$symbols_synthetic) {
+            print "Updating $symbol $lowerTf synthetic\n" if ($verbose);
+            my $synthetic_info = $cfg->symbols->synthetic->{$symbol} || die("Don't know how to calculate $symbol. Add it to fx.yml");
+            my $select_sql = Finance::HostedTrader::Synthetics::get_synthetic_symbol(symbol => $symbol, timeframe => $lowerTf, synthetic_info => $synthetic_info, incremental_base_table => "${symbol}_${lowerTf}");
+
+            my $sql = qq /REPLACE INTO ${symbol}_${lowerTf}
+                ${select_sql};
+            /;
+
+            $ds->dbh->do($sql) or die($!);
+        }
+
+        foreach my $symbol (@$symbols, keys %$symbols_synthetic) {
+            foreach my $tf (@tfs) {
+                print "Updating $symbol $tf synthetic\n" if ($verbose);
+                my $select_sql = Finance::HostedTrader::Synthetics::get_synthetic_timeframe(symbol => $symbol, timeframe => $tf, incremental_base_table => "${symbol}_${tf}");
+
+                my $sql = qq/REPLACE INTO ${symbol}_${tf}
+                $select_sql/;
+
+                $ds->dbh->do($sql) or die($!);
+            }
+        }
+    }
+
 } else {
 
     print "Skip download data\n" if ($verbose);
@@ -209,7 +243,7 @@ version 0.022
 
 =head1 SYNOPSIS
 
-    fx-download-fxcm.pl --timeframes=$TF1[,$TF2] [--symbols=SYM,...] [--verbose] [--help] [--start="15 days ago"] [--end="today] [--numItems=i]
+    fx-download-fxcm.pl --timeframes=$TF1[,$TF2] [--symbols=SYM,...] [--verbose] [--help] [--start="15 days ago"] [--end="today] [--numItems=i] [--mode=simple|views]
 
 =head2 OPTIONS
 
@@ -226,6 +260,12 @@ Required. A comma separated string of symbol codes for which data is to be downl
 =item C<--numItems=i>
 
 Optional. An integer representing how many items to download.  Defaults to 10.
+
+=item C<--mode=s>
+
+simple - Downloads data only for the lower timeframe.  Synthetic symbols/timeframes are calculated via a query and inserted into their respective tables (default).
+views - Downloads data only for the lower timeframe.  Synthetic symbols/timeframes are implemented as views ( calculated on the fly at run time ).
+
 
 =item C<--verbose>
 
