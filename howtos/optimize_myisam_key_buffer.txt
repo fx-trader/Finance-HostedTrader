@@ -1,0 +1,13 @@
+See:
+  https://mariadb.com/kb/en/library/mariadb-memory-allocation/
+  https://mariadb.com/kb/en/library/optimizing-key_buffer_size/
+
+
+The following query returns current index+data size which is helpful to calculate optimal index size
+
+SELECT 
+     table_schema as `Database`, 
+     round((SUM(data_length) / 1024 / 1024), 2) `Data  size in MB`,
+     round((SUM(index_length) / 1024 / 1024), 2) `Index Size in MB` 
+FROM information_schema.TABLES 
+GROUP BY table_schema;
