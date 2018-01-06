@@ -4,7 +4,7 @@
 
 =head1 SYNOPSIS
 
-    fx-test-signal.pl [--timeframe=tf] [--verbose] [--instruments=s] [--debug] [--max_loaded_items=i] [--item_count=i] expr
+    fx-test-signal.pl [--timeframe=tf] [--verbose] [--instruments=s] [--start=s] [--end=s] [--debug] [--max_loaded_items=i] [--item_count=i] expr
 
 
 =head1 DESCRIPTION
