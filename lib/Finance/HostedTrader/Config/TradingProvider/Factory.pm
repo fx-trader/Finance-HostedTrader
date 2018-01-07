@@ -16,6 +16,9 @@ sub create_instance {
     if ($subclass eq 'fxcm') {
         require Finance::HostedTrader::Config::TradingProvider::FXCM;
         return Finance::HostedTrader::Config::TradingProvider::FXCM->new(%$args);
+    } elsif ($subclass eq 'oanda') {
+        require Finance::HostedTrader::Config::TradingProvider::Oanda;
+        return Finance::HostedTrader::Config::TradingProvider::Oanda->new(%$args);
     } else {
         die("Unknown Trading provider found in config file: $subclass\n");
     }
