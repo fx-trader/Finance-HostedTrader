@@ -24,7 +24,6 @@ RUN apt-get update && apt-get -y install \
         libredis-perl \
         libstatistics-descriptive-perl \
         libdevel-stacktrace-perl \
-        librest-client-perl \
         && rm -rf /var/lib/apt/lists/*
 
 ## Finance::FXCM::Simple dependency
@@ -32,7 +31,8 @@ ENV FXCONNECT_HOME /root/ForexConnectAPI-1.3.2-Linux-x86_64
 WORKDIR /root
 RUN curl -L http://fxcodebase.com/bin/forexconnect/1.3.2/ForexConnectAPI-1.3.2-Linux-x86_64.tar.gz | tar zxf - -C /root
 
-RUN cpanm --notest Finance::FXCM::Simple
+# librest-client-perl doesn't seem to be available in ubuntu ? install via cpanm
+RUN cpanm --notest Finance::FXCM::Simple REST::Client
 
 ## Finance::HostedTrader
 COPY . Finance-HostedTrader
