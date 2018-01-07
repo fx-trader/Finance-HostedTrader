@@ -11,6 +11,8 @@ $|=1;
 use Finance::HostedTrader::Config;
 use REST::Client;
 use File::Slurp;
+use JSON::MaybeXS;
+use URI::Query;
 
 my %symbolMap = (
     AUDCAD => 'AUD_CAD',
@@ -89,11 +91,11 @@ my %symbolMap = (
 );
 
 my %timeframeMap = (
-    60     => 'm1',
-    300    => 'm5',
+    60     => 'M1',
+    300    => 'M5',
     3600   => 'H1',
     86400  => 'D1',
-    604800 => 'W1',
+    604800 => 'W',
 );
 
 
@@ -129,8 +131,57 @@ my $client = REST::Client->new(
 $client->addHeader("Authorization", "Bearer $token");
 
 
-$client->GET("/v3/accounts");
-my $content = $client->responseContent;
-print Dumper($content);use Data::Dumper;
+sub _handle_oanda_response {
+    my $client = shift;
+
+    my $content = $client->responseContent;
+    return decode_json($content);
+}
+
+sub _map_args_to_oanda {
+    my $args = shift;
+
+    my %oanda_arg_map = (
+        timeframe   => { name => 'granularity',   map_function => \&convertTimeframeToOanda },
+    );
+
+    my %oanda_args = %$args;
+
+    for my $arg (keys %oanda_arg_map) {
+        next unless(exists($oanda_args{ $arg }));
+        $oanda_args{$oanda_arg_map{$arg}->{name}} = $oanda_arg_map{$arg}->{map_function}->(delete($oanda_args{$arg}));
+    }
+
+    return \%oanda_args;
+}
+
+sub get_instruments {
+    $client->GET("/v3/accounts/$account_id/instruments");
+    my $obj = _handle_oanda_response($client);
+
+    return map { $_->{name} } @{$obj->{instruments}};
+}
+
+sub get_historical_data {
+# See http://developer.oanda.com/rest-live-v20/instrument-ep/
+    my %args = @_;
+
+    my $instrument = delete $args{instrument};
+    my $oanda_args = _map_args_to_oanda(\%args);
+
+    my $qq = URI::Query->new($oanda_args);
+
+    $client->GET("/v3/instruments/$instrument/candles?" . $qq->stringify);
+    my $obj = _handle_oanda_response($client);
+    return $obj;
+}
+
+my $data = get_historical_data(
+    instrument  => "EUR_USD",
+    timeframe   => "300",
+    count       => 50,
+);
+#print Dumper($data);use Data::Dumper;
+print join("\n", map { "$_->{time},$_->{mid}{c}" } @{ $data->{candles} });
 
 __END__
