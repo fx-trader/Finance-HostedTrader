@@ -34,13 +34,8 @@ RUN curl -L http://fxcodebase.com/bin/forexconnect/1.3.2/ForexConnectAPI-1.3.2-L
 # librest-client-perl doesn't seem to be available in ubuntu ? install via cpanm
 RUN cpanm --notest Finance::FXCM::Simple REST::Client
 
-## Finance::HostedTrader
-COPY . Finance-HostedTrader
-
-WORKDIR /root/Finance-HostedTrader
-
-ENV PATH="/root/Finance-HostedTrader/bin:${PATH}"
-ENV PERL5LIB="/root/Finance-HostedTrader/lib:${PERL5LIB}"
+ENV PATH="/src/Finance-HostedTrader/bin:${PATH}"
+ENV PERL5LIB="/src/Finance-HostedTrader/lib:${PERL5LIB}"
 
 RUN mkdir /etc/fxtrader && cp etc/fxtrader/fx* /etc/fxtrader/
 
