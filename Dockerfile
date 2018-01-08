@@ -40,6 +40,6 @@ COPY . Finance-HostedTrader
 WORKDIR /root/Finance-HostedTrader
 
 ENV PATH="/src/Finance-HostedTrader/bin:/root/Finance-HostedTrader/bin:${PATH}"
-ENV PERL5LIB="/src/Finance-HostedTrader/lib:root/Finance-HostedTrader/lib:${PERL5LIB}"
+ENV PERL5LIB="/src/Finance-HostedTrader/lib:/root/Finance-HostedTrader/lib:${PERL5LIB}"
 
 WORKDIR /root
