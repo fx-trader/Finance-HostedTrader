@@ -38,6 +38,4 @@ RUN cpanm --notest Finance::FXCM::Simple REST::Client
 ENV PATH="/src/Finance-HostedTrader/bin:${PATH}"
 ENV PERL5LIB="/src/Finance-HostedTrader/lib:${PERL5LIB}"
 
-RUN mkdir /etc/fxtrader && cp etc/fxtrader/fx* /etc/fxtrader/
-
 WORKDIR /root
