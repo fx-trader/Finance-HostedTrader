@@ -215,9 +215,9 @@ sub get_account_risk {
 
     my $signal_processor = Finance::HostedTrader::ExpressionParser->new();
     my $params = {
-        'expression'        => "datetime,atr(14)",
+        'expression'        => "datetime,previous(atr(14),1)",
         'timeframe'         => "day",
-        'item_count'        => 2,
+        'item_count'        => 1,
     };
 
     foreach my $position (@{ $positions->{positions} }) {
@@ -227,7 +227,7 @@ sub get_account_risk {
         my $currency_ratio      = _getCurrencyRatio($account_currency, $base_currency);
         $params->{symbol}       = $instrument || die("Could not map $instrument");
         my $indicator_result    = $signal_processor->getIndicatorData($params);
-        my $atr14 = $indicator_result->{data}[1][1];
+        my $atr14 = $indicator_result->{data}[0][1];
         my $positionSize = $position->{long}{units} - $position->{short}{units};
         my $average_daily_volatility = ($atr14 * $positionSize) / $currency_ratio;
         my $volatility_nav_ratio = $average_daily_volatility / $NAV;
