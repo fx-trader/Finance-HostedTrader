@@ -24,6 +24,7 @@ RUN apt-get update && apt-get -y install \
         libredis-perl \
         libstatistics-descriptive-perl \
         libdevel-stacktrace-perl \
+        liburi-query-perl \
         && rm -rf /var/lib/apt/lists/*
 
 ## Finance::FXCM::Simple dependency
