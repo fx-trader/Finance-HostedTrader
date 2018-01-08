@@ -14,7 +14,7 @@ use File::Slurp;
 use JSON::MaybeXS;
 use URI::Query;
 
-my %symbolMap = (
+my %instrumentMap = (
     AUDCAD => 'AUD_CAD',
     AUDCHF => 'AUD_CHF',
     AUDJPY => 'AUD_JPY',
@@ -90,6 +90,8 @@ my %symbolMap = (
     Bund    => 'Bund',
 );
 
+my %reverseInstrumentMap = map { $instrumentMap{$_} => $_ } keys %instrumentMap;
+
 my %timeframeMap = (
     60     => 'M1',
     300    => 'M5',
@@ -102,8 +104,8 @@ my %timeframeMap = (
 sub convertSymbolToOanda {
     my ($symbol) = @_;
 
-    die("Unsupported symbol '$symbol'") if (!exists($symbolMap{$symbol}));
-    return $symbolMap{$symbol};
+    die("Unsupported symbol '$symbol'") if (!exists($instrumentMap{$symbol}));
+    return $instrumentMap{$symbol};
 }
 
 sub convertTimeframeToOanda {
@@ -175,6 +177,74 @@ sub get_historical_data {
     my $obj = _handle_oanda_response($client);
     return $obj;
 }
+
+sub _getCurrencyRatio {
+    my ($account_currency, $base_currency) = @_;
+
+    return 1 if ($account_currency eq $base_currency);
+
+    my $signal_processor = Finance::HostedTrader::ExpressionParser->new();
+    my $params = {
+        'expression'        => "datetime,close",
+        'timeframe'         => "5min",
+        'item_count'        => 1,
+        'symbol'            => "${account_currency}${base_currency}"
+    };
+    my $indicator_result    = $signal_processor->getIndicatorData($params);
+    return $indicator_result->{data}[0][1];
+}
+
+sub get_account_risk {
+    use Finance::HostedTrader::ExpressionParser;
+
+    $client->GET("/v3/accounts/$account_id/summary");
+    my $account_obj = _handle_oanda_response($client);
+
+    $client->GET("/v3/accounts/$account_id/openPositions");
+    my $positions = _handle_oanda_response($client);
+
+
+    my $acc = $account_obj->{account};
+
+    my $NAV = $acc->{NAV};
+    my $account_currency = $acc->{currency};
+    my %account_risk = (
+        nav     => $NAV,
+        leverage => sprintf("%.2f",$acc->{positionValue} / $NAV)
+    );
+
+    my $signal_processor = Finance::HostedTrader::ExpressionParser->new();
+    my $params = {
+        'expression'        => "datetime,atr(14)",
+        'timeframe'         => "day",
+        'item_count'        => 2,
+    };
+
+    foreach my $position (@{ $positions->{positions} }) {
+        my $instrument = $reverseInstrumentMap{$position->{instrument}};
+        my $base_currency = $cfg->symbols->getSymbolDenominator($instrument);
+
+        my $currency_ratio      = _getCurrencyRatio($account_currency, $base_currency);
+        $params->{symbol}       = $instrument || die("Could not map $instrument");
+        my $indicator_result    = $signal_processor->getIndicatorData($params);
+        my $atr14 = $indicator_result->{data}[1][1];
+        my $positionSize = $position->{long}{units} - $position->{short}{units};
+        my $average_daily_volatility = ($atr14 * $positionSize) / $currency_ratio;
+        my $volatility_nav_ratio = $average_daily_volatility / $NAV;
+        push @{ $account_risk{positions} }, {
+            instrument          => $position->{instrument},
+            daily_vol           => sprintf("%.4f", $average_daily_volatility),
+            daily_vol_percent   => sprintf("%.6f", $volatility_nav_ratio),
+        };
+    }
+    return \%account_risk;
+}
+
+my $o = get_account_risk();
+
+use Data::Dumper;
+print Dumper($o);
+exit;
 
 my $data = get_historical_data(
     instrument  => "EUR_USD",
