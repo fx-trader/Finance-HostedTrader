@@ -199,10 +199,6 @@ sub get_account_risk {
     $client->GET("/v3/accounts/$account_id/summary");
     my $account_obj = _handle_oanda_response($client);
 
-    $client->GET("/v3/accounts/$account_id/openPositions");
-    my $positions = _handle_oanda_response($client);
-
-
     my $acc = $account_obj->{account};
 
     my $NAV = $acc->{NAV};
@@ -213,14 +209,17 @@ sub get_account_risk {
         position_value => $acc->{positionValue},
     );
 
+    return \%account_risk;
+
+    $client->GET("/v3/accounts/$account_id/openPositions");
+    my $positions = _handle_oanda_response($client);
+
     my $signal_processor = Finance::HostedTrader::ExpressionParser->new();
     my $params = {
         'expression'        => "datetime,previous(atr(14),1)",
         'timeframe'         => "day",
         'item_count'        => 1,
     };
-
-    return \%account_risk;
 
     foreach my $position (@{ $positions->{positions} }) {
         my $instrument = $reverseInstrumentMap{$position->{instrument}};
