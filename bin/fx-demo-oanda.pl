@@ -3,7 +3,6 @@
 # ABSTRACT: Demo oanda v20 api
 # PODNAME: fx-demo-oanda.pl
 
-
 use strict;
 use warnings;
 $|=1;
@@ -80,7 +79,7 @@ my %instrumentMap = (
     UK100  => 'UK100',
     UKOil  => 'UKOil',
     US30   => 'US30',
-    USOil  => 'USOil',
+    USOil  => 'WTICO_USD',
     Copper => 'Copper',
     XPTUSD => 'XPT_USD',
     XPDUSD => 'CPD_USD',
@@ -210,7 +209,8 @@ sub get_account_risk {
     my $account_currency = $acc->{currency};
     my %account_risk = (
         nav     => $NAV,
-        leverage => sprintf("%.2f",$acc->{positionValue} / $NAV)
+        leverage => sprintf("%.2f",$acc->{positionValue} / $NAV),
+        position_value => $acc->{positionValue},
     );
 
     my $signal_processor = Finance::HostedTrader::ExpressionParser->new();
@@ -222,6 +222,7 @@ sub get_account_risk {
 
     foreach my $position (@{ $positions->{positions} }) {
         my $instrument = $reverseInstrumentMap{$position->{instrument}};
+        die("Don't know how to map $position->{instrument}") unless(defined($instrument));
         my $base_currency = $cfg->symbols->getSymbolDenominator($instrument);
 
         my $currency_ratio      = _getCurrencyRatio($account_currency, $base_currency);
@@ -232,9 +233,9 @@ sub get_account_risk {
         my $average_daily_volatility = ($atr14 * $positionSize) / $currency_ratio;
         my $volatility_nav_ratio = $average_daily_volatility / $NAV;
         push @{ $account_risk{positions} }, {
-            instrument          => $position->{instrument},
-            daily_vol           => sprintf("%.4f", $average_daily_volatility),
-            daily_vol_percent   => sprintf("%.6f", $volatility_nav_ratio),
+            instrument                  => $reverseInstrumentMap{$position->{instrument}},
+            daily_volatility            => sprintf("%.4f", $average_daily_volatility),
+            daily_volatility_percent    => sprintf("%.6f", $volatility_nav_ratio),
         };
     }
     return \%account_risk;
@@ -242,8 +243,10 @@ sub get_account_risk {
 
 my $o = get_account_risk();
 
-use Data::Dumper;
-print Dumper($o);
+#use Data::Dumper;
+#print Dumper($o);
+use DateTime;
+print DateTime->now()->iso8601()."Z,$o->{nav},$o->{position_value},$o->{leverage}\n";
 exit;
 
 my $data = get_historical_data(

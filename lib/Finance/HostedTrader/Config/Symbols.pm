@@ -196,6 +196,7 @@ Eg:
 sub getSymbolDenominator {
     my ($self, $symbol) = @_;
 
+    $self->logger->logconfess("Required parameter symbol missing") unless(defined($symbol));
     if (!exists($symbolBaseMap{$symbol})) {
         $self->logger->logconfess("Symbol '$symbol' does not exist in ".__PACKAGE__."::\$symbolBaseMap");
     }
