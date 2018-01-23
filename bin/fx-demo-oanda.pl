@@ -220,6 +220,8 @@ sub get_account_risk {
         'item_count'        => 1,
     };
 
+    return \%account_risk;
+
     foreach my $position (@{ $positions->{positions} }) {
         my $instrument = $reverseInstrumentMap{$position->{instrument}};
         die("Don't know how to map $position->{instrument}") unless(defined($instrument));
@@ -238,7 +240,6 @@ sub get_account_risk {
             daily_volatility_percent    => sprintf("%.6f", $volatility_nav_ratio),
         };
     }
-    return \%account_risk;
 }
 
 my $o = get_account_risk();
