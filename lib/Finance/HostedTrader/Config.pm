@@ -39,6 +39,7 @@ package Finance::HostedTrader::Config;
 
 use Config::Any;
 use Moo;
+use Carp;
 
 use Finance::HostedTrader::Config::DB;
 use Finance::HostedTrader::Config::Symbols;
@@ -105,7 +106,7 @@ around BUILDARGS => sub {
     my $cfg_any = Config::Any->load_files(
         { files => [ $cfgfile ], use_ext => 1, flatten_to_hash => 1 } );
 
-    die("No config file found at $cfgfile.\n") if (!exists($cfg_any->{$cfgfile}));
+    confess("No config file found at $cfgfile.\n") if (!exists($cfg_any->{$cfgfile}));
 
     my $cfg = $cfg_any->{$cfgfile};
 
