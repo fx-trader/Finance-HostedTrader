@@ -29,6 +29,10 @@ RUN apt-get update && apt-get -y install \
         ssmtp \
         && rm -rf /var/lib/apt/lists/*
 
+
+RUN sed -ri -e 's/^(mailhub=).*/\1smtp/' \
+    -e 's/^#(FromLineOverride)/\1/' /etc/ssmtp/ssmtp.conf
+
 ## Finance::FXCM::Simple dependency
 ENV FXCONNECT_HOME /root/ForexConnectAPI-1.3.2-Linux-x86_64
 WORKDIR /root
