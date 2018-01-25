@@ -209,8 +209,6 @@ sub get_account_risk {
         position_value => $acc->{positionValue},
     );
 
-    return \%account_risk;
-
     $client->GET("/v3/accounts/$account_id/openPositions");
     my $positions = _handle_oanda_response($client);
 
@@ -221,6 +219,7 @@ sub get_account_risk {
         'item_count'        => 1,
     };
 
+    my $total_average_daily_volatility=0;
     foreach my $position (@{ $positions->{positions} }) {
         my $instrument = $reverseInstrumentMap{$position->{instrument}};
         die("Don't know how to map $position->{instrument}") unless(defined($instrument));
@@ -233,12 +232,18 @@ sub get_account_risk {
         my $positionSize = $position->{long}{units} - $position->{short}{units};
         my $average_daily_volatility = ($atr14 * $positionSize) / $currency_ratio;
         my $volatility_nav_ratio = $average_daily_volatility / $NAV;
+        $total_average_daily_volatility += $average_daily_volatility;
         push @{ $account_risk{positions} }, {
             instrument                  => $reverseInstrumentMap{$position->{instrument}},
             daily_volatility            => sprintf("%.4f", $average_daily_volatility),
             daily_volatility_percent    => sprintf("%.6f", $volatility_nav_ratio),
         };
     }
+
+    $account_risk{daily_volatility} = $total_average_daily_volatility;
+    $account_risk{daily_volatility_percent} = $total_average_daily_volatility / $NAV;
+
+    return \%account_risk;
 }
 
 my $o = get_account_risk();
@@ -246,7 +251,7 @@ my $o = get_account_risk();
 #use Data::Dumper;
 #print Dumper($o);
 use DateTime;
-print DateTime->now()->iso8601()."Z,$o->{nav},$o->{position_value},$o->{leverage}\n";
+print DateTime->now()->iso8601()."Z,$o->{nav},$o->{position_value},$o->{leverage}," . sprintf('%.2f', $o->{daily_volatility}) . "," . sprintf('%.4f', $o->{daily_volatility_percent}) . "\n";
 exit;
 
 my $data = get_historical_data(
