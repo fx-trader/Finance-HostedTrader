@@ -26,6 +26,7 @@ RUN apt-get update && apt-get -y install \
         libdevel-stacktrace-perl \
         liburi-query-perl \
         libemail-simple-perl \
+        libemail-sender-perl \
         ssmtp \
         && rm -rf /var/lib/apt/lists/*
 
@@ -39,7 +40,7 @@ WORKDIR /root
 RUN curl -L http://fxcodebase.com/bin/forexconnect/1.3.2/ForexConnectAPI-1.3.2-Linux-x86_64.tar.gz | tar zxf - -C /root
 
 # librest-client-perl doesn't seem to be available in ubuntu ? install via cpanm
-RUN cpanm --notest Finance::FXCM::Simple REST::Client Email::Sender::Simple
+RUN cpanm --notest Finance::FXCM::Simple REST::Client
 
 COPY . Finance-HostedTrader
 
