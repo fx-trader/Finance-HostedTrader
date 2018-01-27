@@ -251,7 +251,16 @@ my $o = get_account_risk();
 #use Data::Dumper;
 #print Dumper($o);
 use DateTime;
-print DateTime->now()->iso8601()."Z,$o->{nav},$o->{position_value},$o->{leverage}," . sprintf('%.2f', $o->{daily_volatility}) . "," . sprintf('%.4f', $o->{daily_volatility_percent}) . "\n";
+
+if ($ARGV[0]) {
+    print "${ \DateTime->now()->iso8601() }
+Account NAV:\t\t$o->{nav}
+Daily Volatility:\t${ \sprintf('%.2f', $o->{daily_volatility}) }
+Expected range:\t\t${ \sprintf('%.2f', $o->{nav} - $o->{daily_volatility})} to ${ \sprintf( '%.2f', $o->{nav} + $o->{daily_volatility})}
+";
+} else {
+    print DateTime->now()->iso8601()."Z,$o->{nav},$o->{position_value},$o->{leverage}," . sprintf('%.2f', $o->{daily_volatility}) . "," . sprintf('%.4f', $o->{daily_volatility_percent}) . "\n";
+}
 exit;
 
 my $data = get_historical_data(
@@ -261,5 +270,3 @@ my $data = get_historical_data(
 );
 #print Dumper($data);use Data::Dumper;
 print join("\n", map { "$_->{time},$_->{mid}{c}" } @{ $data->{candles} });
-
-__END__
