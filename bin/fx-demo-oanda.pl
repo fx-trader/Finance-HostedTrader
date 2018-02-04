@@ -63,6 +63,7 @@ my %instrumentMap = (
     USDSGD => 'USD_SGD',
     USDTRY => 'USD_TRY',
     USDZAR => 'USD_ZAR',
+    XAGEUR => 'XAG_EUR',
     XAGUSD => 'XAG_USD',
     XAUUSD => 'XAU_USD',
     ZARJPY => 'ZAR_JPY',
