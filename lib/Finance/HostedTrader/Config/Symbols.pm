@@ -74,6 +74,7 @@ my %symbolBaseMap = (
  USDTRY => { numerator => 'USD',        denominator => 'TRY', meta1 => 10000, meta2 => 1 },
  USDZAR => { numerator => 'USD',        denominator => 'ZAR', meta1 => 10000, meta2 => 1 },
  XAGUSD => { numerator => 'XAG',        denominator => 'USD', meta1 => 100  , meta2 => 1 },
+ XAGEUR => { numerator => 'XAG',        denominator => 'EUR', meta1 => 100  , meta2 => 1 },
  XAUUSD => { numerator => 'XAU',        denominator => 'USD', meta1 => 10   , meta2 => 1 },
  ZARJPY => { numerator => 'ZAR',        denominator => 'JPY', meta1 => 100  , meta2 => 1 },
  ESP35  => { numerator => 'ESP35',      denominator => 'EUR', meta1 => 1    , meta2 => 1 },
