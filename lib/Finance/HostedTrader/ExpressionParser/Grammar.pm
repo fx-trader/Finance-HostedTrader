@@ -1215,7 +1215,7 @@ sub Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::functio
     my $text;
     my $lastsep;
     my $current_match;
-    my $expectation = new Parse::RecDescent::Expectation(q{'ema(', or 'sma(', or 'rsi(', or 'max(', or 'min(', or 'tr(', or 'atr(', or 'previous(', or 'bolhigh(', or 'bollow(', or 'trend(', or 'macd(', or 'macdsig(', or 'macddiff(', or 'abs(', or 'weekday('});
+    my $expectation = new Parse::RecDescent::Expectation(q{'ema(', or 'sma(', or 'rsi(', or 'max(', or 'min(', or 'tr(', or 'atr(', or 'previous(', or 'bolhigh(', or 'bollow(', or 'trend(', or 'macd(', or 'macdsig(', or 'macddiff(', or 'abs(', or 'weekday(', or 'dayname('});
     $expectation->at($_[1]);
     
     my $thisline;
@@ -4533,6 +4533,143 @@ sub Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::functio
         
 
         Parse::RecDescent::_trace(q{>>Matched production: ['weekday(' expression ')']<<},
+                      Parse::RecDescent::_tracefirst($text),
+                      q{function},
+                      $tracelevel)
+                        if defined $::RD_TRACE;
+
+
+
+        $_matched = 1;
+        last;
+    }
+
+
+    while (!$_matched && !$commit)
+    {
+        
+        Parse::RecDescent::_trace(q{Trying production: ['dayname(' expression ')']},
+                      Parse::RecDescent::_tracefirst($_[1]),
+                      q{function},
+                      $tracelevel)
+                        if defined $::RD_TRACE;
+        my $thisprod = $thisrule->{"prods"}[16];
+        $text = $_[1];
+        my $_savetext;
+        @item = (q{function});
+        %item = (__RULE__ => q{function});
+        my $repcount = 0;
+
+
+        Parse::RecDescent::_trace(q{Trying terminal: ['dayname(']},
+                      Parse::RecDescent::_tracefirst($text),
+                      q{function},
+                      $tracelevel)
+                        if defined $::RD_TRACE;
+        undef $lastsep;
+        $expectation->is(q{})->at($text);
+        
+
+        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\Adayname\(/)
+        {
+            $text = $lastsep . $text if defined $lastsep;
+            
+            $expectation->failed();
+            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
+                          Parse::RecDescent::_tracefirst($text))
+                            if defined $::RD_TRACE;
+            last;
+        }
+        $current_match = substr($text, $-[0], $+[0] - $-[0]);
+        substr($text,0,length($current_match),q{});
+        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
+                        . $current_match . q{])},
+                          Parse::RecDescent::_tracefirst($text))
+                            if defined $::RD_TRACE;
+        push @item, $item{__STRING1__}=$current_match;
+        
+
+        Parse::RecDescent::_trace(q{Trying subrule: [expression]},
+                  Parse::RecDescent::_tracefirst($text),
+                  q{function},
+                  $tracelevel)
+                    if defined $::RD_TRACE;
+        if (1) { no strict qw{refs};
+        $expectation->is(q{expression})->at($text);
+        unless (defined ($_tok = Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::expression($thisparser,$text,$repeating,$_noactions,sub { \@arg },undef)))
+        {
+            
+            Parse::RecDescent::_trace(q{<<Didn't match subrule: [expression]>>},
+                          Parse::RecDescent::_tracefirst($text),
+                          q{function},
+                          $tracelevel)
+                            if defined $::RD_TRACE;
+            $expectation->failed();
+            last;
+        }
+        Parse::RecDescent::_trace(q{>>Matched subrule: [expression]<< (return value: [}
+                    . $_tok . q{]},
+
+                      Parse::RecDescent::_tracefirst($text),
+                      q{function},
+                      $tracelevel)
+                        if defined $::RD_TRACE;
+        $item{q{expression}} = $_tok;
+        push @item, $_tok;
+        
+        }
+
+        Parse::RecDescent::_trace(q{Trying terminal: [')']},
+                      Parse::RecDescent::_tracefirst($text),
+                      q{function},
+                      $tracelevel)
+                        if defined $::RD_TRACE;
+        undef $lastsep;
+        $expectation->is(q{')'})->at($text);
+        
+
+        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A\)/)
+        {
+            $text = $lastsep . $text if defined $lastsep;
+            
+            $expectation->failed();
+            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
+                          Parse::RecDescent::_tracefirst($text))
+                            if defined $::RD_TRACE;
+            last;
+        }
+        $current_match = substr($text, $-[0], $+[0] - $-[0]);
+        substr($text,0,length($current_match),q{});
+        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
+                        . $current_match . q{])},
+                          Parse::RecDescent::_tracefirst($text))
+                            if defined $::RD_TRACE;
+        push @item, $item{__STRING2__}=$current_match;
+        
+
+        Parse::RecDescent::_trace(q{Trying action},
+                      Parse::RecDescent::_tracefirst($text),
+                      q{function},
+                      $tracelevel)
+                        if defined $::RD_TRACE;
+        
+
+        $_tok = ($_noactions) ? 0 : do { "dayname($item[2])" };
+        unless (defined $_tok)
+        {
+            Parse::RecDescent::_trace(q{<<Didn't match action>> (return value: [undef])})
+                    if defined $::RD_TRACE;
+            last;
+        }
+        Parse::RecDescent::_trace(q{>>Matched action<< (return value: [}
+                      . $_tok . q{])},
+                      Parse::RecDescent::_tracefirst($text))
+                        if defined $::RD_TRACE;
+        push @item, $_tok;
+        $item{__ACTION1__}=$_tok;
+        
+
+        Parse::RecDescent::_trace(q{>>Matched production: ['dayname(' expression ')']<<},
                       Parse::RecDescent::_tracefirst($text),
                       q{function},
                       $tracelevel)
@@ -11734,6 +11871,46 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                       ],
                                                                            'line' => 70,
                                                                            'number' => 15,
+                                                                           'patcount' => 0,
+                                                                           'strcount' => 2,
+                                                                           'uncommit' => undef
+                                                                         }, 'Parse::RecDescent::Production' ),
+                                                                  bless( {
+                                                                           'actcount' => 1,
+                                                                           'dircount' => 0,
+                                                                           'error' => undef,
+                                                                           'items' => [
+                                                                                        bless( {
+                                                                                                 'description' => '\'dayname(\'',
+                                                                                                 'hashname' => '__STRING1__',
+                                                                                                 'line' => 72,
+                                                                                                 'lookahead' => 0,
+                                                                                                 'pattern' => 'dayname('
+                                                                                               }, 'Parse::RecDescent::Literal' ),
+                                                                                        bless( {
+                                                                                                 'argcode' => undef,
+                                                                                                 'implicit' => undef,
+                                                                                                 'line' => 72,
+                                                                                                 'lookahead' => 0,
+                                                                                                 'matchrule' => 0,
+                                                                                                 'subrule' => 'expression'
+                                                                                               }, 'Parse::RecDescent::Subrule' ),
+                                                                                        bless( {
+                                                                                                 'description' => '\')\'',
+                                                                                                 'hashname' => '__STRING2__',
+                                                                                                 'line' => 72,
+                                                                                                 'lookahead' => 0,
+                                                                                                 'pattern' => ')'
+                                                                                               }, 'Parse::RecDescent::Literal' ),
+                                                                                        bless( {
+                                                                                                 'code' => '{ "dayname($item[2])" }',
+                                                                                                 'hashname' => '__ACTION1__',
+                                                                                                 'line' => 72,
+                                                                                                 'lookahead' => 0
+                                                                                               }, 'Parse::RecDescent::Action' )
+                                                                                      ],
+                                                                           'line' => 71,
+                                                                           'number' => 16,
                                                                            'patcount' => 0,
                                                                            'strcount' => 2,
                                                                            'uncommit' => undef

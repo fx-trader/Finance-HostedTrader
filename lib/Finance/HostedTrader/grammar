@@ -68,4 +68,5 @@ function:
 		'macdsig(' expression ',' number ',' number ',' number ')' { "round(ta_ema(ta_ema($item[2],$item[4]) - ta_ema($item[2],$item[6]),$item[8]),4)" } |
 		'macddiff(' expression ',' number ',' number ',' number ')' { "round((ta_ema($item[2],$item[4]) - ta_ema($item[2],$item[6])) - (ta_ema(ta_ema($item[2],$item[4]) - ta_ema($item[2],$item[6]),$item[8])),4)" } |
 		'abs(' expression ')' { "round(abs($item[2]), 4)" } |
-		'weekday(' expression ')' { "weekday($item[2])" }
+		'weekday(' expression ')' { "weekday($item[2])" } |
+		'dayname(' expression ')' { "dayname($item[2])" }
