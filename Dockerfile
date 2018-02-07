@@ -27,6 +27,7 @@ RUN apt-get update && apt-get -y install \
         liburi-query-perl \
         libemail-simple-perl \
         libemail-sender-perl \
+        libfinance-quotehist-perl \
         ssmtp \
         && rm -rf /var/lib/apt/lists/*
 
