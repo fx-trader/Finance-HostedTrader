@@ -81,6 +81,7 @@ my %instrumentMap = (
     UKOil  => 'UKOil',
     US30   => 'US30',
     USOil  => 'WTICO_USD',
+    Corn   => 'CORN_USD',
     Copper => 'Copper',
     XPTUSD => 'XPT_USD',
     XPDUSD => 'CPD_USD',

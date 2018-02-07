@@ -93,6 +93,7 @@ my %symbolBaseMap = (
  US30   => { numerator => 'US30',       denominator => 'USD', meta1 => 1    , meta2 => 1 },
  USOil  => { numerator => 'USOil',      denominator => 'USD', meta1 => 1    , meta2 => 1 },
  Copper => { numerator => 'Copper',     denominator => 'USD', meta1 => 2000 , meta2 => 1 },
+ Corn   => { numerator => 'Corn',       denominator => 'USD', meta1 => 2000 , meta2 => 1 },
  XPTUSD => { numerator => 'XPT',        denominator => 'USD', meta1 => 10   , meta2 => 1 },
  XPDUSD => { numerator => 'XPD',        denominator => 'USD', meta1 => 10   , meta2 => 1 },
  USDOLLAR => { numerator => 'USDOLLAR', denominator => 'USD', meta1 => 10000, meta2 => 1 },
