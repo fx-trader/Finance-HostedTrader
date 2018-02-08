@@ -223,6 +223,7 @@ sub get_account_risk {
 
     my $total_average_daily_volatility=0;
     foreach my $position (@{ $positions->{positions} }) {
+        next if ($position->{instrument} eq 'CORN_USD');
         my $instrument = $reverseInstrumentMap{$position->{instrument}};
         die("Don't know how to map $position->{instrument}") unless(defined($instrument));
         my $base_currency = $cfg->symbols->getSymbolDenominator($instrument);
