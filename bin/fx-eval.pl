@@ -4,7 +4,7 @@
 
 =head1 SYNOPSIS
 
-    fx-eval.pl [--timeframe=tf] [--instruments=s] [--debug] [--max_loaded_items=i] [--item_count=i] expr
+    fx-eval.pl [--timeframe=tf] [--instruments=s] [--debug] [--max_loaded_items=i] [--item_count=i] [--sql_filter=s] expr
 
 
 =head1 DESCRIPTION
@@ -46,6 +46,12 @@ Number of database records to load. Defaults to 1000 which should be enough to c
 
 Number of indicator periods to display. Defaults to one (eg: only display the indicator value today)
 
+=item C<--sql_filter=s>
+
+A generic filter to be added to the inner query. Examples include:
+
+--sql_filter="DAYOFWEEK(datetime) == 2"
+
 =back
 
 =head1 SEE ALSO
@@ -64,13 +70,14 @@ use Data::Dumper;
 use Getopt::Long;
 use Pod::Usage;
 
-my ( $timeframe, $max_loaded_items, $max_display_items, $instruments_txt, $debug, $help ) =
-  ( 'day', 5000, 1, '', 0, 0 );
+my ( $timeframe, $max_loaded_items, $max_display_items, $instruments_txt, $sql_filter, $debug, $help ) =
+  ( 'day', 5000, 1, '', '', 0, 0 );
 
 GetOptions(
     "timeframe=s"         => \$timeframe,
     "debug"               => \$debug,
     "instruments=s"       => \$instruments_txt,
+    "sql_filter=s"        => \$sql_filter,
     "max_loaded_items=i"  => \$max_loaded_items,
     "item_count=i" => \$max_display_items,
 ) || pod2usage(2);
@@ -91,6 +98,7 @@ foreach my $symbol ( @{$instruments} ) {
             'timeframe'       => $timeframe,
             'max_loaded_items'=> $max_loaded_items,
             'item_count'      => $max_display_items,
+            'sql_filter'      => $sql_filter,
         }
     );
     my $data = $indicator_result->{data};

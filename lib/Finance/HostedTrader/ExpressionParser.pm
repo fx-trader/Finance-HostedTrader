@@ -396,7 +396,7 @@ sub _getIndicatorSql {
 
     my @obsolete_arg_names  = qw(tf fields maxLoadedItems endPeriod numItems);
     $self->log_obsolete_argument_names(\@obsolete_arg_names, \%args);
-    my @good_args           = qw(timeframe expression symbol max_loaded_items end_period item_count);
+    my @good_args           = qw(timeframe expression symbol max_loaded_items end_period item_count sql_filter);
 
     foreach my $key (keys %args) {
         $self->{_logger}->logconfess("invalid arg in getIndicatorData: $key") unless grep { /$key/ } @good_args, @obsolete_arg_names;
@@ -411,6 +411,7 @@ sub _getIndicatorSql {
     $expr = lc($expr);
     my $symbol    = $args{symbol}          || $self->{_logger}->logconfess("No symbol set for indicator");
     my $itemCount = $args{item_count} || $args{numItems} || 10_000_000;
+    my $sqlFilter = $args{sql_filter} // '';
 
     #TODO: Refactor the parser bit so that it can be called independently. This will be usefull to validate expressions before running them.
     $result     = $self->{_parser}->start_indicator($expr);
@@ -420,6 +421,7 @@ sub _getIndicatorSql {
         unless ( defined($result) );
 
     my $WHERE_FILTER = "WHERE datetime <= '$displayEndDate'";
+    $WHERE_FILTER .= " AND ($sqlFilter)" if ($sqlFilter);
 #    $WHERE_FILTER .= ' AND dayofweek(datetime) <> 1' if ( $tf != 604800 );
 
     my $sql = qq(
