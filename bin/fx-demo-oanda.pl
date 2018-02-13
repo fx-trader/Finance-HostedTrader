@@ -73,8 +73,8 @@ my %instrumentMap = (
     HKG33  => 'HKG33',
     ITA40  => 'ITA40',
     JPN225 => 'JPN225',
-    NAS100 => 'NAS100',
-    SPX500 => 'SPX500',
+    NAS100 => 'NAS100_USD',
+    SPX500 => 'SPX500_USD',
     SUI30  => 'SUI30',
     SWE30  => 'SWE30',
     UK100  => 'UK100',
@@ -82,6 +82,7 @@ my %instrumentMap = (
     US30   => 'US30',
     USOil  => 'WTICO_USD',
     Corn   => 'CORN_USD',
+    Wheat  => 'WHEAT_USD',
     Copper => 'Copper',
     XPTUSD => 'XPT_USD',
     XPDUSD => 'CPD_USD',
@@ -223,7 +224,7 @@ sub get_account_risk {
 
     my $total_average_daily_volatility=0;
     foreach my $position (@{ $positions->{positions} }) {
-        next if ($position->{instrument} eq 'CORN_USD');
+        next if ($position->{instrument} eq 'CORN_USD' || $position->{instrument} eq 'WHEAT_USD');
         my $instrument = $reverseInstrumentMap{$position->{instrument}};
         die("Don't know how to map $position->{instrument}") unless(defined($instrument));
         my $base_currency = $cfg->symbols->getSymbolDenominator($instrument);
