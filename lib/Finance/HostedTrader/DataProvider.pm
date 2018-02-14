@@ -48,4 +48,19 @@ sub convertTimeframeTo {
     return $self->timeframeMap->{$timeframe};
 }
 
+sub factory {
+    my $class = shift;
+    my $type = shift;
+
+    if ($type eq 'Oanda') {
+        require Finance::HostedTrader::DataProvider::Oanda;
+        return Finance::HostedTrader::DataProvider::Oanda->new();
+    } elsif ($type eq 'FXCM') {
+        require Finance::HostedTrader::DataProvider::FXCM;
+        return Finance::HostedTrader::DataProvider::FXCM->new();
+    } else {
+        die("Unsupported data provider '$type'");
+    }
+}
+
 1;
