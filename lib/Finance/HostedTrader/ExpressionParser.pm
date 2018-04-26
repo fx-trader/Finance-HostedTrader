@@ -396,7 +396,7 @@ sub _getIndicatorSql {
 
     my @obsolete_arg_names  = qw(tf fields maxLoadedItems endPeriod numItems);
     $self->log_obsolete_argument_names(\@obsolete_arg_names, \%args);
-    my @good_args           = qw(timeframe expression symbol max_loaded_items end_period item_count sql_filter);
+    my @good_args           = qw(timeframe expression symbol max_loaded_items start_period end_period item_count sql_filter);
 
     foreach my $key (keys %args) {
         $self->{_logger}->logconfess("invalid arg in getIndicatorData: $key") unless grep { /$key/ } @good_args, @obsolete_arg_names;
@@ -406,7 +406,8 @@ sub _getIndicatorSql {
     my $tf = $self->{_ds}->cfg->timeframes->getTimeframeID($tf_name);
     $self->{_logger}->logconfess( "Could not understand timeframe " . ( $tf_name ) ) if (!$tf);
     my $maxLoadedItems = $args{max_loaded_items} || $args{maxLoadedItems} || 10_000_000_000;;
-    my $displayEndDate   = $args{end_period} || $args{endPeriod} || '9999-12-31';
+    my $displayStartDate   = $args{start_period} || $args{start_period} || '0001-01-01';
+    my $displayEndDate   = $args{end_period} || $args{end_period} || '9999-12-31';
     my $expr      = $args{expression} || $args{fields}          || $self->{_logger}->logconfess("No indicator expression set");
     $expr = lc($expr);
     my $symbol    = $args{symbol}          || $self->{_logger}->logconfess("No symbol set for indicator");
@@ -420,7 +421,7 @@ sub _getIndicatorSql {
     $self->{_logger}->logdie("Syntax error in indicator \n\n$expr\n")
         unless ( defined($result) );
 
-    my $WHERE_FILTER = "WHERE datetime <= '$displayEndDate'";
+    my $WHERE_FILTER = "WHERE datetime >= '$displayStartDate' AND datetime <= '$displayEndDate'";
     $WHERE_FILTER .= " AND ($sqlFilter)" if ($sqlFilter);
 #    $WHERE_FILTER .= ' AND dayofweek(datetime) <> 1' if ( $tf != 604800 );
 
