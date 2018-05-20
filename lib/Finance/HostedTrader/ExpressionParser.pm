@@ -147,7 +147,7 @@ sub getDescriptiveStatisticsData {
 
 args
 
-timefram
+timeframe
 expression
 symbol
 max_loaded_items
