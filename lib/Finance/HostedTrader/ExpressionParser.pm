@@ -82,17 +82,18 @@ sub new {
 sub getDescriptiveStatisticsData {
     my ($self, $args) = @_;
 
-    my @good_args = qw(timeframe symbol max_loaded_items start_period end_period item_count);
+    my @good_args = qw(timeframe symbol max_loaded_items start_period end_period item_count expression);
     foreach my $key (keys %$args) {
         $self->{_logger}->logconfess("invalid arg in getStatisticsData: $key") unless grep { /$key/ } @good_args;
     }
 
     my %stat_args = %{ $args };
-    $stat_args{expression} = "datetime,open,close,(close-open)/open";
+    my $expression = delete $stat_args{expression} // '(close-open)/open';
+    $stat_args{expression} = "datetime,open,high,low,close,$expression";
 
     my $data    = $self->getIndicatorData( \%stat_args );
     my $stat    = Statistics::Descriptive::Full->new();
-    my @period_returns  = map {  $_->[3] } @{ $data->{data} };
+    my @period_returns  = map {  $_->[5] } @{ $data->{data} };
     $stat->add_data( @period_returns );
 
     $data->{stats}  = {
@@ -120,8 +121,15 @@ sub getDescriptiveStatisticsData {
     }
     $data->{cumulative_frequency_distributions} = \%cumulative_distributions;
     $data->{percentiles} = {
+        20  => scalar($stat->percentile(20)),
+        40  => scalar($stat->percentile(40)),
         50  => scalar($stat->percentile(50)),
+        60  => scalar($stat->percentile(60)),
+        66  => scalar($stat->percentile(66)),
+        75  => scalar($stat->percentile(75)),
+        80  => scalar($stat->percentile(80)),
         90  => scalar($stat->percentile(90)),
+        95  => scalar($stat->percentile(95)),
     };
 
     $data->{average_returns}{overall}   = $data->{stats}{mean};
