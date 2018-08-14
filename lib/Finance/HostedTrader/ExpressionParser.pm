@@ -126,8 +126,10 @@ sub getDescriptiveStatisticsData {
         50  => scalar($stat->percentile(50)),
         60  => scalar($stat->percentile(60)),
         66  => scalar($stat->percentile(66)),
+        70  => scalar($stat->percentile(70)),
         75  => scalar($stat->percentile(75)),
         80  => scalar($stat->percentile(80)),
+        85  => scalar($stat->percentile(85)),
         90  => scalar($stat->percentile(90)),
         95  => scalar($stat->percentile(95)),
     };
