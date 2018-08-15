@@ -89,11 +89,11 @@ sub getDescriptiveStatisticsData {
 
     my %stat_args = %{ $args };
     my $expression = delete $stat_args{expression} // '(close-open)/open';
-    $stat_args{expression} = "datetime,open,high,low,close,$expression";
+    $stat_args{expression} = "datetime,$expression";
 
     my $data    = $self->getIndicatorData( \%stat_args );
     my $stat    = Statistics::Descriptive::Full->new();
-    my @period_returns  = map {  $_->[5] } @{ $data->{data} };
+    my @period_returns  = map {  $_->[1] } @{ $data->{data} };
     $stat->add_data( @period_returns );
 
     $data->{stats}  = {
