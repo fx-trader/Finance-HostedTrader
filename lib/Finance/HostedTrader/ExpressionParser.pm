@@ -82,12 +82,13 @@ sub new {
 sub getDescriptiveStatisticsData {
     my ($self, $args) = @_;
 
-    my @good_args = qw(timeframe symbol max_loaded_items start_period end_period item_count expression);
+    my @good_args = qw(timeframe symbol max_loaded_items start_period end_period item_count expression percentiles);
     foreach my $key (keys %$args) {
         $self->{_logger}->logconfess("invalid arg in getStatisticsData: $key") unless grep { /$key/ } @good_args;
     }
 
     my %stat_args = %{ $args };
+    my $percentiles = delete $stat_args{percentiles} // '75,80,85,90,95,99';
     my $expression = delete $stat_args{expression} // '(close-open)/open';
     $stat_args{expression} = "datetime,$expression";
 
@@ -110,29 +111,17 @@ sub getDescriptiveStatisticsData {
             median              => $stat->median,
         };
 
-    my @bins = qw/-0.03 -0.025 -0.02 -0.015 -0.01 -0.005 0 0.005 0.01 0.015 0.02 0.025 0.3/;
-    $data->{frequency_distributions} = $stat->frequency_distribution_ref( \@bins );
+    #my @bins = qw/-0.03 -0.025 -0.02 -0.015 -0.01 -0.005 0 0.005 0.01 0.015 0.02 0.025 0.3/;
+    #$data->{frequency_distributions} = $stat->frequency_distribution_ref( \@bins );
 
-    my %cumulative_distributions;
-    my $cumulative_total = 0;
-    foreach my $item ( sort { $a <=> $b } keys %{ $data->{frequency_distributions } } ) {
-        $cumulative_total += $data->{frequency_distributions}{$item};
-        $cumulative_distributions{$item}  = $cumulative_total;
-    }
-    $data->{cumulative_frequency_distributions} = \%cumulative_distributions;
-    $data->{percentiles} = {
-        20  => scalar($stat->percentile(20)),
-        40  => scalar($stat->percentile(40)),
-        50  => scalar($stat->percentile(50)),
-        60  => scalar($stat->percentile(60)),
-        66  => scalar($stat->percentile(66)),
-        70  => scalar($stat->percentile(70)),
-        75  => scalar($stat->percentile(75)),
-        80  => scalar($stat->percentile(80)),
-        85  => scalar($stat->percentile(85)),
-        90  => scalar($stat->percentile(90)),
-        95  => scalar($stat->percentile(95)),
-    };
+    #my %cumulative_distributions;
+    #my $cumulative_total = 0;
+    #foreach my $item ( sort { $a <=> $b } keys %{ $data->{frequency_distributions } } ) {
+    #    $cumulative_total += $data->{frequency_distributions}{$item};
+    #    $cumulative_distributions{$item}  = $cumulative_total;
+    #}
+    #$data->{cumulative_frequency_distributions} = \%cumulative_distributions;
+    $data->{percentiles} =  { map { $_ => scalar($stat->percentile($_)) } split(/,/, $percentiles) };
 
     $data->{average_returns}{overall}   = $data->{stats}{mean};
     my $stat_negative_returns = Statistics::Descriptive::Full->new();
