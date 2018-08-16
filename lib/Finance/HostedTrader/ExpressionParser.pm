@@ -95,6 +95,7 @@ sub getDescriptiveStatisticsData {
     my $data    = $self->getIndicatorData( \%stat_args );
     my $stat    = Statistics::Descriptive::Full->new();
     my @period_returns  = map {  $_->[1] } @{ $data->{data} };
+    delete $data->{data};
     $stat->add_data( @period_returns );
 
     $data->{stats}  = {
