@@ -12,6 +12,7 @@ use REST::Client;
 use File::Slurp;
 use JSON::MaybeXS;
 use URI::Query;
+use Carp;
 
 my %instrumentMap = (
     AUDCAD => 'AUD_CAD',
@@ -139,7 +140,9 @@ sub _handle_oanda_response {
     my $client = shift;
 
     my $content = $client->responseContent;
-    return decode_json($content);
+    my $obj = decode_json($content);
+    confess($obj->{errorMessage}) if ($obj->{errorMessage});
+    return $obj;
 }
 
 sub _map_args_to_oanda {
