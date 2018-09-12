@@ -9,7 +9,7 @@ package Finance::HostedTrader::DataProvider::Oanda;
 use Moo;
 extends 'Finance::HostedTrader::DataProvider';
 
-use REST::Client;
+use LWP::UserAgent;
 use File::Slurp;
 use JSON::MaybeXS;
 use URI::Query;
@@ -95,6 +95,7 @@ sub _build_timeframeMap {
     return {
         60     => 'M1',
         300    => 'M5',
+        900    => 'M15',
         3600   => 'H1',
         86400  => 'D1',
         604800 => 'W',
@@ -106,32 +107,45 @@ sub BUILD {
 
     my $providerCfg = $self->cfg->tradingProviders->{oanda};
 
-    my $server_url  = $providerCfg->{serverURL};
-    my $account_id  = $providerCfg->{accountid};
+    $self->{_account_id}    = $providerCfg->{accountid};
     my $token_file  = $providerCfg->{token};
     my $token       = read_file($token_file);
 
-    my $client = REST::Client->new(
-        host    =>  $server_url
-    );
-    $client->addHeader("Authorization", "Bearer $token");
+    my $client = LWP::UserAgent->new();
+    $client->default_header("Authorization" => "Bearer $token");
+    $client->default_header("Content-Type" => "application/json");
+    $client->default_header("Accept-Datetime-Format" => "UNIX");
 
-    $self->{_rest_client} = $client;
+    $self->{_client} = $client;
 }
 
 
 sub _handle_oanda_response {
-    my ($self) = @_;
+    my ($self, $response) = @_;
 
-    my $content = $self->{_rest_client}->responseContent;
-
-    my $obj = decode_json($content);
-    if ($obj->{errorMessage}) {
-        $self->log->logconfess($obj->{errorMessage});
+    if (!$response->is_success()) {
+        $self->log->logconfess($response->status_line());
     }
+    my $content = $response->decoded_content();
+    return $self->_decode_oanda_json($content);
+}
 
+sub _decode_oanda_json {
+    my $self = shift;
+    my $oanda_json = shift;
+
+    my $obj;
+    eval {
+        $obj = decode_json($oanda_json);
+        1;
+    } or do {
+        $self->log->logconfess($oanda_json);
+    };
+    $self->log->logconfess($obj->{errorMessage}) if ($obj->{errorMessage});
     return $obj;
 }
+
+
 
 =item C<saveHistoricalDataToFile($filename, $instrument, $tf, $numberOfItems)>
 
@@ -151,16 +165,62 @@ sub saveHistoricalDataToFile {
 
     my $qq = URI::Query->new($oanda_args);
 
+    my $server_url = $self->cfg->tradingProviders->{oanda}->{serverURL};
     open my $fh, '>', $filename or $self->log->logconfess("Cannot open $filename for writting: $!");
     # See http://developer.oanda.com/rest-live-v20/instrument-ep/
-    $self->{_rest_client}->GET("/v3/instruments/$instrument/candles?" . $qq->stringify);
-    my $obj = $self->_handle_oanda_response();
+    my $response = $self->{_client}->get("${server_url}/v3/instruments/$instrument/candles?" . $qq->stringify);
+    my $obj = $self->_handle_oanda_response($response);
     foreach my $candle ( @{ $obj->{candles} } ) {
         my $price = $candle->{mid};
         print $fh $candle->{time}, "\t", $price->{o}, "\t", $price->{h}, "\t", $price->{l}, "\t", $price->{c}, "\n";
     }
 
     close($fh);
+}
+
+=item C<getHistoricalData($instrument, $tf, $numberOfItems)>
+
+See also http://developer.oanda.com/rest-live-v20/instrument-ep/
+
+=cut
+
+sub getHistoricalData {
+    my ($self, $instrument, $tf, $numberOfItems) = @_;
+
+    $instrument = $self->convertInstrumentTo($instrument);
+    $tf = $self->convertTimeframeTo($tf);
+
+    my $oanda_args = {
+        granularity => $tf,
+        count       => $numberOfItems,
+    };
+
+    my $qq = URI::Query->new($oanda_args);
+
+    my $url = "https://api-fxtrade.oanda.com/v3/instruments/$instrument/candles?" . $qq->stringify;
+    my $response = $self->{_client}->get($url) or $self->log->logconfess("Unable to get $url:\n$!");
+
+    return $self->_handle_oanda_response($response);
+}
+
+sub streamPriceData {
+    my ($self, $instrument, $callback) = @_;
+
+    $instrument = $self->convertInstrumentTo($instrument);
+
+    my $response = $self->{_client}->get(
+        "https://stream-fxtrade.oanda.com/v3/accounts/$self->{_account_id}/pricing/stream?instruments=$instrument",
+        ':content_cb'    => sub {
+            my ($chunk, $response, $protocol) = @_;
+
+            my $obj = $self->_decode_oanda_json($chunk);
+            return if ($obj->{type} eq 'HEARTBEAT');
+
+            return $callback->($obj);
+        }
+    );
+
+    return $response;
 }
 
 1;
