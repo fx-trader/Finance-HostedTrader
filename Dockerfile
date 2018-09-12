@@ -39,9 +39,7 @@ RUN sed -ri -e 's/^(mailhub=).*/\1smtp/' \
 ENV FXCONNECT_HOME /root/ForexConnectAPI-1.3.2-Linux-x86_64
 WORKDIR /root
 RUN curl -L http://fxcodebase.com/bin/forexconnect/1.3.2/ForexConnectAPI-1.3.2-Linux-x86_64.tar.gz | tar zxf - -C /root
-
-# librest-client-perl doesn't seem to be available in ubuntu ? install via cpanm
-RUN cpanm --notest Finance::FXCM::Simple REST::Client
+RUN curl -L http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz | tar zxf - -C /root
 
 COPY . Finance-HostedTrader
 
@@ -49,5 +47,12 @@ WORKDIR /root/Finance-HostedTrader
 
 ENV PATH="/src/Finance-HostedTrader/bin:/root/Finance-HostedTrader/bin:${PATH}"
 ENV PERL5LIB="/src/Finance-HostedTrader/lib:/root/Finance-HostedTrader/lib:${PERL5LIB}"
+ENV LD_LIBRARY_PATH="/usr/local/lib"
+
+WORKDIR /root/ta-lib
+RUN ./configure && make install
+
+# librest-client-perl doesn't seem to be available in ubuntu ? install via cpanm
+RUN TALIB_CFLAGS='-I/usr/local/include/ta-lib' TALIB_LIBS='-L/usr/local/lib -lta_lib' cpanm --notest Finance::FXCM::Simple REST::Client Finance::TA
 
 WORKDIR /root
