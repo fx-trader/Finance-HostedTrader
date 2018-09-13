@@ -28,6 +28,7 @@ RUN apt-get update && apt-get -y install \
         libemail-simple-perl \
         libemail-sender-perl \
         libfinance-quotehist-perl \
+        libdatetime-format-rfc3339-perl \
         ssmtp \
         && rm -rf /var/lib/apt/lists/*
 
@@ -47,12 +48,12 @@ WORKDIR /root/Finance-HostedTrader
 
 ENV PATH="/src/Finance-HostedTrader/bin:/root/Finance-HostedTrader/bin:${PATH}"
 ENV PERL5LIB="/src/Finance-HostedTrader/lib:/root/Finance-HostedTrader/lib:${PERL5LIB}"
-ENV LD_LIBRARY_PATH="/usr/local/lib"
+ENV LD_LIBRARY_PATH="/usr/local/lib:${FXCONNECT_HOME}/lib"
 
 WORKDIR /root/ta-lib
 RUN ./configure && make install
 
 # librest-client-perl doesn't seem to be available in ubuntu ? install via cpanm
-RUN TALIB_CFLAGS='-I/usr/local/include/ta-lib' TALIB_LIBS='-L/usr/local/lib -lta_lib' cpanm --notest Finance::FXCM::Simple REST::Client Finance::TA
+RUN TALIB_CFLAGS='-I/usr/local/include/ta-lib' TALIB_LIBS='-L/usr/local/lib -lta_lib' cpanm --notest Finance::FXCM::Simple Finance::TA
 
 WORKDIR /root

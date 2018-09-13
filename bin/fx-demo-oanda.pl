@@ -8,11 +8,7 @@ use warnings;
 $|=1;
 
 use Finance::HostedTrader::Config;
-use REST::Client;
-use File::Slurp;
-use JSON::MaybeXS;
-use URI::Query;
-use Carp;
+use Finance::HostedTrader::DataProvider::Oanda;
 
 my %instrumentMap = (
     AUDCAD => 'AUD_CAD',
@@ -79,7 +75,7 @@ my %instrumentMap = (
     SUI30  => 'SUI30',
     SWE30  => 'SWE30',
     UK100  => 'UK100',
-    UKOil  => 'UKOil',
+    UKOil  => 'BCO_USD',
     US30   => 'US30',
     USOil  => 'WTICO_USD',
     Corn   => 'CORN_USD',
@@ -95,93 +91,10 @@ my %instrumentMap = (
 
 my %reverseInstrumentMap = map { $instrumentMap{$_} => $_ } keys %instrumentMap;
 
-my %timeframeMap = (
-    60     => 'M1',
-    300    => 'M5',
-    3600   => 'H1',
-    86400  => 'D1',
-    604800 => 'W',
-);
-
-
-sub convertSymbolToOanda {
-    my ($symbol) = @_;
-
-    die("Unsupported symbol '$symbol'") if (!exists($instrumentMap{$symbol}));
-    return $instrumentMap{$symbol};
-}
-
-sub convertTimeframeToOanda {
-    my ($timeframe) = @_;
-
-    die("Unsupported timeframe '$timeframe'") if (!exists($timeframeMap{$timeframe}));
-    return $timeframeMap{$timeframe};
-}
-
-
-
-#pod2usage(1) if ( $help || !defined($timeframes_from_txt));
-
 my $cfg = Finance::HostedTrader::Config->new();
-my $providerCfg = $cfg->tradingProviders->{oanda};
-
-my $server_url  = $providerCfg->{serverURL};
-my $account_id  = $providerCfg->{accountid};
-my $token_file  = $providerCfg->{token};
-my $token       = read_file($token_file);
-
-my $client = REST::Client->new(
-    host    =>  $server_url
-);
-$client->addHeader("Authorization", "Bearer $token");
 
 
-sub _handle_oanda_response {
-    my $client = shift;
-
-    my $content = $client->responseContent;
-    my $obj = decode_json($content);
-    confess($obj->{errorMessage}) if ($obj->{errorMessage});
-    return $obj;
-}
-
-sub _map_args_to_oanda {
-    my $args = shift;
-
-    my %oanda_arg_map = (
-        timeframe   => { name => 'granularity',   map_function => \&convertTimeframeToOanda },
-    );
-
-    my %oanda_args = %$args;
-
-    for my $arg (keys %oanda_arg_map) {
-        next unless(exists($oanda_args{ $arg }));
-        $oanda_args{$oanda_arg_map{$arg}->{name}} = $oanda_arg_map{$arg}->{map_function}->(delete($oanda_args{$arg}));
-    }
-
-    return \%oanda_args;
-}
-
-sub get_instruments {
-    $client->GET("/v3/accounts/$account_id/instruments");
-    my $obj = _handle_oanda_response($client);
-
-    return map { $_->{name} } @{$obj->{instruments}};
-}
-
-sub get_historical_data {
-# See http://developer.oanda.com/rest-live-v20/instrument-ep/
-    my %args = @_;
-
-    my $instrument = delete $args{instrument};
-    my $oanda_args = _map_args_to_oanda(\%args);
-
-    my $qq = URI::Query->new($oanda_args);
-
-    $client->GET("/v3/instruments/$instrument/candles?" . $qq->stringify);
-    my $obj = _handle_oanda_response($client);
-    return $obj;
-}
+my $oanda = Finance::HostedTrader::DataProvider::Oanda->new();
 
 sub _getCurrencyRatio {
     my ($account_currency, $base_currency) = @_;
@@ -202,8 +115,7 @@ sub _getCurrencyRatio {
 sub get_account_risk {
     use Finance::HostedTrader::ExpressionParser;
 
-    $client->GET("/v3/accounts/$account_id/summary");
-    my $account_obj = _handle_oanda_response($client);
+    my $account_obj = $oanda->getAccountSummary();
 
     my $acc = $account_obj->{account};
 
@@ -215,8 +127,7 @@ sub get_account_risk {
         position_value => $acc->{positionValue},
     );
 
-    $client->GET("/v3/accounts/$account_id/openPositions");
-    my $positions = _handle_oanda_response($client);
+    my $positions = $oanda->getOpenPositions();
 
     my $signal_processor = Finance::HostedTrader::ExpressionParser->new();
     my $params = {
@@ -268,12 +179,3 @@ Expected range:\t\t${ \sprintf('%.2f', $o->{nav} - $o->{daily_volatility})} to $
 } else {
     print DateTime->now()->iso8601()."Z,$o->{nav},$o->{position_value},$o->{leverage}," . sprintf('%.2f', $o->{daily_volatility}) . "," . sprintf('%.4f', $o->{daily_volatility_percent}) . "\n";
 }
-exit;
-
-my $data = get_historical_data(
-    instrument  => "EUR_USD",
-    timeframe   => "300",
-    count       => 50,
-);
-#print Dumper($data);use Data::Dumper;
-print join("\n", map { "$_->{time},$_->{mid}{c}" } @{ $data->{candles} });

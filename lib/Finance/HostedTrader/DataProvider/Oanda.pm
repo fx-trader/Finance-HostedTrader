@@ -21,7 +21,7 @@ sub _build_instrumentMap {
         AUDJPY => 'AUD_JPY',
         AUDNZD => 'AUD_NZD',
         AUDUSD => 'AUD_USD',
-        AUS200 => 'AUS200',
+        AUS200 => 'AU200_AUD',
         CADCHF => 'CAD_CHF',
         CADJPY => 'CAD_JPY',
         CHFJPY => 'CHF_JPY',
@@ -69,19 +69,15 @@ sub _build_instrumentMap {
         XAGUSD => 'XAG_USD',
         XAUUSD => 'XAU_USD',
         ZARJPY => 'ZAR_JPY',
-        ESP35  => 'ESP35',
-        FRA40  => 'FRA40',
-        GER30  => 'GER30',
-        HKG33  => 'HKG33',
-        ITA40  => 'ITA40',
-        JPN225 => 'JPN225',
+        FRA40  => 'FR40_EUR',
+        GER30  => 'DE30_EUR',
+        HKG33  => 'HK33_HKD',
+        JPN225 => 'JP225_USD',
         NAS100 => 'NAS100_USD',
         SPX500 => 'SPX500_USD',
-        SUI30  => 'SUI30',
-        SWE30  => 'SWE30',
-        UK100  => 'UK100',
-        UKOil  => 'UKOil',
-        US30   => 'US30',
+        UK100  => 'UK100_GBP',
+        UKOil  => 'BCO_USD',
+        US30   => 'US30_USD',
         USOil  => 'WTICO_USD',
         CORNUSD   => 'CORN_USD',
         WHEATUSD  => 'WHEAT_USD',
@@ -145,7 +141,31 @@ sub _decode_oanda_json {
     return $obj;
 }
 
+sub getInstruments {
+    my $self = shift;
 
+    my $url = "https://api-fxtrade.oanda.com/v3/accounts/$self->{_account_id}/instruments";
+    my $response = $self->{_client}->get($url) or $self->log->logconfess("Unable to get $url:\n$!");
+    my $obj = $self->_handle_oanda_response($response);
+
+    return map { $_->{name} } @{$obj->{instruments}};
+}
+
+sub getAccountSummary {
+    my $self = shift;
+
+    my $url     = "https://api-fxtrade.oanda.com/v3/accounts/$self->{_account_id}/summary";
+    my $response = $self->{_client}->get($url) or $self->log->logconfess("Unable to get $url:\n$!");
+    return $self->_handle_oanda_response($response);
+}
+
+sub getOpenPositions {
+    my $self = shift;
+
+    my $url     = "https://api-fxtrade.oanda.com/v3/accounts/$self->{_account_id}/openPositions";
+    my $response = $self->{_client}->get($url) or $self->log->logconfess("Unable to get $url:\n$!");
+    return $self->_handle_oanda_response($response);
+}
 
 =item C<saveHistoricalDataToFile($filename, $instrument, $tf, $numberOfItems)>
 
