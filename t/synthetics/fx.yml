@@ -29,6 +29,7 @@ timeframes:
         - 3600
         - 86400
         - 604800
+        - 18144000
     synthetic:
         - name: 900
           base: 300

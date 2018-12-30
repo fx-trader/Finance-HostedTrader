@@ -32,6 +32,7 @@ my %timeframes = (
     'day'   => [86400, "date_format(datetime, '%Y-%m-%d 00:00:00')"],
     '2day'  => [172800, undef],
     'week'  => [604800, "date_format(date_sub(datetime, interval weekday(datetime)+1 DAY), '%Y-%m-%d 00:00:00')"],
+    'month' => [18144000, "date_format(datetime, '%Y-%m-01 00:00:00')"],
 );
 
 #These two subs are used to make sure timeframe data is returned sorted

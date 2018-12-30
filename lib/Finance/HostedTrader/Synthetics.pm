@@ -38,6 +38,9 @@ my %tfMap = (
         date_format => "date_format(date_sub(datetime, interval weekday(datetime)+1 DAY), '%Y-%m-%d 00:00:00')",
         date_group  => "date_format(datetime, '%x-%v')",
     },
+    18144000 => {
+        date_format => "date_format(datetime, '%Y-%m-01 00:00:00')",
+    },
 );
 
 sub get_synthetic_symbol {

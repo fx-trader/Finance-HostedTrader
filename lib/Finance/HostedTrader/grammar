@@ -6,7 +6,8 @@ statement_indicator:		expression(s /,/) {join(',', map { (/^[0-9]/ ? $_ : "$_") 
 
 recursive_timeframe_statement_signal:       <leftop: timeframe_statement_signal boolop timeframe_statement_signal >     { $item[1] }
 
-timeframe_statement_signal:     'week' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 604800); $item[3] }
+timeframe_statement_signal:     'month' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 18144000); $item[3] }
+                              | 'week' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 604800); $item[3] }
                               | 'day' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 86400); $item[3] }
                               | '4hour' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 14400); $item[3] }
                               | '3hour' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 10800); $item[3] }
