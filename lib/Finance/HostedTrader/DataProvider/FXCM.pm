@@ -86,6 +86,7 @@ sub _build_instrumentMap {
         NGAS    => 'NGAS',
         EUSTX50 => 'EUSTX50',
         Bund    => 'Bund',
+        Wheat   => 'WHEATF',
     };
 }
 
