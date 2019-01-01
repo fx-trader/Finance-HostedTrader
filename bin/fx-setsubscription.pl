@@ -9,7 +9,7 @@ use Finance::FXCM::Simple;
 use Finance::HostedTrader::Config;
 
 my $cfg = Finance::HostedTrader::Config->new();
-my $providerCfg = $cfg->tradingProviders->{fxcm};
+my $providerCfg = $cfg->providers->{fxcm};
 my $fxcm_user = $ENV{FXCM_USERNAME} || $providerCfg->username;
 my $fxcm_pass = $ENV{FXCM_PASSWORD} || $providerCfg->password;
 my $fxcm_accounttype = $ENV{FXCM_ACCOUNT_TYPE} || $providerCfg->accountType;

@@ -13,7 +13,7 @@ $|=1;
 use Getopt::Long;
 use Finance::HostedTrader::Config;
 use Finance::HostedTrader::Datasource;
-use Finance::HostedTrader::DataProvider;
+use Finance::HostedTrader::Provider;
 use Finance::HostedTrader::Synthetics;
 use Pod::Usage;
 use Try::Tiny;

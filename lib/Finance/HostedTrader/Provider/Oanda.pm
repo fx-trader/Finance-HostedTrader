@@ -1,13 +1,13 @@
-package Finance::HostedTrader::DataProvider::Oanda;
+package Finance::HostedTrader::Provider::Oanda;
 
-# ABSTRACT: Finance::HostedTrader::DataProvider::Oanda - Download historicaldata from Oanda
+# ABSTRACT: Finance::HostedTrader::Provider::Oanda - Download historicaldata from Oanda
 
 =head1 SYNOPSIS
 
 =cut
 
 use Moo;
-extends 'Finance::HostedTrader::DataProvider';
+extends 'Finance::HostedTrader::Provider';
 
 use LWP::UserAgent;
 use File::Slurp;
@@ -102,7 +102,7 @@ sub _build_timeframeMap {
 sub BUILD {
     my ($self, $args) = @_;
 
-    my $providerCfg = $self->cfg->tradingProviders->{oanda};
+    my $providerCfg = $self->cfg->providers->{oanda};
 
     $self->{_account_id}    = $providerCfg->{accountid};
     my $token_file  = $providerCfg->{token};
@@ -186,7 +186,7 @@ sub saveHistoricalDataToFile {
 
     my $qq = URI::Query->new($oanda_args);
 
-    my $server_url = $self->cfg->tradingProviders->{oanda}->{serverURL};
+    my $server_url = $self->cfg->providers->{oanda}->{serverURL};
     open my $fh, '>', $filename or $self->log->logconfess("Cannot open $filename for writting: $!");
     # See http://developer.oanda.com/rest-live-v20/instrument-ep/
     my $response = $self->{_client}->get("${server_url}/v3/instruments/$instrument/candles?" . $qq->stringify);

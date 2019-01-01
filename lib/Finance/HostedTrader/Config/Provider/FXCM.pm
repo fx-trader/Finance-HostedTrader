@@ -1,6 +1,6 @@
-package Finance::HostedTrader::Config::TradingProvider::FXCM;
+package Finance::HostedTrader::Config::Provider::FXCM;
 
-# ABSTRACT: Finance::HostedTrader::Config::TradingProvider::FXCM - Configuration for the FXCM trading platform
+# ABSTRACT: Finance::HostedTrader::Config::Provider::FXCM - Configuration for the FXCM trading platform
 
 =head1 SYNOPSIS
 
@@ -8,7 +8,7 @@ package Finance::HostedTrader::Config::TradingProvider::FXCM;
 
 use Moo;
 
-extends 'Finance::HostedTrader::Config::TradingProvider';
+extends 'Finance::HostedTrader::Config::Provider';
 
 
 =attr C<username>

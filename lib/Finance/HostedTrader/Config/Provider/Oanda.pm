@@ -1,6 +1,6 @@
-package Finance::HostedTrader::Config::TradingProvider::Oanda;
+package Finance::HostedTrader::Config::Provider::Oanda;
 
-# ABSTRACT: Finance::HostedTrader::Config::TradingProvider::Oanda - Configuration for the Oanda trading platform
+# ABSTRACT: Finance::HostedTrader::Config::Provider::Oanda - Configuration for the Oanda trading platform
 
 =head1 SYNOPSIS
 
@@ -8,7 +8,7 @@ package Finance::HostedTrader::Config::TradingProvider::Oanda;
 
 use Moo;
 
-extends 'Finance::HostedTrader::Config::TradingProvider';
+extends 'Finance::HostedTrader::Config::Provider';
 
 
 =attr C<accountid>

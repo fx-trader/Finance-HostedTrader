@@ -13,7 +13,7 @@ $|=1;
 use Getopt::Long;
 use Finance::HostedTrader::Config;
 use Finance::HostedTrader::Datasource;
-use Finance::HostedTrader::DataProvider;
+use Finance::HostedTrader::Provider;
 use Finance::HostedTrader::Synthetics;
 use Pod::Usage;
 use Try::Tiny;
@@ -49,7 +49,7 @@ while (1) {
 
 if (!$service || download_data()) {
 
-    my $data_provider = Finance::HostedTrader::DataProvider->factory('FXCM');
+    my $data_provider = Finance::HostedTrader::Provider->factory('FXCM');
     foreach my $timeframe (@timeframes) {
 
         foreach my $symbol (@symbols) {

@@ -1,13 +1,13 @@
-package Finance::HostedTrader::DataProvider::FXCM;
+package Finance::HostedTrader::Provider::FXCM;
 
-# ABSTRACT: Finance::HostedTrader::DataProvider::FXCM - Download historicaldata from FXCM
+# ABSTRACT: Finance::HostedTrader::Provider::FXCM - Download historicaldata from FXCM
 
 =head1 SYNOPSIS
 
 =cut
 
 use Moo;
-extends 'Finance::HostedTrader::DataProvider';
+extends 'Finance::HostedTrader::Provider';
 
 use Finance::FXCM::Simple;
 
@@ -105,7 +105,7 @@ sub _build_timeframeMap {
 sub BUILD {
     my ($self, $args) = @_;
 
-    my $providerCfg = $self->cfg->tradingProviders->{fxcm};
+    my $providerCfg = $self->cfg->providers->{fxcm};
 
     my $fxcm = Finance::FXCM::Simple->new($providerCfg->username, $providerCfg->password, $providerCfg->accountType, $providerCfg->serverURL);
 

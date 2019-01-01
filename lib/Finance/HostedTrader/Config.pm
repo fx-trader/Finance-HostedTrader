@@ -44,7 +44,7 @@ use Carp;
 use Finance::HostedTrader::Config::DB;
 use Finance::HostedTrader::Config::Symbols;
 use Finance::HostedTrader::Config::Timeframes;
-use Finance::HostedTrader::Config::TradingProvider::Factory;
+use Finance::HostedTrader::Config::Provider::Factory;
 
 
 =attr C<db>
@@ -74,10 +74,10 @@ has timeframes => (
     required => 1,
 );
 
-=attr C<tradingProviders>
-<L><Finance::HostedTrader::Config::TradingProvider> hasref of available trading providers configuration
+=attr C<providers>
+<L><Finance::HostedTrader::Config::Provider> hasref of available providers configuration
 =cut
-has tradingProviders => (
+has providers => (
     is       => 'ro',
     required => 0,
 );
@@ -114,8 +114,8 @@ around BUILDARGS => sub {
         'db' => Finance::HostedTrader::Config::DB->new($cfg->{db}),
         'symbols' => Finance::HostedTrader::Config::Symbols->new($cfg->{symbols}),
         'timeframes' => Finance::HostedTrader::Config::Timeframes->new($cfg->{timeframes}),
-        'tradingProviders' => {
-            map { $_ => Finance::HostedTrader::Config::TradingProvider::Factory->new()->create_instance($_, $cfg->{tradingProviders}->{$_}) }  keys %{$cfg->{tradingProviders}}
+        'providers' => {
+            map { $_ => Finance::HostedTrader::Config::Provider::Factory->new()->create_instance($_, $cfg->{providers}->{$_}) }  keys %{$cfg->{providers}}
         },
     };
 

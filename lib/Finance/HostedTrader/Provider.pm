@@ -1,6 +1,6 @@
-package Finance::HostedTrader::DataProvider;
+package Finance::HostedTrader::Provider;
 
-# ABSTRACT: Finance::HostedTrader::Config::DataProvider - Base class for historical data providers
+# ABSTRACT: Finance::HostedTrader::Config::Provider - Base class for historical data providers
 
 =head1 SYNOPSIS
 
@@ -53,11 +53,11 @@ sub factory {
     my $type = shift;
 
     if ($type eq 'Oanda') {
-        require Finance::HostedTrader::DataProvider::Oanda;
-        return Finance::HostedTrader::DataProvider::Oanda->new();
+        require Finance::HostedTrader::Provider::Oanda;
+        return Finance::HostedTrader::Provider::Oanda->new();
     } elsif ($type eq 'FXCM') {
-        require Finance::HostedTrader::DataProvider::FXCM;
-        return Finance::HostedTrader::DataProvider::FXCM->new();
+        require Finance::HostedTrader::Provider::FXCM;
+        return Finance::HostedTrader::Provider::FXCM->new();
     } else {
         die("Unsupported data provider '$type'");
     }

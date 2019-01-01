@@ -8,7 +8,7 @@ use warnings;
 $|=1;
 
 use Finance::HostedTrader::Config;
-use Finance::HostedTrader::DataProvider::Oanda;
+use Finance::HostedTrader::Provider::Oanda;
 
 my %instrumentMap = (
     AUDCAD => 'AUD_CAD',
@@ -94,7 +94,7 @@ my %reverseInstrumentMap = map { $instrumentMap{$_} => $_ } keys %instrumentMap;
 my $cfg = Finance::HostedTrader::Config->new();
 
 
-my $oanda = Finance::HostedTrader::DataProvider::Oanda->new();
+my $oanda = Finance::HostedTrader::Provider::Oanda->new();
 
 sub _getCurrencyRatio {
     my ($account_currency, $base_currency) = @_;
