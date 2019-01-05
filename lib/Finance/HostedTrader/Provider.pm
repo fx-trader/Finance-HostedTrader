@@ -34,6 +34,12 @@ sub _build_cfg {
     return Finance::HostedTrader::Config->new();
 }
 
+sub getInstruments {
+    my ($self) = @_;
+
+    return sort keys %{ $self->instrumentMap() };
+}
+
 sub convertInstrumentTo {
     my ($self, $symbol) = @_;
 
@@ -52,10 +58,11 @@ sub factory {
     my $class = shift;
     my $type = shift;
 
-    if ($type eq 'Oanda') {
+    $type = lc($type);
+    if ($type eq 'oanda') {
         require Finance::HostedTrader::Provider::Oanda;
         return Finance::HostedTrader::Provider::Oanda->new();
-    } elsif ($type eq 'FXCM') {
+    } elsif ($type eq 'fxcm') {
         require Finance::HostedTrader::Provider::FXCM;
         return Finance::HostedTrader::Provider::FXCM->new();
     } else {
