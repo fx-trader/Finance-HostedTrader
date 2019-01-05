@@ -11,6 +11,18 @@ extends 'Finance::HostedTrader::Provider';
 
 use Finance::FXCM::Simple;
 
+has '_fxcm_client' => (
+    is => 'lazy',
+
+);
+
+sub _build_fxcm_client {
+    my $self = shift;
+
+    my $providerCfg = $self->cfg->providers->{fxcm};
+    return Finance::FXCM::Simple->new($providerCfg->username, $providerCfg->password, $providerCfg->accountType, $providerCfg->serverURL);
+}
+
 sub _build_instrumentMap {
     return {
         AUDCAD => 'AUD/CAD',
@@ -101,18 +113,6 @@ sub _build_timeframeMap {
     };
 }
 
-
-sub BUILD {
-    my ($self, $args) = @_;
-
-    my $providerCfg = $self->cfg->providers->{fxcm};
-
-    my $fxcm = Finance::FXCM::Simple->new($providerCfg->username, $providerCfg->password, $providerCfg->accountType, $providerCfg->serverURL);
-
-    $self->{_fxcm_client} = $fxcm;
-}
-
-
 =item C<saveHistoricalDataToFile($filename, $instrument, $tf, $numberOfItems)>
 
 =cut
@@ -124,7 +124,7 @@ sub saveHistoricalDataToFile {
     $instrument = $self->convertInstrumentTo($instrument);
     $tf = $self->convertTimeframeTo($tf);
 
-    $self->{_fxcm_client}->saveHistoricalDataToFile($filename, $instrument, $tf, $numberOfItems);
+    $self->_fxcm_client->saveHistoricalDataToFile($filename, $instrument, $tf, $numberOfItems);
 }
 
 1;
