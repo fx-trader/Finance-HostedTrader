@@ -11,7 +11,7 @@ extends 'Finance::HostedTrader::Provider';
 
 use Finance::FXCM::Simple;
 
-has '_fxcm_client' => (
+has 'fxcm_client' => (
     is => 'lazy',
 
 );
@@ -124,7 +124,7 @@ sub saveHistoricalDataToFile {
     $instrument = $self->convertInstrumentTo($instrument);
     $tf = $self->convertTimeframeTo($tf);
 
-    $self->_fxcm_client->saveHistoricalDataToFile($filename, $instrument, $tf, $numberOfItems);
+    $self->fxcm_client->saveHistoricalDataToFile($filename, $instrument, $tf, $numberOfItems);
 }
 
 1;
