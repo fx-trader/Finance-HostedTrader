@@ -70,7 +70,6 @@ if (!$service || download_data()) {
     }
 
     if ($mode eq 'simple') {
-        my $instruments = $cfg->symbols->natural();
         my $instruments_synthetic = $cfg->symbols->synthetic();
         my @tfs = sort { $a <=> $b } @{ $cfg->timeframes->all() };
         my $lowerTf = shift (@tfs);
@@ -85,17 +84,17 @@ if (!$service || download_data()) {
             my $sql = qq /REPLACE INTO ${table}
                 ${select_sql};
             /;
-            die($sql);
 
             $ds->dbh->do($sql) or die($!);
         }
 
-        foreach my $instrument (@$instruments, keys %$instruments_synthetic) {
+        foreach my $instrument (@instruments, keys %$instruments_synthetic) {
             foreach my $tf (@tfs) {
                 print "Updating $instrument $tf synthetic\n" if ($verbose);
-                my $select_sql = Finance::HostedTrader::Synthetics::get_synthetic_timeframe(provider => $data_provider, symbol => $instrument, timeframe => $tf, incremental_base_table => "${instrument}_${tf}");
+                my $table = $data_provider->getTableName($instrument, $tf);
+                my $select_sql = Finance::HostedTrader::Synthetics::get_synthetic_timeframe(provider => $data_provider, symbol => $instrument, timeframe => $tf, incremental_base_table => "$table");
 
-                my $sql = qq/REPLACE INTO ${instrument}_${tf}
+                my $sql = qq/REPLACE INTO $table
                 $select_sql/;
 
                 $ds->dbh->do($sql) or die($!);
