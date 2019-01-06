@@ -147,11 +147,25 @@ sub _build_instrumentMap {
 
 sub _build_timeframeMap {
     return {
+        5      => 'S5',
+        10     => 'S10',
+        15     => 'S15',
+        30     => 'S30',
         60     => 'M1',
+        120    => 'M2',
+        240    => 'M4',
         300    => 'M5',
+        600    => 'M10',
         900    => 'M15',
+        1800   => 'M30',
         3600   => 'H1',
-        86400  => 'D1',
+        7200   => 'H2',
+        10800  => 'H3',
+        14400  => 'H4',
+        21600  => 'H6',
+        28800  => 'H8',
+        43200  => 'H12',
+        86400  => 'D',
         604800 => 'W',
         18144000 => 'M',
     };
@@ -169,7 +183,7 @@ sub BUILD {
     my $client = LWP::UserAgent->new();
     $client->default_header("Authorization" => "Bearer $token");
     $client->default_header("Content-Type" => "application/json");
-    $client->default_header("Accept-Datetime-Format" => "UNIX");
+    $client->default_header("Accept-Datetime-Format" => "RFC3339");
 
     $self->{_client} = $client;
 }

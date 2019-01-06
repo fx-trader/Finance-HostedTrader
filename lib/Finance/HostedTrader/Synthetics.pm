@@ -49,6 +49,7 @@ sub get_synthetic_symbol {
     my $synthetic_info  = $options{synthetic_info};
     my $symbol          = $options{symbol};
     my $tf              = $options{timeframe};
+    my $p               = $options{provider};
     my $incremental_base_table  = $options{incremental_base_table};
     my $incremental_sql_filter = "";
 
@@ -58,7 +59,7 @@ sub get_synthetic_symbol {
 
     my $op = $synthetic_info->{op};
     my $leftop = $synthetic_info->{leftop};
-    my $rightop = $synthetic_info->{rightop};
+    my $rightop = $p->getTableName($synthetic_info->{rightop}, $tf);
     my ($sql, $high, $low);
 
     if ( $op eq '*' ) {
@@ -73,6 +74,7 @@ sub get_synthetic_symbol {
 
     if ($leftop ne '1') {
 
+        $leftop = $p->getTableName($synthetic_info->{leftop}, $tf);
         if ($incremental_sql_filter) {
             $incremental_sql_filter = "AND T1.$incremental_sql_filter ";
         }
@@ -82,7 +84,7 @@ sub get_synthetic_symbol {
             ROUND(T1.high $op T2.${high},4) AS high,
             ROUND(T1.low  $op T2.${low},4) AS low,
             ROUND(T1.close $op T2.close,4) AS close
-            FROM ${leftop}_${tf} AS T1, ${rightop}_${tf} AS T2
+            FROM ${leftop} AS T1, ${rightop} AS T2
             WHERE T1.datetime = T2.datetime $incremental_sql_filter
         };
 
@@ -97,7 +99,7 @@ sub get_synthetic_symbol {
             ROUND(1 $op T2.${high},4) AS high,
             ROUND(1 $op T2.${low},4) AS low,
             ROUND(1 $op T2.close,4) AS close
-            FROM $rightop\_$tf AS T2
+            FROM $rightop AS T2
             $incremental_sql_filter
             ORDER BY T2.datetime DESC
         };
@@ -111,6 +113,7 @@ sub get_synthetic_timeframe {
     my %options = @_;
     my $symbol = $options{symbol} || die("missing symbol");
     my $tf = $options{timeframe} || die("missing timeframe");
+    my $p  = $options{provider} || die("missing provider");
     my $incremental_base_table  = $options{incremental_base_table};
 
     my $date_format = $tfMap{$tf}->{date_format};
@@ -125,13 +128,15 @@ sub get_synthetic_timeframe {
 
     $where_clause = ( $where_clause ? "WHERE $where_clause" : "" );
 
+    my $table = $p->getTableName($symbol, $lowerTf);
+
     return qq/SELECT
       $date_format AS datetime,
       CAST(SUBSTRING_INDEX(GROUP_CONCAT(CAST(open AS CHAR) ORDER BY datetime), ',', 1) AS DECIMAL(9,4)) as open,
       MAX(high) as high,
       MIN(low) as low,
       CAST(SUBSTRING_INDEX(GROUP_CONCAT(CAST(close AS CHAR) ORDER BY datetime DESC), ',', 1) AS DECIMAL(9,4)) as close
-    FROM ${symbol}_${lowerTf}
+    FROM ${table}
     $where_clause
     GROUP BY $date_group
     ORDER BY datetime DESC;

@@ -60,8 +60,6 @@ my $result = GetOptions(
 ) or pod2usage(1);
 pod2usage(1) if ($help);
 
-my @tfs = sort { $a <=> $b } @{ $cfg->timeframes->all() };
-
 my $symbols_synthetic = $cfg->symbols->synthetic();
 my $dbname = $cfg->db->dbname;
 my $dbuser = $cfg->db->dbuser;
@@ -75,16 +73,19 @@ print qq{
 
 foreach my $provider_type (@provider_types) {
 
+    my @tfs = sort { $a <=> $b } @{ $cfg->timeframes->all() };
+
     my $p = Finance::HostedTrader::Provider->factory($provider_type);
-    my @symbols = map { "${provider_type}_${_}" } $p->getInstruments();
+    my @symbols = $p->getInstruments();
 
     if ($mode eq 'simple') {
 
         foreach my $symbol (@symbols, keys %$symbols_synthetic) {
             foreach my $tf (@tfs) {
-                print "DROP TABLE IF EXISTS `$symbol\_$tf`;\n" if ($drop_table);
+                my $tableName = $p->getTableName($symbol, $tf);
+                print "DROP TABLE IF EXISTS `$tableName`;\n" if ($drop_table);
                 print qq /
-    CREATE TABLE IF NOT EXISTS `${symbol}_${tf}` (
+    CREATE TABLE IF NOT EXISTS `$tableName` (
     `datetime` DATETIME NOT NULL ,
     `open` DECIMAL(9,4) NOT NULL ,
     `high` DECIMAL(9,4) NOT NULL ,
@@ -101,9 +102,10 @@ foreach my $provider_type (@provider_types) {
 
 
         foreach my $symbol (@symbols) {
-            print "DROP TABLE IF EXISTS `$symbol\_$lowerTf`;\n" if ($drop_table);
+            my $tableName = $p->getTableName($symbol, $lowerTf);
+            print "DROP TABLE IF EXISTS `$tableName`;\n" if ($drop_table);
             print qq /
-        CREATE TABLE IF NOT EXISTS `${symbol}_${lowerTf}` (
+        CREATE TABLE IF NOT EXISTS `$tableName` (
         `datetime` DATETIME NOT NULL ,
         `open` DECIMAL(9,4) NOT NULL ,
         `high` DECIMAL(9,4) NOT NULL ,
@@ -117,20 +119,22 @@ foreach my $provider_type (@provider_types) {
         foreach my $symbol (keys %$symbols_synthetic) {
 
             my $synthetic_info = $cfg->symbols->synthetic->{$symbol} || die("Don't know how to calculate $symbol. Add it to fx.yml");
-            my $sql = Finance::HostedTrader::Synthetics::get_synthetic_symbol(symbol => $symbol, timeframe => $lowerTf, synthetic_info => $synthetic_info);
+            my $sql = Finance::HostedTrader::Synthetics::get_synthetic_symbol(provider => $p, symbol => $symbol, timeframe => $lowerTf, synthetic_info => $synthetic_info);
+            my $tableName = $p->getTableName($symbol, $lowerTf);
 
             print qq /
-        CREATE OR REPLACE VIEW ${symbol}_${lowerTf} AS
+        CREATE OR REPLACE VIEW $tableName AS
         ${sql};
         /;
         }
 
         foreach my $symbol (@symbols, keys %$symbols_synthetic) {
             foreach my $tf (@tfs) {
-                my $sql = Finance::HostedTrader::Synthetics::get_synthetic_timeframe(symbol => $symbol, timeframe => $tf);
+                my $sql = Finance::HostedTrader::Synthetics::get_synthetic_timeframe(provider => $p, symbol => $symbol, timeframe => $tf);
+                my $tableName = $p->getTableName($symbol, $tf);
 
         print qq/
-        CREATE OR REPLACE VIEW ${symbol}_${tf} AS
+        CREATE OR REPLACE VIEW $tableName AS
         $sql/;
             }
         }

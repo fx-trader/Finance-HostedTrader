@@ -30,6 +30,10 @@ has cfg => (
     builder => '_build_cfg',
 );
 
+has 'id' => (
+    is => 'ro',
+);
+
 sub _build_cfg {
     return Finance::HostedTrader::Config->new();
 }
@@ -54,6 +58,13 @@ sub convertTimeframeTo {
     return $self->timeframeMap->{$timeframe};
 }
 
+sub getTableName {
+    my ($self, $instrument, $timeframe) = @_;
+
+    my $provider_id = $self->id;
+    return "${provider_id}_${instrument}_${timeframe}";
+}
+
 sub factory {
     my $class = shift;
     my $type = shift;
@@ -61,10 +72,10 @@ sub factory {
     $type = lc($type);
     if ($type eq 'oanda') {
         require Finance::HostedTrader::Provider::Oanda;
-        return Finance::HostedTrader::Provider::Oanda->new();
+        return Finance::HostedTrader::Provider::Oanda->new( id => $type );
     } elsif ($type eq 'fxcm') {
         require Finance::HostedTrader::Provider::FXCM;
-        return Finance::HostedTrader::Provider::FXCM->new();
+        return Finance::HostedTrader::Provider::FXCM->new( id => $type );
     } else {
         die("Unsupported data provider '$type'");
     }
