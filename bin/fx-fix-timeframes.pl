@@ -35,7 +35,6 @@ my $cfg         = Finance::HostedTrader::Config->new();
 @instruments = split(/,/, join(',', @instruments));
 @timeframes = split(/,/, join(',', @timeframes));
 
-@instruments = @{ $cfg->symbols->all } unless(@instruments);
 @timeframes = @{ $cfg->timeframes->all } unless(@timeframes);
 
 
@@ -44,16 +43,23 @@ my $lowerTf = shift (@tfs);
 
 my $ds = Finance::HostedTrader::Datasource->new();
 
-foreach my $symbol (@instruments) {
-    foreach my $tf (@tfs) {
-        next unless (grep(/^$tf$/,@timeframes));
-        print "Updating $symbol $tf synthetic\n" if ($verbose);
-        my $select_sql = Finance::HostedTrader::Synthetics::get_synthetic_timeframe(symbol => $symbol, timeframe => $tf );
+my @provider_types = sort keys %{ $cfg->providers };
 
-        my $sql = qq/REPLACE INTO ${symbol}_${tf}
-        $select_sql/;
+foreach my $provider_type (@provider_types) {
+    my $p = Finance::HostedTrader::Provider->factory($provider_type);
+    my @provider_instruments = (@instruments ? @instruments : $p->getInstruments());
+    foreach my $symbol (@provider_instruments) {
+        foreach my $tf (@tfs) {
+            next unless (grep(/^$tf$/,@timeframes));
+            print "Updating $provider_type $symbol $tf synthetic\n" if ($verbose);
+            my $select_sql = Finance::HostedTrader::Synthetics::get_synthetic_timeframe(provider => $p, symbol => $symbol, timeframe => $tf );
+            my $table = $p->getTableName($symbol, $tf);
 
-        $ds->dbh->do($sql) or die($!);
+            my $sql = qq/REPLACE INTO $table
+            $select_sql/;
+
+            $ds->dbh->do($sql) or die($!);
+        }
     }
 }
 

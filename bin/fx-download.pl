@@ -52,6 +52,7 @@ while (1) {
 if (!$service || download_data()) {
 
     my $data_provider = Finance::HostedTrader::Provider->factory($provider);
+    @instruments = $data_provider->getInstruments() unless(@instruments);
     foreach my $timeframe (@timeframes) {
 
         foreach my $instrument (@instruments) {

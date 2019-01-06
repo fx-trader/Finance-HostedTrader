@@ -242,6 +242,8 @@ sub getOpenPositions {
 
 =item C<saveHistoricalDataToFile($filename, $instrument, $tf, $numberOfItems)>
 
+See http://developer.oanda.com/rest-live-v20/instrument-ep/
+
 =cut
 
 sub saveHistoricalDataToFile {
@@ -251,21 +253,32 @@ sub saveHistoricalDataToFile {
     $instrument = $self->convertInstrumentTo($instrument);
     $tf = $self->convertTimeframeTo($tf);
 
-    my $oanda_args = {
-        granularity => $tf,
-        count       => $numberOfItems,
-    };
-
-    my $qq = URI::Query->new($oanda_args);
-
     my $server_url = $self->cfg->providers->{oanda}->{serverURL};
+    my $timeTo = undef;
     open my $fh, '>', $filename or $self->log->logconfess("Cannot open $filename for writting: $!");
-    # See http://developer.oanda.com/rest-live-v20/instrument-ep/
-    my $response = $self->{_client}->get("${server_url}/v3/instruments/$instrument/candles?" . $qq->stringify);
-    my $obj = $self->_handle_oanda_response($response);
-    foreach my $candle ( @{ $obj->{candles} } ) {
-        my $price = $candle->{mid};
-        print $fh $candle->{time}, "\t", $price->{o}, "\t", $price->{h}, "\t", $price->{l}, "\t", $price->{c}, "\n";
+
+    while ($numberOfItems > 0) {
+
+        my $oanda_args = {
+            granularity => $tf,
+            count       => ($numberOfItems > 5000 ? 5000 : $numberOfItems),
+            to          => $timeTo,
+        };
+
+        my $qq = URI::Query->new($oanda_args);
+
+        my $response = $self->{_client}->get("${server_url}/v3/instruments/$instrument/candles?" . $qq->stringify);
+        my $obj = $self->_handle_oanda_response($response);
+        foreach my $candle ( @{ $obj->{candles} } ) {
+            my $price = $candle->{mid};
+            print $fh $candle->{time}, "\t", $price->{o}, "\t", $price->{h}, "\t", $price->{l}, "\t", $price->{c}, "\n";
+        }
+
+        $numberOfItems -= scalar(@{$obj->{candles}});
+        if ($numberOfItems > 0) {
+            $timeTo = $obj->{candles}->[0]->{time};
+            warn "$timeTo\n";
+        }
     }
 
     close($fh);
