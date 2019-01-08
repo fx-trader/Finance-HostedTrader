@@ -14,6 +14,15 @@ use File::Slurp;
 use JSON::MaybeXS;
 use URI::Query;
 
+has datetime_format => (
+    is => 'ro',
+    isa => sub {
+            die("Invalid datetime_format $_[0].  Must be either 'UNIX' or 'RFC3339'")
+                unless ($_[0] eq 'UNIX' || $_[0] eq 'RFC3339');
+        },
+    default => sub { "RFC3339" },
+);
+
 sub _build_instrumentMap {
 #root@fx-shell:~# perl -MFinance::HostedTrader::Provider::Oanda -e 'my $o=Finance::HostedTrader::Provider::Oanda->new();my @i = sort $o->getInstrumentsFromProvider(); foreach my $a (@i) { print "        $a => '\''$a'\'',\n"};'
 #Fix JP225_USD, should be JP225_JPY as it's priced in Yen, not Dollars
@@ -183,7 +192,11 @@ sub BUILD {
     my $client = LWP::UserAgent->new();
     $client->default_header("Authorization" => "Bearer $token");
     $client->default_header("Content-Type" => "application/json");
-    $client->default_header("Accept-Datetime-Format" => "RFC3339");
+    $client->default_header("Accept-Datetime-Format" => $self->datetime_format);
+    if ($ENV{https_proxy}) {
+        $ENV{https_proxy} =~ s/^https/connect/;
+    	$client->proxy('https', $ENV{https_proxy});
+    }
 
     $self->{_client} = $client;
 }
