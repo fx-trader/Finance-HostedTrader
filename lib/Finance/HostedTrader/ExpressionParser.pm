@@ -12,6 +12,7 @@ use Statistics::Descriptive;
 use Log::Log4perl qw(:easy);
 use List::Util;
 use Finance::HostedTrader::Datasource;
+use Finance::HostedTrader::Provider;
 
 # See http://search.cpan.org/~jtbraun/Parse-RecDescent-1.967013/lib/Parse/RecDescent.pm#Precompiling_parsers
 # For details of how to generate Grammar.pm.
@@ -82,7 +83,7 @@ sub new {
 sub getDescriptiveStatisticsData {
     my ($self, $args) = @_;
 
-    my @good_args = qw(timeframe symbol max_loaded_items start_period end_period item_count expression percentiles);
+    my @good_args = qw(provider timeframe symbol max_loaded_items start_period end_period item_count expression percentiles);
     foreach my $key (keys %$args) {
         $self->{_logger}->logconfess("invalid arg in getStatisticsData: $key") unless grep { /$key/ } @good_args;
     }
@@ -208,7 +209,7 @@ my ($self, $args) = @_;
 
     my @obsolete_arg_names  = qw(tf expr maxLoadedItems startPeriod endPeriod numItems fields);
     $self->log_obsolete_argument_names(\@obsolete_arg_names, $args);
-    my @good_args           = qw(timeframe expression symbol max_loaded_items start_period end_period item_count fields);
+    my @good_args           = qw(provider timeframe expression symbol max_loaded_items start_period end_period item_count fields);
 
     foreach my $key (keys %$args) {
         $self->{_logger}->logconfess("invalid arg in _getSignalSql: $key") unless grep { /$key/ } @good_args, @obsolete_arg_names;
@@ -224,6 +225,9 @@ my ($self, $args) = @_;
     my $startPeriod = $args->{start_period} || $args->{startPeriod} || '0001-01-01 00:00:00';
     my $endPeriod = $args->{end_period} || $args->{endPeriod} || '9999-12-31 23:59:59';
     my $fields = $args->{fields} || 'datetime';
+    my $provider = $args->{provider} || 'oanda';
+
+    my $data_provider = Finance::HostedTrader::Provider->factory($provider);
 
     my $itemCount = $args->{item_count} || $args->{numItems} || $maxLoadedItems;
 
@@ -296,13 +300,15 @@ my ($self, $args) = @_;
         my $ORDERBY_CLAUSE='';
         $ORDERBY_CLAUSE='ORDER BY datetime ASC';
 
+        my $tableName = $data_provider->getTableName($symbol, $tf);
+
         my $tf_sql = qq(
 (
 SELECT $fields, $common_timeframe_pattern AS COMMON_TIMEFRAME_PATTERN FROM (
 SELECT $fields FROM (
 SELECT *$select_fields
 FROM (
-    SELECT * FROM $symbol\_$tf
+    SELECT * FROM ${tableName}
     $WHERE_FILTER
     ORDER BY datetime DESC
     LIMIT $maxLoadedItems
@@ -396,7 +402,7 @@ sub _getIndicatorSql {
 
     my @obsolete_arg_names  = qw(tf fields maxLoadedItems endPeriod numItems);
     $self->log_obsolete_argument_names(\@obsolete_arg_names, \%args);
-    my @good_args           = qw(timeframe expression symbol max_loaded_items start_period end_period item_count sql_filter);
+    my @good_args           = qw(provider timeframe expression symbol max_loaded_items start_period end_period item_count sql_filter);
 
     foreach my $key (keys %args) {
         $self->{_logger}->logconfess("invalid arg in getIndicatorData: $key") unless grep { /$key/ } @good_args, @obsolete_arg_names;
@@ -413,6 +419,9 @@ sub _getIndicatorSql {
     my $symbol    = $args{symbol}          || $self->{_logger}->logconfess("No symbol set for indicator");
     my $itemCount = $args{item_count} || $args{numItems} || 10_000_000;
     my $sqlFilter = $args{sql_filter} // '';
+    my $provider  = $args{provider} // 'oanda';
+
+    my $data_provider = Finance::HostedTrader::Provider->factory($provider);
 
     #TODO: Refactor the parser bit so that it can be called independently. This will be usefull to validate expressions before running them.
     $result     = $self->{_parser}->start_indicator($expr);
@@ -425,10 +434,11 @@ sub _getIndicatorSql {
     $WHERE_FILTER .= " AND ($sqlFilter)" if ($sqlFilter);
 #    $WHERE_FILTER .= ' AND dayofweek(datetime) <> 1' if ( $tf != 604800 );
 
+    my $tableName = $data_provider->getTableName($symbol, $tf);
     my $sql = qq(
 SELECT * FROM (
 SELECT $result FROM (
-  SELECT * FROM $symbol\_$tf
+  SELECT * FROM $tableName
   $WHERE_FILTER
   ORDER BY datetime DESC
   LIMIT $maxLoadedItems
@@ -451,7 +461,7 @@ Check wether a given signal occurred in a given period of time
 sub checkSignal {
     my ( $self, $args ) = @_;
 
-    my @good_args = qw( expr symbol tf maxLoadedItems period simulatedNowValue);
+    my @good_args = qw(provider expr symbol tf maxLoadedItems period simulatedNowValue);
 
     foreach my $key (keys %$args) {
         $self->{_logger}->logconfess("invalid arg in checkSignal: $key") unless grep { /$key/ } @good_args;
@@ -463,11 +473,13 @@ sub checkSignal {
     my $maxLoadedItems = $args->{maxLoadedItems} || -1;
     my $period = $args->{period} || 3600;
     my $nowValue = $args->{simulatedNowValue} || 'now';
+    my $provider = $args->{provider};
 
     my $startPeriod = UnixDate(DateCalc($nowValue, '- '.$period."seconds"), '%Y-%m-%d %H:%M:%S');
     my $endPeriod = UnixDate($nowValue, '%Y-%m-%d %H:%M:%S');
     my $signal_result = $self->getSignalData(
         {
+            'provider'        => $provider,
             'expr'            => $expr,
             'symbol'          => $symbol,
             'tf'              => $timeframe,
