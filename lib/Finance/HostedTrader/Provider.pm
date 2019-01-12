@@ -44,6 +44,12 @@ sub getInstruments {
     return sort keys %{ $self->instrumentMap() };
 }
 
+sub getAllInstruments {
+    my ($self) = @_;
+
+    return $self->getInstruments(), $cfg->symbols->synthetic_names;
+}
+
 sub convertInstrumentTo {
     my ($self, $symbol) = @_;
 
@@ -56,6 +62,20 @@ sub convertTimeframeTo {
 
     $self->log->logconfess("Unsupported timeframe '$timeframe'") if (!exists($self->timeframeMap->{$timeframe}));
     return $self->timeframeMap->{$timeframe};
+}
+
+sub getInstrumentNumerator {
+    my ($self, $instrument) = @_;
+
+    my ($numerator, $denominator) = split(/_/, $instrument, 2);
+    return $numerator;
+}
+
+sub getInstrumentDenominator {
+    my ($self, $instrument) = @_;
+
+    my ($numerator, $denominator) = split(/_/, $instrument, 2);
+    return $denominator;
 }
 
 sub getTableName {
