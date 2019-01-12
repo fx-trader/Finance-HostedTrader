@@ -47,7 +47,7 @@ sub getInstruments {
 sub getAllInstruments {
     my ($self) = @_;
 
-    return $self->getInstruments(), $cfg->symbols->synthetic_names;
+    return $self->getInstruments(), $self->cfg->symbols->synthetic_names;
 }
 
 sub convertInstrumentTo {

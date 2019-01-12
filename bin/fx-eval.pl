@@ -64,14 +64,15 @@ use strict;
 use warnings;
 
 use Finance::HostedTrader::Config;
+use Finance::HostedTrader::Provider;
 use Finance::HostedTrader::ExpressionParser;
 
 use Data::Dumper;
 use Getopt::Long;
 use Pod::Usage;
 
-my ( $timeframe, $max_loaded_items, $max_display_items, $instruments_txt, $sql_filter, $debug, $help ) =
-  ( 'day', 5000, 1, '', '', 0, 0 );
+my ( $timeframe, $max_loaded_items, $max_display_items, $instruments_txt, $sql_filter, $provider, $debug, $help ) =
+  ( 'day', 5000, 1, '', '', undef, 0, 0 );
 
 GetOptions(
     "timeframe=s"         => \$timeframe,
@@ -80,17 +81,20 @@ GetOptions(
     "sql_filter=s"        => \$sql_filter,
     "max_loaded_items=i"  => \$max_loaded_items,
     "item_count=i" => \$max_display_items,
+    "provider=s" => \$provider,
 ) || pod2usage(2);
 pod2usage(1) if ($help);
 
 my $cfg               = Finance::HostedTrader::Config->new();
 my $signal_processor = Finance::HostedTrader::ExpressionParser->new();
 
-my $instruments = $cfg->symbols->all;
+my $data_provider = $cfg->provider();
+my @instruments = $data_provider->getAllInstruments();
+print Dumper(\@instruments);exit;use Data::Dumper;
 
-$instruments = [ split( ',', $instruments_txt ) ] if ($instruments_txt);
+@instruments = split( ',', $instruments_txt ) if ($instruments_txt);
 print "Processing in the $timeframe timeframe\n";
-foreach my $symbol ( @{$instruments} ) {
+foreach my $symbol ( @instruments ) {
     my $indicator_result = $signal_processor->getIndicatorData(
         {
             'expression'      => $ARGV[0],
@@ -99,6 +103,7 @@ foreach my $symbol ( @{$instruments} ) {
             'max_loaded_items'=> $max_loaded_items,
             'item_count'      => $max_display_items,
             'sql_filter'      => $sql_filter,
+            'provider'        => $provider,
         }
     );
     my $data = $indicator_result->{data};

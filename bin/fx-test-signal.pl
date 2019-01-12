@@ -71,8 +71,8 @@ use Date::Manip;
 use Getopt::Long;
 use Pod::Usage;
 
-my ( $timeframe, $max_loaded_items, $instruments_txt, $debug, $help, $startPeriod, $endPeriod, $item_count, $verbose ) =
-  ( 'day', undef, '', 0, 0, '90 days ago', undef, undef, 0 );
+my ( $timeframe, $max_loaded_items, $instruments_txt, $debug, $help, $startPeriod, $endPeriod, $item_count, $provider, $verbose ) =
+  ( 'day', undef, '', 0, 0, '90 days ago', undef, undef, 'default', 0 );
 
 GetOptions(
     "timeframe=s"         => \$timeframe,
@@ -83,15 +83,17 @@ GetOptions(
     "max_loaded_items=i"  => \$max_loaded_items,
     "start=s" => \$startPeriod,
     "end=s" => \$endPeriod,
+    "provider=s" => \$provider,
 ) || pod2usage(2);
 pod2usage(1) if ($help);
 
 my $cfg               = Finance::HostedTrader::Config->new();
 my $signal_processor = Finance::HostedTrader::ExpressionParser->new();
 
-my $instruments = $cfg->symbols->natural;
+my $data_provider = Finance::HostedTrader::Provider->factory($provider);
+my @instruments = $data_provider->getInstruments();
 
-$instruments = [ split( ',', $instruments_txt ) ] if ($instruments_txt);
+@instruments = split( ',', $instruments_txt ) if ($instruments_txt);
 
 
 foreach my $signal (@ARGV) {
@@ -106,6 +108,7 @@ foreach my $symbol ( @{$instruments} ) {
             'timeframe'         => $timeframe,
             'max_loaded_items'  => $max_loaded_items,
             'start_period'      => UnixDate($startPeriod, '%Y-%m-%d %H:%M:%S'),
+            'provider'          => $provider,
         };
     $signal_args->{endPeriod} = UnixDate($endPeriod, '%Y-%m-%d %H:%M:%S') if (defined($endPeriod));
     my $signal_result = $signal_processor->getSignalData( $signal_args );

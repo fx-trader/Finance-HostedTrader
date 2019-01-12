@@ -126,6 +126,12 @@ around BUILDARGS => sub {
     return $class->$orig($class_args);
 };
 
+sub provider {
+    my ($self, $name) = @_;
+
+    return $self->{providers}{$name // 'default'};
+}
+
 __PACKAGE__->meta->make_immutable;
 1;
 
