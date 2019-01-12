@@ -110,6 +110,8 @@ around BUILDARGS => sub {
 
     my $cfg = $cfg_any->{$cfgfile};
 
+    confess("Cannot have a provider called default in $cfgfile") if ($cfg->{providers}{default});
+
     my $class_args = {
         'db' => Finance::HostedTrader::Config::DB->new($cfg->{db}),
         'symbols' => Finance::HostedTrader::Config::Symbols->new($cfg->{symbols}),
@@ -118,6 +120,8 @@ around BUILDARGS => sub {
             map { $_ => Finance::HostedTrader::Config::Provider::Factory->new()->create_instance($_, $cfg->{providers}->{$_}) }  keys %{$cfg->{providers}}
         },
     };
+
+    $class_args->{providers}{default} = $class_args->{providers}{$cfg->{defaultProvider}};
 
     return $class->$orig($class_args);
 };
