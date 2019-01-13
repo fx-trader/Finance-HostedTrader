@@ -1,6 +1,6 @@
 package Finance::HostedTrader::Provider;
 
-# ABSTRACT: Finance::HostedTrader::Config::Provider - Base class for historical data providers
+# ABSTRACT: Finance::HostedTrader::Provider - Base class for trading and historical data providers
 
 =head1 SYNOPSIS
 

@@ -60,7 +60,7 @@ has timeframes => (
 );
 
 =attr C<providers>
-<L><Finance::HostedTrader::Config::Provider> hasref of available providers configuration
+<L><Finance::HostedTrader::Provider> hasref of available providers
 =cut
 has providers => (
     is       => 'ro',
