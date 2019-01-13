@@ -36,7 +36,6 @@ sub _build_dbh {
         'DBI:mysql:' . $cfg->db->dbname . ';host=' . $cfg->db->dbhost,
         $cfg->db->dbuser,
         $cfg->db->dbpasswd,
-        { RaiseError => 1}
     );
 
 
