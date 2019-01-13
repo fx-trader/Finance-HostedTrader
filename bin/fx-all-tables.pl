@@ -4,7 +4,7 @@
 
 =head1 SYNOPSIS
 
-    fx-all-tables.pl [--template "TRUNCATE TABLE TABLE_NAME" --timeframes=$TF1[,$TF2] --symbols=EURUSD,[GBPUSD]]
+    fx-all-tables.pl [--template "TRUNCATE TABLE TABLE_NAME" --timeframes=$TF1[,$TF2] --instruments=EURUSD,[GBPUSD]] --providers=oanda,[fxcm]
 
 =head2 OPTIONS
 
@@ -16,10 +16,10 @@ Optional. A comma separated string of timeframe codes for which data is to be do
 See L<Finance::HostedTrader::Config::Timeframes> for available codes.
 Defaults to all timeframes defined in /etc/fxtrader/fx.yml .
 
-=item C<--symbols=s>
+=item C<--instruments=s>
 
-Optional. A comma separated string of symbols to process.
-Defaults to all symbols defined in /etc/fxtrader/fx.yml .
+Optional. A comma separated string of instruments to process.
+Defaults to all instruments supported by the provider.
 
 =item C<--template=s>
 
@@ -44,10 +44,12 @@ use Getopt::Long;
 use Pod::Usage;
 use Finance::HostedTrader::Datasource;
 
-my ($template,$timeframes_txt, $symbols_txt, $help) = ('TABLE_NAME');
+my ($template,$timeframes_txt, $instruments_txt, $providers_txt, $help) = ('TABLE_NAME');
 
 my $result = GetOptions(
                         "timeframes=s", \$timeframes_txt,
+                        "instruments=s", \$instruments_txt,
+                        "providers=s", \$providers_txt,
                         "template=s", \$template,
                         "help", \$help,
                     )  or pod2usage(1);
@@ -60,10 +62,16 @@ my $db = Finance::HostedTrader::Datasource->new();
 my $timeframes = $db->cfg->timeframes->all;
 $timeframes = [split(',',$timeframes_txt)] if ($timeframes_txt);
 
+my @providers_filter = split(/,/, $providers_txt // '');
+
 $db->cfg->forEachProvider( sub {
     my $provider = shift;
 
-    my @instruments = $provider->getAllInstruments();
+    if (@providers_filter) {
+        return unless (grep { $_ eq $provider->id } @providers_filter);
+    }
+
+    my @instruments = ($instruments_txt ? split(/,/, $instruments_txt) : $provider->getAllInstruments());
 
     foreach my $instrument (@instruments) {
         foreach my $tf (@$timeframes) {
