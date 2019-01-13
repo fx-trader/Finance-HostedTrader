@@ -50,7 +50,7 @@ my ( $drop_table, $help );
 my ($mode, $table_type) = ('simple','MYISAM');
 my $cfg = Finance::HostedTrader::Config->new();
 
-my @provider_types = sort keys %{ $cfg->providers };
+my @provider_types = $cfg->getProviderNames();
 
 my $result = GetOptions(
     "tableType=s",\$table_type,
@@ -60,7 +60,6 @@ my $result = GetOptions(
 ) or pod2usage(1);
 pod2usage(1) if ($help);
 
-my $symbols_synthetic = $cfg->symbols->synthetic();
 my $dbname = $cfg->db->dbname;
 my $dbuser = $cfg->db->dbuser;
 my $dbpasswd = $cfg->db->dbpasswd;
@@ -75,12 +74,12 @@ foreach my $provider_type (@provider_types) {
 
     my @tfs = sort { $a <=> $b } @{ $cfg->timeframes->all() };
 
-    my $p = Finance::HostedTrader::Provider->factory($provider_type);
+    my $p = $cfg->providers->{$provider_type};
     my @symbols = $p->getInstruments();
 
     if ($mode eq 'simple') {
 
-        foreach my $symbol (@symbols, keys %$symbols_synthetic) {
+        foreach my $symbol (@symbols, $p->synthetic_names) {
             foreach my $tf (@tfs) {
                 my $tableName = $p->getTableName($symbol, $tf);
                 print "DROP TABLE IF EXISTS `$tableName`;\n" if ($drop_table);
@@ -116,7 +115,7 @@ foreach my $provider_type (@provider_types) {
         /;
         }
 
-        foreach my $symbol (keys %$symbols_synthetic) {
+        foreach my $symbol ($p->synthetic_names) {
 
             my $synthetic_info = $cfg->symbols->synthetic->{$symbol} || die("Don't know how to calculate $symbol. Add it to fx.yml");
             my $sql = Finance::HostedTrader::Synthetics::get_synthetic_symbol(provider => $p, symbol => $symbol, timeframe => $lowerTf, synthetic_info => $synthetic_info);
@@ -128,7 +127,7 @@ foreach my $provider_type (@provider_types) {
         /;
         }
 
-        foreach my $symbol (@symbols, keys %$symbols_synthetic) {
+        foreach my $symbol (@symbols, $p->synthetic_names) {
             foreach my $tf (@tfs) {
                 my $sql = Finance::HostedTrader::Synthetics::get_synthetic_timeframe(provider => $p, symbol => $symbol, timeframe => $tf);
                 my $tableName = $p->getTableName($symbol, $tf);

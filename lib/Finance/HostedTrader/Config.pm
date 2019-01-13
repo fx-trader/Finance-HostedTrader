@@ -109,6 +109,20 @@ around BUILDARGS => sub {
     return $class->$orig($class_args);
 };
 
+sub getProviderNames {
+    my ($self) = @_;
+
+    return grep { $_ ne 'default' } sort keys( %{$self->providers} );
+}
+
+sub forEachProvider {
+    my ($self, $codeRef) = @_;
+
+    foreach my $providerName ($self->getProviderNames) {
+        $codeRef->($self->providers->{$providerName});
+    }
+}
+
 sub provider {
     my ($self, $name) = @_;
 

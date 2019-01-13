@@ -11,6 +11,56 @@ extends 'Finance::HostedTrader::Provider';
 
 use Finance::FXCM::Simple;
 
+=attr C<username>
+
+Username to connect to the trading provider
+
+=cut
+
+has username => (
+    is     => 'ro',
+    required=>1,
+);
+
+=attr C<password>
+
+Password to connect to the trading provider
+
+=cut
+
+
+has password => (
+    is     => 'ro',
+    required=>1,
+);
+
+=attr C<accountType>
+
+FXCM account type. Either 'Demo' or 'Real'.
+
+=cut
+
+
+has accountType => (
+    is     => 'ro',
+    required=>1,
+);
+
+=attr C<serverURL>
+
+ForexConnect server URL. Tipically http://www.fxcorporate.com/Hosts.jsp
+
+=cut
+
+
+has serverURL => (
+    is     => 'ro',
+    default=> 'http://www.fxcorporate.com/Hosts.jsp',
+    required=>1,
+);
+
+
+
 has 'fxcm_client' => (
     is => 'lazy',
 
@@ -19,8 +69,7 @@ has 'fxcm_client' => (
 sub _build_fxcm_client {
     my $self = shift;
 
-    my $providerCfg = $self->cfg->providers->{fxcm};
-    return Finance::FXCM::Simple->new($providerCfg->username, $providerCfg->password, $providerCfg->accountType, $providerCfg->serverURL);
+    return Finance::FXCM::Simple->new($self->username, $self->password, $self->accountType, $self->serverURL);
 }
 
 sub _build_instrumentMap {

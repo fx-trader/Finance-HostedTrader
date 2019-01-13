@@ -14,15 +14,43 @@ use File::Slurp;
 use JSON::MaybeXS;
 use URI::Query;
 
+=attr C<accountid>
+
+Account to connect to
+
+=cut
+
 has account_id => (
     is          => 'ro',
     required    => 1,
 );
 
+=attr C<token>
+
+File containing an access token to connect with
+
+=cut
+
 has token_file => (
     is          => 'ro',
     required    => 1,
 );
+
+=attr C<serverURL>
+
+Oanda server URL. https://api-fxpractice.oanda.com for demo or https://api-fxtrade.oanda.com for real.
+
+See http://developer.oanda.com/rest-live-v20/development-guide/
+
+=cut
+
+
+has serverURL => (
+    is     => 'ro',
+    default=> 'https://api-fxtrade.oanda.com',
+    required=>1,
+);
+
 
 has datetime_format => (
     is => 'ro',
@@ -273,7 +301,7 @@ sub saveHistoricalDataToFile {
     $instrument = $self->convertInstrumentTo($instrument);
     $tf = $self->convertTimeframeTo($tf);
 
-    my $server_url = $self->cfg->providers->{oanda}->{serverURL};
+    my $server_url = $self->serverURL;
     my $timeTo = undef;
     open my $fh, '>', $filename or $self->log->logconfess("Cannot open $filename for writting: $!");
 

@@ -9,13 +9,13 @@ use Finance::FXCM::Simple;
 use Finance::HostedTrader::Config;
 
 my $cfg = Finance::HostedTrader::Config->new();
-my $providerCfg = $cfg->providers->{fxcm};
-my $fxcm_user = $ENV{FXCM_USERNAME} || $providerCfg->username;
-my $fxcm_pass = $ENV{FXCM_PASSWORD} || $providerCfg->password;
-my $fxcm_accounttype = $ENV{FXCM_ACCOUNT_TYPE} || $providerCfg->accountType;
+my $provider = $cfg->providers->{fxcm};
+my $fxcm_user = $ENV{FXCM_USERNAME} || $provider->username;
+my $fxcm_pass = $ENV{FXCM_PASSWORD} || $provider->password;
+my $fxcm_accounttype = $ENV{FXCM_ACCOUNT_TYPE} || $provider->accountType;
 
 print "Connecting to fxcm account $fxcm_user ($fxcm_accounttype)\n";
-my $fxcm = Finance::FXCM::Simple->new($fxcm_user, $fxcm_pass, $fxcm_accounttype, $providerCfg->serverURL);
+my $fxcm = Finance::FXCM::Simple->new($fxcm_user, $fxcm_pass, $fxcm_accounttype, $provider->serverURL);
 
 foreach my $symbol (@ARGV) {
     print "Setting subscription for $symbol\n";

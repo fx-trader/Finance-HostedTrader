@@ -225,9 +225,9 @@ my ($self, $args) = @_;
     my $startPeriod = $args->{start_period} || $args->{startPeriod} || '0001-01-01 00:00:00';
     my $endPeriod = $args->{end_period} || $args->{endPeriod} || '9999-12-31 23:59:59';
     my $fields = $args->{fields} || 'datetime';
-    my $provider = $args->{provider} || 'oanda';
+    my $provider = $args->{provider};
 
-    my $data_provider = Finance::HostedTrader::Provider->factory($provider);
+    my $data_provider = $self->{_ds}->cfg->provider($provider);
 
     my $itemCount = $args->{item_count} || $args->{numItems} || $maxLoadedItems;
 
@@ -419,9 +419,9 @@ sub _getIndicatorSql {
     my $symbol    = $args{symbol}          || $self->{_logger}->logconfess("No symbol set for indicator");
     my $itemCount = $args{item_count} || $args{numItems} || 10_000_000;
     my $sqlFilter = $args{sql_filter} // '';
-    my $provider  = $args{provider} // 'oanda';
+    my $provider  = $args{provider};
 
-    my $data_provider = Finance::HostedTrader::Provider->factory($provider);
+    my $data_provider = $self->{_ds}->cfg->provider($provider);
 
     #TODO: Refactor the parser bit so that it can be called independently. This will be usefull to validate expressions before running them.
     $result     = $self->{_parser}->start_indicator($expr);

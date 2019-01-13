@@ -48,7 +48,6 @@ my ($template,$timeframes_txt, $symbols_txt, $help) = ('TABLE_NAME');
 
 my $result = GetOptions(
                         "timeframes=s", \$timeframes_txt,
-                        "symbols=s", \$symbols_txt,
                         "template=s", \$template,
                         "help", \$help,
                     )  or pod2usage(1);
@@ -57,27 +56,24 @@ pod2usage(1) if ( $help );
 
 my $db = Finance::HostedTrader::Datasource->new();
 
-my $symbols;
-if (!defined($symbols_txt)) {
-    $symbols = $db->cfg->provider->getAllInstruments();
-} elsif ($symbols_txt eq 'natural') {
-    $symbols = $db->cfg->symbols->natural;
-} elsif ($symbols_txt eq 'synthetics') {
-    $symbols = $db->cfg->symbols->synthetic_names;
-} else {
-    $symbols = [split(',',$symbols_txt)] if ($symbols_txt);
-}
 
 my $timeframes = $db->cfg->timeframes->all;
 $timeframes = [split(',',$timeframes_txt)] if ($timeframes_txt);
 
+$db->cfg->forEachProvider( sub {
+    my $provider = shift;
 
-foreach my $symbol (@{$symbols}) {
-foreach my $tf (@$timeframes) {
-next if ($tf == 60);
-my $tableName = $symbol.'_'.$tf;
-my $s = $template;
-$s =~ s/TABLE_NAME/$tableName/g;
-print $s,"\n";
-}
-}
+    my @instruments = $provider->getAllInstruments();
+
+    foreach my $instrument (@instruments) {
+        foreach my $tf (@$timeframes) {
+            my $tableName = $provider->getTableName($instrument, $tf);
+            my $s = $template;
+            $s =~ s/TABLE_NAME/$tableName/g;
+            print $s,"\n";
+        }
+    }
+});
+
+
+

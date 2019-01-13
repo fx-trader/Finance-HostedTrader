@@ -13,7 +13,6 @@ $|=1;
 use Getopt::Long;
 use Finance::HostedTrader::Config;
 use Finance::HostedTrader::Datasource;
-use Finance::HostedTrader::Provider;
 use Finance::HostedTrader::Synthetics;
 use Pod::Usage;
 use Try::Tiny;
@@ -43,15 +42,14 @@ my $lowerTf = shift (@tfs);
 
 my $ds = Finance::HostedTrader::Datasource->new();
 
-my @provider_types = sort keys %{ $cfg->providers };
+$ds->cfg->forEachProvider( sub {
+    my $p = shift;
 
-foreach my $provider_type (@provider_types) {
-    my $p = Finance::HostedTrader::Provider->factory($provider_type);
     my @provider_instruments = (@instruments ? @instruments : $p->getInstruments());
     foreach my $symbol (@provider_instruments) {
         foreach my $tf (@tfs) {
             next unless (grep(/^$tf$/,@timeframes));
-            print "Updating $provider_type $symbol $tf synthetic\n" if ($verbose);
+            print "Updating " . $p->id . " $symbol $tf synthetic\n" if ($verbose);
             my $select_sql = Finance::HostedTrader::Synthetics::get_synthetic_timeframe(provider => $p, symbol => $symbol, timeframe => $tf );
             my $table = $p->getTableName($symbol, $tf);
 
@@ -61,7 +59,7 @@ foreach my $provider_type (@provider_types) {
             $ds->dbh->do($sql) or die($!);
         }
     }
-}
+});
 
 
 __END__

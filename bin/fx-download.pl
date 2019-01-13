@@ -21,7 +21,7 @@ use Try::Tiny;
 use Time::Piece;
 
 my $numItemsToDownload = 10;
-my ( $timeframes_from_txt, $instruments_from_txt, $verbose, $help, $service, $mode, $provider ) = ( undef, undef, 0, 0, 0, 'simple', 'oanda' );
+my ( $timeframes_from_txt, $instruments_from_txt, $verbose, $help, $service, $mode, $provider ) = ( undef, undef, 0, 0, 0, 'simple', undef );
 
 my $result = GetOptions(
     "instruments=s",    \$instruments_from_txt,
@@ -51,7 +51,7 @@ while (1) {
 
 if (!$service || download_data()) {
 
-    my $data_provider = Finance::HostedTrader::Provider->factory($provider);
+    my $data_provider = $cfg->provider($provider);
     @instruments = $data_provider->getInstruments() unless(@instruments);
     foreach my $timeframe (@timeframes) {
 
@@ -71,14 +71,14 @@ if (!$service || download_data()) {
     }
 
     if ($mode eq 'simple') {
-        my $instruments_synthetic = $cfg->symbols->synthetic();
+        my @instruments_synthetic = $data_provider->synthetic_names;
         my @tfs = sort { $a <=> $b } @{ $cfg->timeframes->all() };
         my $lowerTf = shift (@tfs);
 
         my $ds = (defined($global_ds) ? $global_ds :  Finance::HostedTrader::Datasource->new());
-        foreach my $instrument (keys %$instruments_synthetic) {
+        foreach my $instrument (@instruments_synthetic) {
             print "Updating $instrument $lowerTf synthetic\n" if ($verbose);
-            my $synthetic_info = $cfg->symbols->synthetic->{$instrument} || die("Don't know how to calculate $instrument. Add it to fx.yml");
+            my $synthetic_info = $data_provider->synthetic->{$instrument} || die("Don't know how to calculate $instrument. Add it to fx.yml");
             my $table = $data_provider->getTableName($instrument, $lowerTf);
             my $select_sql = Finance::HostedTrader::Synthetics::get_synthetic_symbol(provider => $data_provider, symbol => $instrument, timeframe => $lowerTf, synthetic_info => $synthetic_info, incremental_base_table => "$table");
 
@@ -89,7 +89,7 @@ if (!$service || download_data()) {
             $ds->dbh->do($sql) or die($!);
         }
 
-        foreach my $instrument (@instruments, keys %$instruments_synthetic) {
+        foreach my $instrument (@instruments, @instruments_synthetic) {
             foreach my $tf (@tfs) {
                 print "Updating $instrument $tf synthetic\n" if ($verbose);
                 my $table = $data_provider->getTableName($instrument, $tf);
