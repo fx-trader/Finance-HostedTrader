@@ -53,7 +53,7 @@ has serverURL => (
 
 
 has datetime_format => (
-    is => 'ro',
+    is => 'rw',
     isa => sub {
             die("Invalid datetime_format $_[0].  Must be either 'UNIX' or 'RFC3339'")
                 unless ($_[0] eq 'UNIX' || $_[0] eq 'RFC3339');
@@ -221,11 +221,14 @@ sub _build_timeframeMap {
 sub BUILD {
     my ($self, $args) = @_;
 
-    $self->{_account_id}    = $self->account_id;
-    my $token       = read_file($self->token_file);
+    $self->{_token} = read_file($self->token_file);
+}
+
+sub _client {
+    my $self = shift;
 
     my $client = LWP::UserAgent->new();
-    $client->default_header("Authorization" => "Bearer $token");
+    $client->default_header("Authorization" => "Bearer $self->{_token}");
     $client->default_header("Content-Type" => "application/json");
     $client->default_header("Accept-Datetime-Format" => $self->datetime_format);
     if ($ENV{https_proxy}) {
@@ -233,7 +236,7 @@ sub BUILD {
         $client->proxy('https', $ENV{https_proxy});
     }
 
-    $self->{_client} = $client;
+    return $client;
 }
 
 
@@ -265,8 +268,8 @@ sub _decode_oanda_json {
 sub getInstrumentsFromProvider {
     my $self = shift;
 
-    my $url = "https://api-fxtrade.oanda.com/v3/accounts/$self->{_account_id}/instruments";
-    my $response = $self->{_client}->get($url) or $self->log->logconfess("Unable to get $url:\n$!");
+    my $url = "https://api-fxtrade.oanda.com/v3/accounts/${\$self->account_id}/instruments";
+    my $response = $self->_client->get($url) or $self->log->logconfess("Unable to get $url:\n$!");
     my $obj = $self->_handle_oanda_response($response);
 
     return map { $_->{name} } @{$obj->{instruments}};
@@ -275,16 +278,16 @@ sub getInstrumentsFromProvider {
 sub getAccountSummary {
     my $self = shift;
 
-    my $url     = "https://api-fxtrade.oanda.com/v3/accounts/$self->{_account_id}/summary";
-    my $response = $self->{_client}->get($url) or $self->log->logconfess("Unable to get $url:\n$!");
+    my $url     = "https://api-fxtrade.oanda.com/v3/accounts/${\self->account_id}/summary";
+    my $response = $self->_client->get($url) or $self->log->logconfess("Unable to get $url:\n$!");
     return $self->_handle_oanda_response($response);
 }
 
 sub getOpenPositions {
     my $self = shift;
 
-    my $url     = "https://api-fxtrade.oanda.com/v3/accounts/$self->{_account_id}/openPositions";
-    my $response = $self->{_client}->get($url) or $self->log->logconfess("Unable to get $url:\n$!");
+    my $url     = "https://api-fxtrade.oanda.com/v3/accounts/${\$self->account_id}/openPositions";
+    my $response = $self->_client->get($url) or $self->log->logconfess("Unable to get $url:\n$!");
     return $self->_handle_oanda_response($response);
 }
 
@@ -315,7 +318,7 @@ sub saveHistoricalDataToFile {
 
         my $qq = URI::Query->new($oanda_args);
 
-        my $response = $self->{_client}->get("${server_url}/v3/instruments/$instrument/candles?" . $qq->stringify);
+        my $response = $self->_client->get("${server_url}/v3/instruments/$instrument/candles?" . $qq->stringify);
         my $obj = $self->_handle_oanda_response($response);
         foreach my $candle ( @{ $obj->{candles} } ) {
             my $price = $candle->{mid};
@@ -352,7 +355,7 @@ sub getHistoricalData {
     my $qq = URI::Query->new($oanda_args);
 
     my $url = "https://api-fxtrade.oanda.com/v3/instruments/$instrument/candles?" . $qq->stringify;
-    my $response = $self->{_client}->get($url) or $self->log->logconfess("Unable to get $url:\n$!");
+    my $response = $self->_client->get($url) or $self->log->logconfess("Unable to get $url:\n$!");
 
     return $self->_handle_oanda_response($response);
 }
@@ -362,8 +365,8 @@ sub streamPriceData {
 
     $instrument = $self->convertInstrumentTo($instrument);
 
-    my $response = $self->{_client}->get(
-        "https://stream-fxtrade.oanda.com/v3/accounts/$self->{_account_id}/pricing/stream?instruments=$instrument",
+    my $response = $self->_client->get(
+        "https://stream-fxtrade.oanda.com/v3/accounts/${\$self->account_id}/pricing/stream?instruments=$instrument",
         ':content_cb'    => sub {
             my ($chunk, $response, $protocol) = @_;
 
