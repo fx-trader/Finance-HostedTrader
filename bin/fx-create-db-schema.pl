@@ -86,10 +86,10 @@ foreach my $provider_type (@provider_types) {
                 print qq /
     CREATE TABLE IF NOT EXISTS `$tableName` (
     `datetime` DATETIME NOT NULL ,
-    `open` DECIMAL(9,4) NOT NULL ,
-    `high` DECIMAL(9,4) NOT NULL ,
-    `low` DECIMAL(9,4) NOT NULL ,
-    `close` DECIMAL(9,4) NOT NULL ,
+    `open` DECIMAL(10,4) NOT NULL ,
+    `high` DECIMAL(10,4) NOT NULL ,
+    `low` DECIMAL(10,4) NOT NULL ,
+    `close` DECIMAL(10,4) NOT NULL ,
     PRIMARY KEY ( `datetime` )
     ) ENGINE = $table_type ;/;
             }
@@ -106,10 +106,10 @@ foreach my $provider_type (@provider_types) {
             print qq /
         CREATE TABLE IF NOT EXISTS `$tableName` (
         `datetime` DATETIME NOT NULL ,
-        `open` DECIMAL(9,4) NOT NULL ,
-        `high` DECIMAL(9,4) NOT NULL ,
-        `low` DECIMAL(9,4) NOT NULL ,
-        `close` DECIMAL(9,4) NOT NULL ,
+        `open` DECIMAL(10,4) NOT NULL ,
+        `high` DECIMAL(10,4) NOT NULL ,
+        `low` DECIMAL(10,4) NOT NULL ,
+        `close` DECIMAL(10,4) NOT NULL ,
         PRIMARY KEY ( `datetime` )
         ) ENGINE = $table_type ;
         /;

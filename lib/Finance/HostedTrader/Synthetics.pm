@@ -132,10 +132,10 @@ sub get_synthetic_timeframe {
 
     return qq/SELECT
       $date_format AS datetime,
-      CAST(SUBSTRING_INDEX(GROUP_CONCAT(CAST(open AS CHAR) ORDER BY datetime), ',', 1) AS DECIMAL(9,4)) as open,
+      CAST(SUBSTRING_INDEX(GROUP_CONCAT(CAST(open AS CHAR) ORDER BY datetime), ',', 1) AS DECIMAL(10,4)) as open,
       MAX(high) as high,
       MIN(low) as low,
-      CAST(SUBSTRING_INDEX(GROUP_CONCAT(CAST(close AS CHAR) ORDER BY datetime DESC), ',', 1) AS DECIMAL(9,4)) as close
+      CAST(SUBSTRING_INDEX(GROUP_CONCAT(CAST(close AS CHAR) ORDER BY datetime DESC), ',', 1) AS DECIMAL(10,4)) as close
     FROM ${table}
     $where_clause
     GROUP BY $date_group
