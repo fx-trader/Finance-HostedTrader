@@ -23,20 +23,57 @@ has timeframeMap => (
     builder     => '_build_timeframeMap',
 );
 
-has cfg => (
-    is      => 'ro',
-    isa      => sub { die("invalid type") unless ($_[0]->isa("Finance::HostedTrader::Config")) },
-    required=> 1,
-    builder => '_build_cfg',
+=attr C<synthetic>
+
+Returns a list of synthetic instruments.
+
+Synthetic instruments can be calculated based on existing instruments supported by the underlying provider.
+
+=cut
+
+
+sub _around_synthetic_instruments {
+    my $orig = shift;
+    my $self = shift;
+
+    return $self->$orig(@_) if @_; #Call the Moose generated setter if this is a set call (actually because the attributes are read-only we'll never 
+
+    # If it is a get call, call the Moose generated getter
+    my $value = $self->$orig();
+    return $value if (defined($value));
+    return {};
+}
+
+has synthetic => (
+    is     => 'ro',
+    builder => '_build_synthetic',
+    required=>0,
 );
+
+sub _build_synthetic {
+    return {};
+}
+
+#register method modifier so that undef values can be converted to empty lists
+around 'synthetic' => \&_around_synthetic_instruments;
+
+
+sub synthetic_names {
+    my $self = shift;
+
+    my $synthetics = $self->synthetic;
+    return keys %$synthetics;
+}
+
+
 
 has 'id' => (
     is => 'ro',
 );
 
-sub _build_cfg {
-    return Finance::HostedTrader::Config->new();
-}
+#sub _build_cfg {
+#    return Finance::HostedTrader::Config->new();
+#}
 
 sub getInstruments {
     my ($self) = @_;
@@ -47,7 +84,7 @@ sub getInstruments {
 sub getAllInstruments {
     my ($self) = @_;
 
-    return $self->getInstruments(), $self->cfg->symbols->synthetic_names;
+    return $self->getInstruments(), $self->synthetic_names;
 }
 
 sub convertInstrumentTo {
@@ -86,18 +123,19 @@ sub getTableName {
 }
 
 sub factory {
-    my $class = shift;
-    my $type = shift;
+    my ($class, $type, $args) = @_;
 
     $type = lc($type);
     if ($type eq 'oanda') {
+#    print Dumper($args);exit;use Data::Dumper;
         require Finance::HostedTrader::Provider::Oanda;
-        return Finance::HostedTrader::Provider::Oanda->new( id => $type );
+        return Finance::HostedTrader::Provider::Oanda->new( id => $type, %$args );
     } elsif ($type eq 'fxcm') {
         require Finance::HostedTrader::Provider::FXCM;
-        return Finance::HostedTrader::Provider::FXCM->new( id => $type );
+        return Finance::HostedTrader::Provider::FXCM->new( id => $type, %$args );
     } else {
-        die("Unsupported data provider '$type'");
+        use Carp;
+        confess("Unsupported data provider '$type'");
     }
 }
 

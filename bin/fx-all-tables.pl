@@ -59,7 +59,7 @@ my $db = Finance::HostedTrader::Datasource->new();
 
 my $symbols;
 if (!defined($symbols_txt)) {
-    $symbols = $db->cfg->symbols->all;
+    $symbols = $db->cfg->provider->getAllInstruments();
 } elsif ($symbols_txt eq 'natural') {
     $symbols = $db->cfg->symbols->natural;
 } elsif ($symbols_txt eq 'synthetics') {

@@ -126,7 +126,7 @@ Eg: AUDJPY can be synthetically calculated based on AUDUSD and USDJPY
 
 has natural => (
     is     => 'ro',
-    required=>1,
+    required=>0,
 );
 
 =attr C<synthetic>
@@ -178,6 +178,7 @@ Returns a list of all symbols, natural and synthetic.
 =cut
 sub all {
     my $self = shift;
+    $self->logger->logconfess("This should be calling the Provider getAllInstruments method");
     return [ @{ $self->natural }, @{ $self->synthetic_names } ];
 
 }
@@ -199,6 +200,7 @@ Eg:
 sub getSymbolDenominator {
     my ($self, $symbol) = @_;
 
+    $self->logger->logconfess("This should be calling the Provider getSymbolDenominator method");
     $self->logger->logconfess("Required parameter symbol missing") unless(defined($symbol));
     if (!exists($symbolBaseMap{$symbol})) {
         $self->logger->logconfess("Symbol '$symbol' does not exist in ".__PACKAGE__."::\$symbolBaseMap");
@@ -222,6 +224,7 @@ Eg:
 sub getSymbolNumerator {
     my ($self, $symbol) = @_;
 
+    $self->logger->logconfess("This should be calling the Provider getSymbolNumerator method");
     if (!exists($symbolBaseMap{$symbol})) {
         $self->logger->logcroak("Unsupported symbol '$symbol'");
     }
@@ -239,6 +242,7 @@ I don't know exactly what the information is, this documentation needs improving
 sub getSymbolMeta1 {
     my ($self, $symbol) = @_;
 
+    $self->logger->logconfess("This should be calling a Provider method");
     if (!exists($symbolBaseMap{$symbol})) {
         $self->logger->logcroak("Unsupported symbol '$symbol'");
     }
@@ -256,6 +260,7 @@ I don't know exactly what the information is, this documentation needs improving
 sub getSymbolMeta2 {
     my ($self, $symbol) = @_;
 
+    $self->logger->logconfess("This should be calling a Provider method");
     if (!exists($symbolBaseMap{$symbol})) {
         $self->logger->logcroak("Unsupported symbol '$symbol'");
     }
@@ -266,12 +271,14 @@ sub getSymbolMeta2 {
 sub get_symbols_by_denominator {
     my ($self, $base) = @_;
 
+    $self->logger->logconfess("This should be calling a Provider method");
     return [ grep { $self->getSymbolDenominator($_) eq $base } @{$self->all} ];
 }
 
 sub get_symbols_by_numerator {
     my ($self, $base) = @_;
 
+    $self->logger->logconfess("This should be calling a Provider method");
     return [ grep { $self->getSymbolNumerator($_) eq $base } @{$self->all} ];
 }
 

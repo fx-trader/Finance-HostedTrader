@@ -83,14 +83,13 @@ GetOptions(
     "item_count=i" => \$max_display_items,
     "provider=s" => \$provider,
 ) || pod2usage(2);
-pod2usage(1) if ($help);
+pod2usage(1) if ($help or !$ARGV[0]);
 
 my $cfg               = Finance::HostedTrader::Config->new();
 my $signal_processor = Finance::HostedTrader::ExpressionParser->new();
 
 my $data_provider = $cfg->provider();
 my @instruments = $data_provider->getAllInstruments();
-print Dumper(\@instruments);exit;use Data::Dumper;
 
 @instruments = split( ',', $instruments_txt ) if ($instruments_txt);
 print "Processing in the $timeframe timeframe\n";

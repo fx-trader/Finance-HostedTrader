@@ -14,6 +14,16 @@ use File::Slurp;
 use JSON::MaybeXS;
 use URI::Query;
 
+has account_id => (
+    is          => 'ro',
+    required    => 1,
+);
+
+has token_file => (
+    is          => 'ro',
+    required    => 1,
+);
+
 has datetime_format => (
     is => 'ro',
     isa => sub {
@@ -183,11 +193,8 @@ sub _build_timeframeMap {
 sub BUILD {
     my ($self, $args) = @_;
 
-    my $providerCfg = $self->cfg->providers->{oanda};
-
-    $self->{_account_id}    = $providerCfg->{accountid};
-    my $token_file  = $providerCfg->{token};
-    my $token       = read_file($token_file);
+    $self->{_account_id}    = $self->account_id;
+    my $token       = read_file($self->token_file);
 
     my $client = LWP::UserAgent->new();
     $client->default_header("Authorization" => "Bearer $token");
@@ -195,7 +202,7 @@ sub BUILD {
     $client->default_header("Accept-Datetime-Format" => $self->datetime_format);
     if ($ENV{https_proxy}) {
         $ENV{https_proxy} =~ s/^https/connect/;
-    	$client->proxy('https', $ENV{https_proxy});
+        $client->proxy('https', $ENV{https_proxy});
     }
 
     $self->{_client} = $client;
