@@ -56,4 +56,6 @@ RUN ./configure && make install
 # librest-client-perl doesn't seem to be available in ubuntu ? install via cpanm
 RUN TALIB_CFLAGS='-I/usr/local/include/ta-lib' TALIB_LIBS='-L/usr/local/lib -lta_lib' cpanm --notest Finance::FXCM::Simple Finance::TA
 
+RUN cpanm --notest JSON LWP::Protocol::connect
+
 WORKDIR /root
