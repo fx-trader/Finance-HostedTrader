@@ -227,7 +227,7 @@ sub BUILD {
 
     $self->{_token} = read_file($self->token_file);
 
-    my $client = LWP::UserAgent->new();
+    my $client = LWP::UserAgent->new( keep_alive => 100 );
     $client->default_header("Authorization" => "Bearer $self->{_token}");
     $client->default_header("Content-Type" => "application/json");
     $client->default_header("Accept-Datetime-Format" => $self->datetime_format);
