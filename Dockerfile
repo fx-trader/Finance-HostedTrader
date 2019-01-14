@@ -29,6 +29,7 @@ RUN apt-get update && apt-get -y install \
         libemail-sender-perl \
         libfinance-quotehist-perl \
         libdatetime-format-rfc3339-perl \
+        libmce-perl \
         ssmtp \
         && rm -rf /var/lib/apt/lists/*
 
