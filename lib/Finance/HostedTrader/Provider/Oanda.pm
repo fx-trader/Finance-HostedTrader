@@ -59,6 +59,10 @@ has datetime_format => (
                 unless ($_[0] eq 'UNIX' || $_[0] eq 'RFC3339');
         },
     default => sub { "RFC3339" },
+    trigger => sub {
+        my ($self, $value) = @_;
+        $self->{_client}->default_header("Accept-Datetime-Format" => $value);
+    },
 );
 
 sub _build_instrumentMap {
@@ -222,10 +226,6 @@ sub BUILD {
     my ($self, $args) = @_;
 
     $self->{_token} = read_file($self->token_file);
-}
-
-sub _client {
-    my $self = shift;
 
     my $client = LWP::UserAgent->new();
     $client->default_header("Authorization" => "Bearer $self->{_token}");
@@ -236,7 +236,7 @@ sub _client {
         $client->proxy('https', $ENV{https_proxy});
     }
 
-    return $client;
+    $self->{_client} = $client;
 }
 
 
@@ -269,7 +269,7 @@ sub getInstrumentsFromProvider {
     my $self = shift;
 
     my $url = "https://api-fxtrade.oanda.com/v3/accounts/${\$self->account_id}/instruments";
-    my $response = $self->_client->get($url) or $self->log->logconfess("Unable to get $url:\n$!");
+    my $response = $self->{_client}->get($url) or $self->log->logconfess("Unable to get $url:\n$!");
     my $obj = $self->_handle_oanda_response($response);
 
     return map { $_->{name} } @{$obj->{instruments}};
@@ -279,7 +279,7 @@ sub getAccountSummary {
     my $self = shift;
 
     my $url     = "https://api-fxtrade.oanda.com/v3/accounts/${\$self->account_id}/summary";
-    my $response = $self->_client->get($url) or $self->log->logconfess("Unable to get $url:\n$!");
+    my $response = $self->{_client}->get($url) or $self->log->logconfess("Unable to get $url:\n$!");
     return $self->_handle_oanda_response($response);
 }
 
@@ -287,7 +287,7 @@ sub getOpenPositions {
     my $self = shift;
 
     my $url     = "https://api-fxtrade.oanda.com/v3/accounts/${\$self->account_id}/openPositions";
-    my $response = $self->_client->get($url) or $self->log->logconfess("Unable to get $url:\n$!");
+    my $response = $self->{_client}->get($url) or $self->log->logconfess("Unable to get $url:\n$!");
     return $self->_handle_oanda_response($response);
 }
 
@@ -318,7 +318,7 @@ sub saveHistoricalDataToFile {
 
         my $qq = URI::Query->new($oanda_args);
 
-        my $response = $self->_client->get("${server_url}/v3/instruments/$instrument/candles?" . $qq->stringify);
+        my $response = $self->{_client}->get("${server_url}/v3/instruments/$instrument/candles?" . $qq->stringify);
         my $obj = $self->_handle_oanda_response($response);
         foreach my $candle ( @{ $obj->{candles} } ) {
             my $price = $candle->{mid};
@@ -355,7 +355,7 @@ sub getHistoricalData {
     my $qq = URI::Query->new($oanda_args);
 
     my $url = "https://api-fxtrade.oanda.com/v3/instruments/$instrument/candles?" . $qq->stringify;
-    my $response = $self->_client->get($url) or $self->log->logconfess("Unable to get $url:\n$!");
+    my $response = $self->{_client}->get($url) or $self->log->logconfess("Unable to get $url:\n$!");
 
     return $self->_handle_oanda_response($response);
 }
@@ -365,7 +365,7 @@ sub streamPriceData {
 
     $instrument = $self->convertInstrumentTo($instrument);
 
-    my $response = $self->_client->get(
+    my $response = $self->{_client}->get(
         "https://stream-fxtrade.oanda.com/v3/accounts/${\$self->account_id}/pricing/stream?instruments=$instrument",
         ':content_cb'    => sub {
             my ($chunk, $response, $protocol) = @_;
