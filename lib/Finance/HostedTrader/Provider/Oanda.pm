@@ -361,12 +361,12 @@ sub getHistoricalData {
 }
 
 sub streamPriceData {
-    my ($self, $instrument, $callback) = @_;
+    my ($self, $instruments, $callback) = @_;
 
-    $instrument = $self->convertInstrumentTo($instrument);
+    my $instrument_names = join(',', map { $self->convertInstrumentTo($_) } @$instruments);
 
     my $response = $self->{_client}->get(
-        "https://stream-fxtrade.oanda.com/v3/accounts/${\$self->account_id}/pricing/stream?instruments=$instrument",
+        "https://stream-fxtrade.oanda.com/v3/accounts/${\$self->account_id}/pricing/stream?instruments=$instrument_names",
         ':content_cb'    => sub {
             my ($chunk, $response, $protocol) = @_;
 
