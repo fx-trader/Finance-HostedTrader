@@ -66,10 +66,15 @@ sub synthetic_names {
 }
 
 
-
 has 'id' => (
     is => 'ro',
 );
+
+sub BUILD {
+    my ($self) = @_;
+
+    $self->{_reverseInstrumentMap} = { reverse %{ $self->instrumentMap } };
+}
 
 #sub _build_cfg {
 #    return Finance::HostedTrader::Config->new();
@@ -92,6 +97,13 @@ sub convertInstrumentTo {
 
     $self->log->logconfess("Unsupported symbol '$symbol'") if (!exists($self->instrumentMap->{$symbol}));
     return $self->instrumentMap->{$symbol};
+}
+
+sub convertInstrumentFrom {
+    my ($self, $symbol) = @_;
+
+    $self->log->logconfess("Unsupported symbol '$symbol'") if (!exists($self->{_reverseInstrumentMap}->{$symbol}));
+    return $self->{_reverseInstrumentMap}->{$symbol};
 }
 
 sub convertTimeframeTo {
@@ -127,7 +139,6 @@ sub factory {
 
     $type = lc($type);
     if ($type eq 'oanda') {
-#    print Dumper($args);exit;use Data::Dumper;
         require Finance::HostedTrader::Provider::Oanda;
         return Finance::HostedTrader::Provider::Oanda->new( id => $type, %$args );
     } elsif ($type eq 'fxcm') {

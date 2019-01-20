@@ -373,6 +373,8 @@ sub streamPriceData {
             my $obj = $self->_decode_oanda_json($chunk);
             return if ($obj->{type} eq 'HEARTBEAT');
 
+            $obj->{instrument} = $self->convertInstrumentFrom( $obj->{instrument} );
+
             return $callback->($obj);
         }
     );
