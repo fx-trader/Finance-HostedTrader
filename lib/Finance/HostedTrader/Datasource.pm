@@ -54,7 +54,6 @@ sub _build_dbh {
 
 Returns the L<Finance::HostedTrader::Config> object associated with this datasource.
 
-This object contains a list of available timeframes and symbols in this data source.
 =cut
 has cfg => (
     is       => 'ro',
@@ -79,18 +78,20 @@ my ($datetime, $close) = $self->getLastClose('EURUSD')
 sub getLastClose {
     my $self = shift;
     my %args = validate( @_, {
-        symbol  => 1,
+        instrument  => 1,
     });
 
-    my $symbol = $args{symbol};
+    my $instrument      = $args{instrument};
+    my $data_provider   = $self->cfg->provider($args{provider});
 
     my $cfg = $self->cfg;
     my $timeframe = 300;#TODO hardcoded lowest available timeframe is 5min. Could look it up in $cfg instead.
 
+    my $tableName = $data_provider->getTableName($instrument, $timeframe);
     my $sql = qq{
             SELECT T1.datetime,
             ROUND(T1.close,4) AS close
-            FROM $symbol\_$timeframe AS T1
+            FROM $tableName AS T1
             ORDER BY T1.datetime DESC
             LIMIT 1
         };
