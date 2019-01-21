@@ -365,17 +365,32 @@ sub streamPriceData {
 
     my $instrument_names = join(',', map { $self->convertInstrumentTo($_) } @$instruments);
 
+    my $cache = '';
+
     my $response = $self->{_client}->get(
         "https://stream-fxtrade.oanda.com/v3/accounts/${\$self->account_id}/pricing/stream?instruments=$instrument_names",
         ':content_cb'    => sub {
             my ($chunk, $response, $protocol) = @_;
 
-            my $obj = $self->_decode_oanda_json($chunk);
-            return if ($obj->{type} eq 'HEARTBEAT');
+            local $/ = "\n";
+            my $isFinal = chomp($chunk);
 
-            $obj->{instrument} = $self->convertInstrumentFrom( $obj->{instrument} );
+            $cache .= $chunk;
+            if (!$isFinal) {
+                return;
+            }
 
-            return $callback->($obj);
+            my @records = split("\n", $cache);
+            $cache = '';
+
+            foreach my $record (@records) {
+                my $obj = $self->_decode_oanda_json($record);
+                return if ($obj->{type} eq 'HEARTBEAT');
+
+                $obj->{instrument} = $self->convertInstrumentFrom( $obj->{instrument} );
+
+                $callback->($obj);
+            }
         }
     );
 
