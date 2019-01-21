@@ -79,6 +79,7 @@ sub getLastClose {
     my $self = shift;
     my %args = validate( @_, {
         instrument  => 1,
+        provider    => 0,
     });
 
     my $instrument      = $args{instrument};
