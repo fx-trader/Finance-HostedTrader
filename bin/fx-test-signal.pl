@@ -72,7 +72,7 @@ use Getopt::Long;
 use Pod::Usage;
 
 my ( $timeframe, $max_loaded_items, $instruments_txt, $debug, $help, $startPeriod, $endPeriod, $item_count, $provider, $verbose ) =
-  ( 'day', undef, '', 0, 0, '90 days ago', undef, undef, 'default', 0 );
+  ( 'day', undef, '', 0, 0, '90 days ago', undef, undef, undef, 0 );
 
 GetOptions(
     "timeframe=s"         => \$timeframe,
@@ -90,7 +90,7 @@ pod2usage(1) if ($help);
 my $cfg               = Finance::HostedTrader::Config->new();
 my $signal_processor = Finance::HostedTrader::ExpressionParser->new();
 
-my $data_provider = Finance::HostedTrader::Provider->factory($provider);
+my $data_provider = $cfg->provider($provider);
 my @instruments = $data_provider->getInstruments();
 
 @instruments = split( ',', $instruments_txt ) if ($instruments_txt);
@@ -98,13 +98,13 @@ my @instruments = $data_provider->getInstruments();
 
 foreach my $signal (@ARGV) {
 print "$signal\n----------------------\n" if ($verbose);
-foreach my $symbol ( @{$instruments} ) {
-    print "Testing $symbol\n" if ($verbose);
+foreach my $instrument ( @instruments ) {
+    print "Testing $instrument\n" if ($verbose);
     my $signal_args = 
         {
             'expression'        => $signal,
             'item_count'        => $item_count,
-            'symbol'            => $symbol,
+            'symbol'            => $instrument,
             'timeframe'         => $timeframe,
             'max_loaded_items'  => $max_loaded_items,
             'start_period'      => UnixDate($startPeriod, '%Y-%m-%d %H:%M:%S'),
@@ -113,6 +113,6 @@ foreach my $symbol ( @{$instruments} ) {
     $signal_args->{endPeriod} = UnixDate($endPeriod, '%Y-%m-%d %H:%M:%S') if (defined($endPeriod));
     my $signal_result = $signal_processor->getSignalData( $signal_args );
     my $data = $signal_result->{data};
-    print $symbol, ' - ', Dumper(\$data) if (scalar(@$data));
+    print $instrument, ' - ', Dumper(\$data) if (scalar(@$data));
 }
 }
