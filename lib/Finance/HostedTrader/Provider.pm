@@ -134,6 +134,24 @@ sub getTableName {
     return "${provider_id}_${instrument}_${timeframe}";
 }
 
+sub getBid {
+    my ($self, $instrument) = @_;
+
+    $self->log->logconfess("getBid must be implemented in child class");
+}
+
+sub getAsk {
+    my ($self, $instrument) = @_;
+
+    $self->log->logconfess("getAsk must be implemented in child class");
+}
+
+sub getOpenTradesForInstrument {
+    my ($self, $instrument) = @_;
+
+    $self->log->logconfess("getTradesForInstrument must be implemented in child class");
+}
+
 sub factory {
     my ($class, $type, $args) = @_;
 

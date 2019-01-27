@@ -36,7 +36,7 @@ has token_file => (
     required    => 1,
 );
 
-=attr C<serverURL>
+=attr C<endpoint_hosts>
 
 Oanda server URL. https://api-fxpractice.oanda.com for demo or https://api-fxtrade.oanda.com for real.
 
@@ -45,9 +45,13 @@ See http://developer.oanda.com/rest-live-v20/development-guide/
 =cut
 
 
-has serverURL => (
-    is     => 'ro',
-    default=> 'https://api-fxtrade.oanda.com',
+has endpoint_hosts => (
+    is      => 'ro',
+    isa     => sub {
+        my $endpoint_hosts = shift;
+        die("Invalid endpoint_hosts: must be a hash with keys 'rest' and 'stream'.")
+            unless ($endpoint_hosts && ref($endpoint_hosts) eq 'HASH' && $endpoint_hosts->{rest} && $endpoint_hosts->{stream});
+    },
     required=>1,
 );
 
@@ -304,7 +308,7 @@ sub saveHistoricalDataToFile {
     $instrument = $self->convertInstrumentTo($instrument);
     $tf = $self->convertTimeframeTo($tf);
 
-    my $server_url = $self->serverURL;
+    my $server_url = $self->endpoint_hosts->{rest};
     my $timeTo = undef;
     open my $fh, '>', $filename or $self->log->logconfess("Cannot open $filename for writting: $!");
 
@@ -395,6 +399,57 @@ sub streamPriceData {
     );
 
     return $response;
+}
+
+sub _fetch_obj {
+    my ($self, $host_type, $url_path, $parameters) = @_;
+
+    my $host = $self->{endpoint_hosts}{$host_type};
+    my $url = "https://${host}/v3${url_path}";
+    my $response = $self->{_client}->get($url) or $self->log->logconfess("Unable to get $url:\n$!");
+    my $obj = $self->_handle_oanda_response($response);
+
+    return $obj;
+}
+
+sub getBid {
+    my ($self, $instrument) = @_;
+
+    $instrument = $self->convertInstrumentTo($instrument);
+    my $obj = $self->_fetch_obj('rest', "/accounts/${\$self->account_id}/pricing?instruments=$instrument");
+
+    return $obj->{prices}[0]{bids}[0]{price};
+}
+
+sub getAsk {
+    my ($self, $instrument) = @_;
+
+    $instrument = $self->convertInstrumentTo($instrument);
+    my $obj = $self->_fetch_obj('rest', "/accounts/${\$self->account_id}/pricing?instruments=$instrument");
+
+    return $obj->{prices}[0]{asks}[0]{price};
+}
+
+sub getOpenTradesForInstrument {
+    my ($self, $instrument) = @_;
+
+    $instrument = $self->convertInstrumentTo($instrument);
+    my $obj = $self->_fetch_obj('rest', "/accounts/${\$self->account_id}/openTrades");
+
+    my @instrument_trades = grep {$_->{instrument} eq $instrument} @{ $obj->{trades} };
+
+    return \@instrument_trades;
+}
+
+sub openMarket {
+    my ($self, $instrument, $direction, $quantity) = @_;
+
+    return 1;
+}
+
+sub getBaseUnitSize {
+
+    return 1;
 }
 
 1;
