@@ -322,7 +322,7 @@ sub saveHistoricalDataToFile {
 
         my $qq = URI::Query->new($oanda_args);
 
-        my $response = $self->{_client}->get("${server_url}/v3/instruments/$instrument/candles?" . $qq->stringify);
+        my $response = $self->{_client}->get("https://${server_url}/v3/instruments/$instrument/candles?" . $qq->stringify);
         my $obj = $self->_handle_oanda_response($response);
         foreach my $candle ( @{ $obj->{candles} } ) {
             my $price = $candle->{mid};
