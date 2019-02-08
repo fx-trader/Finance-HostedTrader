@@ -8,6 +8,17 @@ use warnings;
 $|=1;
 
 use Finance::HostedTrader::Config;
+use Getopt::Long;
+
+my %options = (
+    exclude  => [],
+);
+
+GetOptions(
+    \%options,
+    "help"      => sub { Getopt::Long::HelpMessage() },
+    'exclude=s@',
+) or Getopt::Long::HelpMessage(2);
 
 my $cfg = Finance::HostedTrader::Config->new();
 
@@ -56,7 +67,7 @@ sub get_account_risk {
 
     my $total_average_daily_volatility=0;
     foreach my $position (@{ $positions->{positions} }) {
-        next if ($position->{instrument} eq 'CORN_USD' || $position->{instrument} eq 'WHEAT_USD');
+        next if (grep { /$position->{instrument}/ } @{$options{exclude}});
         my $instrument = $oanda->convertInstrumentTo($position->{instrument});
         die("Don't know how to map $position->{instrument}") unless(defined($instrument));
         my $base_currency = $oanda->getInstrumentDenominator($instrument);
