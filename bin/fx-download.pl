@@ -21,7 +21,7 @@ use Try::Tiny;
 use Time::Piece;
 
 my $numItemsToDownload = 10;
-my ( $timeframes_from_txt, $instruments_from_txt, $verbose, $help, $service, $mode, $provider ) = ( undef, undef, 0, 0, 0, 'simple', undef );
+my ( $timeframes_from_txt, $instruments_from_txt, $verbose, $help, $service, $mode, $provider, $nodb ) = ( undef, undef, 0, 0, 0, 'simple', undef, 0 );
 
 my $result = GetOptions(
     "instruments=s",    \$instruments_from_txt,
@@ -31,6 +31,7 @@ my $result = GetOptions(
     "service",      \$service,
     "mode=s",       \$mode,
     "provider=s",   \$provider,
+    "nodb",         \$nodb,
     "help",         \$help)  or pod2usage(1);
 
 pod2usage(1) if ( $help || !defined($timeframes_from_txt));
@@ -61,9 +62,11 @@ if (!$service || download_data()) {
 
             try {
                 $data_provider->saveHistoricalDataToFile($tableToLoad, $instrument, $timeframe, $numItemsToDownload);
-                my $ds = (defined($global_ds) ? $global_ds :  Finance::HostedTrader::Datasource->new());
-                $ds->dbh->do("LOAD DATA LOCAL INFILE '$tableToLoad' IGNORE INTO TABLE $tableToLoad FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n'") or die($!);
-                unlink($tableToLoad);
+                if (!$nodb) {
+                    my $ds = (defined($global_ds) ? $global_ds :  Finance::HostedTrader::Datasource->new());
+                    $ds->dbh->do("LOAD DATA LOCAL INFILE '$tableToLoad' IGNORE INTO TABLE $tableToLoad FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n'") or die($!);
+                    unlink($tableToLoad);
+                }
             } catch {
                 warn "Failed to fetch $instrument $timeframe: $_";
             };
@@ -167,6 +170,9 @@ simple - Downloads data only for the lower timeframe.  Synthetic instruments/tim
 
 views - Downloads data only for the lower timeframe.  Synthetic instruments/timeframes are implemented as views ( calculated on the fly at run time ).
 
+=item C<--nodb>
+
+Write data to a file instead of the database
 
 =item C<--verbose>
 
