@@ -70,7 +70,7 @@ has datetime_format => (
 );
 
 sub _build_instrumentMap {
-#root@fx-shell:~# perl -MFinance::HostedTrader::Provider::Oanda -e 'my $o=Finance::HostedTrader::Provider::Oanda->new();my @i = sort $o->getInstrumentsFromProvider(); foreach my $a (@i) { print "        $a => '\''$a'\'',\n"};'
+#root@fx-shell:~# perl -MFinance::HostedTrader::Config -e 'my $o=Finance::HostedTrader::Config->new()->provider('oanda_demo');my @i = sort $o->getInstrumentsFromProvider(); foreach my $a (@i) { print "        $a => '\''$a'\'',\n"};'
 #Fix JP225_USD, should be JP225_JPY as it's priced in Yen, not Dollars
     return {
         AU200_AUD => 'AU200_AUD',
