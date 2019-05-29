@@ -30,6 +30,8 @@ RUN apt-get update && apt-get -y install \
         libfinance-quotehist-perl \
         libdatetime-format-rfc3339-perl \
         libmce-perl \
+        libterm-readkey-perl \
+        libjson-perl \
         ssmtp \
         && rm -rf /var/lib/apt/lists/*
 
@@ -55,4 +57,4 @@ RUN ./configure && make install
 
 WORKDIR /root
 
-RUN TALIB_CFLAGS='-I/usr/local/include/ta-lib' TALIB_LIBS='-L/usr/local/lib -lta_lib' cpanm --notest Finance::FXCM::Simple Finance::TA JSON LWP::Protocol::connect
+RUN TALIB_CFLAGS='-I/usr/local/include/ta-lib' TALIB_LIBS='-L/usr/local/lib -lta_lib' cpanm --notest Finance::FXCM::Simple Finance::TA LWP::Protocol::connect
