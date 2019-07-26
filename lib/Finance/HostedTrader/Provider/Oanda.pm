@@ -422,8 +422,8 @@ sub _fetch_obj {
         } or do {
             $self->log->logconfess("failed to encode json");
         };
-        $self->log->info($url);
-        $self->log->info($encoded_json);
+        $self->log->debug($url);
+        $self->log->debug($encoded_json);
         $response = $self->{_client}->post($url, 'Content' => $encoded_json) or $self->log->logconfess("Unable to post to $url:\nContent: $encoded_json\n$!");
     } else {
         $self->log->logconfess("unable to handle http method: $method");
