@@ -346,7 +346,7 @@ See also http://developer.oanda.com/rest-live-v20/instrument-ep/
 =cut
 
 sub getHistoricalData {
-    my ($self, $instrument, $tf, $numberOfItems) = @_;
+    my ($self, $instrument, $tf, $numberOfItems, $from) = @_;
 
     $instrument = $self->convertInstrumentTo($instrument);
     $tf = $self->convertTimeframeTo($tf);
@@ -356,12 +356,14 @@ sub getHistoricalData {
         count       => $numberOfItems,
     };
 
+    if (defined($from)) {
+        $oanda_args->{from} = $from;
+        $oanda_args->{includeFirst} = 'false';
+    }
+
     my $qq = URI::Query->new($oanda_args);
 
-    my $url = "https://api-fxtrade.oanda.com/v3/instruments/$instrument/candles?" . $qq->stringify;
-    my $response = $self->{_client}->get($url) or $self->log->logconfess("Unable to get $url:\n$!");
-
-    return $self->_handle_oanda_response($response);
+    return $self->_fetch_obj('rest', "/instruments/$instrument/candles?" . $qq->stringify);
 }
 
 sub streamPriceData {
