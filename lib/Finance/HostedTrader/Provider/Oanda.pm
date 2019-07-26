@@ -404,11 +404,30 @@ sub streamPriceData {
 }
 
 sub _fetch_obj {
-    my ($self, $host_type, $url_path, $parameters) = @_;
+    my ($self, $host_type, $url_path, $parameters, $method, $body) = @_;
 
     my $host = $self->{endpoint_hosts}{$host_type};
     my $url = "https://${host}/v3${url_path}";
-    my $response = $self->{_client}->get($url) or $self->log->logconfess("Unable to get $url:\n$!");
+    my $response;
+
+    if (!defined($method) || $method eq 'get') {
+        $response = $self->{_client}->get($url) or $self->log->logconfess("Unable to get $url:\n$!");
+    } elsif ( $method eq 'post' ) {
+
+        my $encoded_json;
+
+        eval {
+            $encoded_json = encode_json($body);
+            1;
+        } or do {
+            $self->log->logconfess("failed to encode json");
+        };
+        $self->log->info($url);
+        $self->log->info($encoded_json);
+        $response = $self->{_client}->post($url, 'Content' => $encoded_json) or $self->log->logconfess("Unable to post to $url:\nContent: $encoded_json\n$!");
+    } else {
+        $self->log->logconfess("unable to handle http method: $method");
+    }
     my $obj = $self->_handle_oanda_response($response);
 
     return $obj;
@@ -444,8 +463,18 @@ sub getOpenTradesForInstrument {
 }
 
 sub openMarket {
-    my ($self, $instrument, $direction, $quantity) = @_;
+    my ($self, $instrument, $quantity) = @_;
 
+    $instrument = $self->convertInstrumentTo($instrument);
+
+    my $priceBound;
+
+    my $order = {
+        type        => "MARKET",
+        instrument  => $instrument,
+        units       => "$quantity",
+    };
+    my $obj = $self->_fetch_obj('rest', "/accounts/${\$self->account_id}/orders", undef, 'post' , { order => $order });
     return 1;
 }
 
