@@ -117,7 +117,7 @@ foreach my $provider_type (@provider_types) {
 
         foreach my $symbol ($p->synthetic_names) {
 
-            my $synthetic_info = $cfg->symbols->synthetic->{$symbol} || die("Don't know how to calculate $symbol. Add it to fx.yml");
+            my $synthetic_info = $p->synthetic->{$symbol} || die("Don't know how to calculate $symbol. Add it to fx.yml");
             my $sql = Finance::HostedTrader::Synthetics::get_synthetic_symbol(provider => $p, symbol => $symbol, timeframe => $lowerTf, synthetic_info => $synthetic_info);
             my $tableName = $p->getTableName($symbol, $lowerTf);
 
