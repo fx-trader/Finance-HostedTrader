@@ -32,6 +32,7 @@ RUN apt-get update && apt-get -y install \
         libmce-perl \
         libterm-readkey-perl \
         libjson-perl \
+        librest-client-perl \
         ssmtp \
         && rm -rf /var/lib/apt/lists/*
 
