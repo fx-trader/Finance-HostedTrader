@@ -295,6 +295,14 @@ sub getOpenPositions {
     return $self->_handle_oanda_response($response);
 }
 
+sub getOpenTrades {
+    my $self = shift;
+
+    my $url     = "https://api-fxtrade.oanda.com/v3/accounts/${\$self->account_id}/openTrades";
+    my $response = $self->{_client}->get($url) or $self->log->logconfess("Unable to get $url:\n$!");
+    return $self->_handle_oanda_response($response)->{trades};
+}
+
 =item C<saveHistoricalDataToFile($filename, $instrument, $tf, $numberOfItems)>
 
 See http://developer.oanda.com/rest-live-v20/instrument-ep/
