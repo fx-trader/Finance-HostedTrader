@@ -74,21 +74,13 @@ sub _build_instrumentMap {
 #Fix JP225_USD, should be JP225_JPY as it's priced in Yen, not Dollars
     return {
         AU200_AUD => 'AU200_AUD',
-        AUD_CAD => 'AUD_CAD',
         AUD_CHF => 'AUD_CHF',
         AUD_HKD => 'AUD_HKD',
         AUD_JPY => 'AUD_JPY',
         AUD_NZD => 'AUD_NZD',
-        AUD_SGD => 'AUD_SGD',
         AUD_USD => 'AUD_USD',
         BCO_USD => 'BCO_USD',
-        CAD_CHF => 'CAD_CHF',
-        CAD_HKD => 'CAD_HKD',
-        CAD_JPY => 'CAD_JPY',
-        CAD_SGD => 'CAD_SGD',
-        CHF_HKD => 'CHF_HKD',
         CHF_JPY => 'CHF_JPY',
-        CHF_ZAR => 'CHF_ZAR',
         CN50_USD => 'CN50_USD',
         CORN_USD => 'CORN_USD',
         DE10YB_EUR => 'DE10YB_EUR',
@@ -97,52 +89,30 @@ sub _build_instrumentMap {
         EUR_AUD => 'EUR_AUD',
         EUR_CAD => 'EUR_CAD',
         EUR_CHF => 'EUR_CHF',
-        EUR_CZK => 'EUR_CZK',
-        EUR_DKK => 'EUR_DKK',
         EUR_GBP => 'EUR_GBP',
         EUR_HKD => 'EUR_HKD',
-        EUR_HUF => 'EUR_HUF',
         EUR_JPY => 'EUR_JPY',
-        EUR_NOK => 'EUR_NOK',
         EUR_NZD => 'EUR_NZD',
-        EUR_PLN => 'EUR_PLN',
-        EUR_SEK => 'EUR_SEK',
-        EUR_SGD => 'EUR_SGD',
-        EUR_TRY => 'EUR_TRY',
         EUR_USD => 'EUR_USD',
-        EUR_ZAR => 'EUR_ZAR',
         FR40_EUR => 'FR40_EUR',
-        GBP_AUD => 'GBP_AUD',
-        GBP_CAD => 'GBP_CAD',
         GBP_CHF => 'GBP_CHF',
-        GBP_HKD => 'GBP_HKD',
         GBP_JPY => 'GBP_JPY',
         GBP_NZD => 'GBP_NZD',
-        GBP_PLN => 'GBP_PLN',
-        GBP_SGD => 'GBP_SGD',
         GBP_USD => 'GBP_USD',
-        GBP_ZAR => 'GBP_ZAR',
         HK33_HKD => 'HK33_HKD',
-        HKD_JPY => 'HKD_JPY',
         IN50_USD => 'IN50_USD',
         JP225_JPY => 'JP225_USD',
         NAS100_USD => 'NAS100_USD',
         NATGAS_USD => 'NATGAS_USD',
         NL25_EUR => 'NL25_EUR',
-        NZD_CAD => 'NZD_CAD',
         NZD_CHF => 'NZD_CHF',
         NZD_HKD => 'NZD_HKD',
         NZD_JPY => 'NZD_JPY',
-        NZD_SGD => 'NZD_SGD',
         NZD_USD => 'NZD_USD',
         SG30_SGD => 'SG30_SGD',
-        SGD_CHF => 'SGD_CHF',
-        SGD_HKD => 'SGD_HKD',
-        SGD_JPY => 'SGD_JPY',
         SOYBN_USD => 'SOYBN_USD',
         SPX500_USD => 'SPX500_USD',
         SUGAR_USD => 'SUGAR_USD',
-        TRY_JPY => 'TRY_JPY',
         TWIX_USD => 'TWIX_USD',
         UK100_GBP => 'UK100_GBP',
         UK10YB_GBP => 'UK10YB_GBP',
@@ -155,8 +125,6 @@ sub _build_instrumentMap {
         USD_CAD => 'USD_CAD',
         USD_CHF => 'USD_CHF',
         USD_CNH => 'USD_CNH',
-        USD_CZK => 'USD_CZK',
-        USD_DKK => 'USD_DKK',
         USD_HKD => 'USD_HKD',
         USD_HUF => 'USD_HUF',
         USD_INR => 'USD_INR',
@@ -172,31 +140,14 @@ sub _build_instrumentMap {
         USD_ZAR => 'USD_ZAR',
         WHEAT_USD => 'WHEAT_USD',
         WTICO_USD => 'WTICO_USD',
-        XAG_AUD => 'XAG_AUD',
-        XAG_CAD => 'XAG_CAD',
-        XAG_CHF => 'XAG_CHF',
         XAG_EUR => 'XAG_EUR',
-        XAG_GBP => 'XAG_GBP',
-        XAG_HKD => 'XAG_HKD',
-        XAG_JPY => 'XAG_JPY',
-        XAG_NZD => 'XAG_NZD',
-        XAG_SGD => 'XAG_SGD',
         XAG_USD => 'XAG_USD',
-        XAU_AUD => 'XAU_AUD',
-        XAU_CAD => 'XAU_CAD',
-        XAU_CHF => 'XAU_CHF',
         XAU_EUR => 'XAU_EUR',
-        XAU_GBP => 'XAU_GBP',
-        XAU_HKD => 'XAU_HKD',
-        XAU_JPY => 'XAU_JPY',
-        XAU_NZD => 'XAU_NZD',
-        XAU_SGD => 'XAU_SGD',
         XAU_USD => 'XAU_USD',
         XAU_XAG => 'XAU_XAG',
         XCU_USD => 'XCU_USD',
         XPD_USD => 'XPD_USD',
         XPT_USD => 'XPT_USD',
-        ZAR_JPY => 'ZAR_JPY',
     };
 }
 
@@ -354,7 +305,7 @@ See also http://developer.oanda.com/rest-live-v20/instrument-ep/
 =cut
 
 sub getHistoricalData {
-    my ($self, $instrument, $tf, $numberOfItems) = @_;
+    my ($self, $instrument, $tf, $numberOfItems, $from) = @_;
 
     $instrument = $self->convertInstrumentTo($instrument);
     $tf = $self->convertTimeframeTo($tf);
@@ -364,12 +315,14 @@ sub getHistoricalData {
         count       => $numberOfItems,
     };
 
+    if (defined($from)) {
+        $oanda_args->{from} = $from;
+        $oanda_args->{includeFirst} = 'false';
+    }
+
     my $qq = URI::Query->new($oanda_args);
 
-    my $url = "https://api-fxtrade.oanda.com/v3/instruments/$instrument/candles?" . $qq->stringify;
-    my $response = $self->{_client}->get($url) or $self->log->logconfess("Unable to get $url:\n$!");
-
-    return $self->_handle_oanda_response($response);
+    return $self->_fetch_obj('rest', "/instruments/$instrument/candles?" . $qq->stringify);
 }
 
 sub streamPriceData {
@@ -410,11 +363,30 @@ sub streamPriceData {
 }
 
 sub _fetch_obj {
-    my ($self, $host_type, $url_path, $parameters) = @_;
+    my ($self, $host_type, $url_path, $parameters, $method, $body) = @_;
 
     my $host = $self->{endpoint_hosts}{$host_type};
     my $url = "https://${host}/v3${url_path}";
-    my $response = $self->{_client}->get($url) or $self->log->logconfess("Unable to get $url:\n$!");
+    my $response;
+
+    if (!defined($method) || $method eq 'get') {
+        $response = $self->{_client}->get($url) or $self->log->logconfess("Unable to get $url:\n$!");
+    } elsif ( $method eq 'post' ) {
+
+        my $encoded_json;
+
+        eval {
+            $encoded_json = encode_json($body);
+            1;
+        } or do {
+            $self->log->logconfess("failed to encode json");
+        };
+        $self->log->debug($url);
+        $self->log->debug($encoded_json);
+        $response = $self->{_client}->post($url, 'Content' => $encoded_json) or $self->log->logconfess("Unable to post to $url:\nContent: $encoded_json\n$!");
+    } else {
+        $self->log->logconfess("unable to handle http method: $method");
+    }
     my $obj = $self->_handle_oanda_response($response);
 
     return $obj;
@@ -450,8 +422,18 @@ sub getOpenTradesForInstrument {
 }
 
 sub openMarket {
-    my ($self, $instrument, $direction, $quantity) = @_;
+    my ($self, $instrument, $quantity) = @_;
 
+    $instrument = $self->convertInstrumentTo($instrument);
+
+    my $priceBound;
+
+    my $order = {
+        type        => "MARKET",
+        instrument  => $instrument,
+        units       => "$quantity",
+    };
+    my $obj = $self->_fetch_obj('rest', "/accounts/${\$self->account_id}/orders", undef, 'post' , { order => $order });
     return 1;
 }
 
