@@ -7,8 +7,11 @@ package Finance::HostedTrader::Synthetics;
 use strict;
 use warnings;
 
-my $lowerTf = 300;
+my $lowerTf = 60;
 my %tfMap = (
+    60 => {
+        date_format => "CAST(CONCAT(year(datetime), '-', month(datetime), '-', day(datetime), ' ',  hour(datetime), ':', minute(datetime), ':00') AS DATETIME)",
+    },
     300 => {
         date_format => "CAST(CONCAT(year(datetime), '-', month(datetime), '-', day(datetime), ' ',  hour(datetime), ':', floor(minute(datetime) / 5) * 5, ':00') AS DATETIME)",
     },
