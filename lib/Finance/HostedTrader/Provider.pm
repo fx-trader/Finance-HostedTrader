@@ -156,7 +156,7 @@ sub factory {
     my ($class, $type, $args) = @_;
 
     $type = lc($type);
-    if ($type eq 'oanda' || $type eq 'oanda_demo') {
+    if ($type =~ /^oanda/) {
         require Finance::HostedTrader::Provider::Oanda;
         return Finance::HostedTrader::Provider::Oanda->new( id => $type, %$args );
     } elsif ($type eq 'fxcm') {
