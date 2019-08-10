@@ -4,7 +4,7 @@
 
 =head1 SYNOPSIS
 
-    fx-eval.pl [--timeframe=tf] [--instruments=s] [--debug] [--max_loaded_items=i] [--item_count=i] [--sql_filter=s] expr
+    fx-eval.pl [--timeframe=tf] [--instruments=s] [--debug] [--max_loaded_items=i] [--item_count=i] [--sql_filter=s] [--provider=s] expr
 
 
 =head1 DESCRIPTION
@@ -50,7 +50,11 @@ Number of indicator periods to display. Defaults to one (eg: only display the in
 
 A generic filter to be added to the inner query. Examples include:
 
---sql_filter="DAYOFWEEK(datetime) == 2"
+--sql_filter="DAYOFWEEK(datetime) = 2"
+
+=item C<--provider=s>
+
+The data provider to use.  See providers defined in /etc/fxtrader/fx.yml .
 
 =back
 
