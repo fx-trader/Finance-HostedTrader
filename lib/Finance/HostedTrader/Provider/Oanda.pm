@@ -141,6 +141,7 @@ sub _build_instrumentMap {
         WHEAT_USD => 'WHEAT_USD',
         WTICO_USD => 'WTICO_USD',
         XAG_EUR => 'XAG_EUR',
+        XAG_GBP => 'XAG_GBP',
         XAG_USD => 'XAG_USD',
         XAU_EUR => 'XAU_EUR',
         XAU_USD => 'XAU_USD',
