@@ -21,7 +21,7 @@ use Try::Tiny;
 use Time::Piece;
 
 my $numItemsToDownload = 10;
-my ( $timeframes_from_txt, $instruments_from_txt, $verbose, $help, $service, $mode, $provider, $nodb ) = ( undef, undef, 0, 0, 0, 'simple', undef, 0 );
+my ( $timeframes_from_txt, $instruments_from_txt, $verbose, $help, $service, $mode, $provider, $nodb ) = ( undef, undef, 0, 0, 0, 'all', undef, 0 );
 
 my $result = GetOptions(
     "instruments=s",    \$instruments_from_txt,
@@ -35,6 +35,9 @@ my $result = GetOptions(
     "help",         \$help)  or pod2usage(1);
 
 pod2usage(1) if ( $help || !defined($timeframes_from_txt));
+
+my $download_data = ($mode eq 'all' || $mode eq 'data_only');
+my $calculate_synthetics = ($mode eq 'all' || $mode eq 'synthetics_only');
 
 my $cfg = Finance::HostedTrader::Config->new();
 my @instruments = split(',', $instruments_from_txt // '');
@@ -54,26 +57,29 @@ if (!$service || download_data()) {
 
     my $data_provider = $cfg->provider($provider);
     @instruments = $data_provider->getInstruments() unless(@instruments);
-    foreach my $timeframe (@timeframes) {
 
-        foreach my $instrument (@instruments) {
-            print "Fetching $instrument $timeframe\n" if ($verbose);
-            my $tableToLoad = $data_provider->getTableName($instrument, $timeframe);
+    if ($download_data) {
+        foreach my $timeframe (@timeframes) {
 
-            try {
-                $data_provider->saveHistoricalDataToFile($tableToLoad, $instrument, $timeframe, $numItemsToDownload);
-                if (!$nodb) {
-                    my $ds = (defined($global_ds) ? $global_ds :  Finance::HostedTrader::Datasource->new());
-                    $ds->dbh->do("LOAD DATA LOCAL INFILE '$tableToLoad' IGNORE INTO TABLE $tableToLoad FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n'") or die($!);
-                    unlink($tableToLoad);
-                }
-            } catch {
-                warn "Failed to fetch $instrument $timeframe: $_";
-            };
+            foreach my $instrument (@instruments) {
+                print "Fetching $instrument $timeframe\n" if ($verbose);
+                my $tableToLoad = $data_provider->getTableName($instrument, $timeframe);
+
+                try {
+                    $data_provider->saveHistoricalDataToFile($tableToLoad, $instrument, $timeframe, $numItemsToDownload);
+                    if (!$nodb) {
+                        my $ds = (defined($global_ds) ? $global_ds :  Finance::HostedTrader::Datasource->new());
+                        $ds->dbh->do("LOAD DATA LOCAL INFILE '$tableToLoad' IGNORE INTO TABLE $tableToLoad FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n'") or die($!);
+                        unlink($tableToLoad);
+                    }
+                } catch {
+                    warn "Failed to fetch $instrument $timeframe: $_";
+                };
+            }
         }
     }
 
-    if ($mode eq 'simple') {
+    if ($calculate_synthetics) {
         my @instruments_synthetic = $data_provider->synthetic_names;
         my @tfs = sort { $a <=> $b } @{ $cfg->timeframes->all() };
         my $lowerTf = shift (@tfs);
@@ -146,7 +152,7 @@ version 0.022
 
 =head1 SYNOPSIS
 
-    fx-download-fxcm.pl --timeframes=$TF1[,$TF2] [--instruments=SYM,...] [--verbose] [--help] [--start="15 days ago"] [--end="today] [--numItems=i] [--mode=simple|views]
+    fx-download-fxcm.pl --timeframes=$TF1[,$TF2] [--instruments=SYM,...] [--verbose] [--help] [--start="15 days ago"] [--end="today] [--numItems=i] [--mode=all|data_only|synthetics_only]
 
 =head2 OPTIONS
 
@@ -166,9 +172,11 @@ Optional. An integer representing how many items to download.  Defaults to 10.
 
 =item C<--mode=s>
 
-simple - Downloads data only for the lower timeframe.  Synthetic instruments/timeframes are calculated via a query and inserted into their respective tables (default).
+all - Downloads data only for the lower timeframe.  Synthetic instruments/timeframes are calculated via a query and inserted into their respective tables (default).
 
-views - Downloads data only for the lower timeframe.  Synthetic instruments/timeframes are implemented as views ( calculated on the fly at run time ).
+data_only - Downloads data only for the lower timeframe.  Synthetic instruments/timeframes are implemented as views ( calculated on the fly at run time ).
+
+synthetic_only - Only calculate synthetic instruments/timeframes, without downloading any data from the provider.
 
 =item C<--nodb>
 
