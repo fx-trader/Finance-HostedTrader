@@ -83,7 +83,7 @@ sub new {
 sub getDescriptiveStatisticsData {
     my ($self, $args) = @_;
 
-    my @good_args = qw(provider timeframe symbol max_loaded_items start_period end_period item_count expression percentiles);
+    my @good_args = qw(provider timeframe symbol max_loaded_items start_period end_period item_count expression percentiles weekdays inner_sql_filter);
     foreach my $key (keys %$args) {
         $self->{_logger}->logconfess("invalid arg in getStatisticsData: $key") unless grep { /$key/ } @good_args;
     }
@@ -146,6 +146,7 @@ symbol
 max_loaded_items
 end_period
 item_count
+weekdays
 
 =cut
 
@@ -402,7 +403,7 @@ sub _getIndicatorSql {
 
     my @obsolete_arg_names  = qw(tf fields maxLoadedItems endPeriod numItems);
     $self->log_obsolete_argument_names(\@obsolete_arg_names, \%args);
-    my @good_args           = qw(provider timeframe expression symbol max_loaded_items start_period end_period item_count inner_sql_filter);
+    my @good_args           = qw(provider timeframe expression symbol max_loaded_items start_period end_period item_count inner_sql_filter weekdays);
 
     foreach my $key (keys %args) {
         $self->{_logger}->logconfess("invalid arg in getIndicatorData: $key") unless grep { /$key/ } @good_args, @obsolete_arg_names;
