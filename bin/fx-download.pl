@@ -144,7 +144,7 @@ __END__
 
 =head1 NAME
 
-fx-download-fxcm.pl - Downloads historical data from fxcm, inserts it into local database.
+fx-download.pl - Downloads historical data from a provider and optionally insert it into the local database.
 
 =head1 VERSION
 
@@ -152,7 +152,7 @@ version 0.022
 
 =head1 SYNOPSIS
 
-    fx-download-fxcm.pl --timeframes=$TF1[,$TF2] [--instruments=SYM,...] [--verbose] [--help] [--start="15 days ago"] [--end="today] [--numItems=i] [--mode=all|data_only|synthetics_only]
+    fx-download.pl --timeframes=$TF1[,$TF2] [--instruments=SYM,...] [--verbose] [--help] [--start="15 days ago"] [--end="today] [--numItems=i] [--mode=all|data_only|synthetics_only]
 
 =head2 OPTIONS
 
@@ -191,17 +191,5 @@ Verbose output
 Help screen
 
 =back
-
-=head1 AUTHOR
-
-João Costa <joaocosta@zonalivre.org>
-
-=head1 COPYRIGHT AND LICENSE
-
-This software is Copyright (c) 2015 by João Costa.
-
-This is free software, licensed under:
-
-  The MIT (X11) License
 
 =cut
