@@ -315,10 +315,12 @@ FROM (
     LIMIT $maxLoadedItems
 ) AS T_INNER
 ORDER BY datetime ASC
+LIMIT 18446744073709551615 -- See https://mariadb.com/kb/en/why-is-order-by-in-a-from-subquery-ignored/
 ) AS T_OUTER
 WHERE $result_str AND datetime <='$endPeriod'
 ) AS DT
 $ORDERBY_CLAUSE
+LIMIT 18446744073709551615 -- See https://mariadb.com/kb/en/why-is-order-by-in-a-from-subquery-ignored/
 ) AS SIGNALS_TF_$tf
 
 );
