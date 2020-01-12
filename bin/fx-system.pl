@@ -1,5 +1,59 @@
 #!/usr/bin/perl
 
+=pod
+
+# Sample query for multiple timeframes
+
+SELECT TF_60.datetime, close_60, TF_300.datetime, close_300 FROM (
+  SELECT datetime, CAST(CONCAT(year(datetime), '-', month(datetime), '-', day(datetime), ' ',  hour(datetime), ':', floor(minute(datetime) / 5) * 5, ':00') AS DATETIME) AS COMMON_DATETIME, close AS close_60,round(ta_sma(close,10), 4)
+  FROM oanda_historical_EUR_USD_60
+  WHERE datetime >= '2005-01-02 23:00:00 UTC' AND datetime < '2005-01-03 00:00:00 UTC'
+  ORDER BY datetime
+  LIMIT 10000000000
+) AS TF_60
+
+INNER JOIN (
+
+  SELECT datetime, close AS close_300,round(ta_sma(close,10), 4)
+  FROM oanda_historical_EUR_USD_300
+  WHERE datetime >= '2005-01-02 23:00:00 UTC' AND datetime < '2005-01-03 00:00:00 UTC'
+  ORDER BY datetime
+  LIMIT 10000000000
+
+) AS TF_300 ON TF_60.COMMON_DATETIME = TF_300.datetime
+ORDER BY TF_60.datetime;
+
+## Another example that uses only one base table
+## but still has the problem of not doing running calculations in the higher timeframes
+## ie, using this, the system would be looking into the future, ie:
+## at 13:33 it would be using the close time from 13:34
+
+SELECT TF60.datetime, TF60.close, TF60.SMA2, TF300.SMA2
+FROM (
+  SELECT datetime, CAST(CONCAT(year(datetime), '-', month(datetime), '-', day(datetime), ' ',  hour(datetime), ':', floor(minute(datetime) / 5) * 5, ':00') AS DATETIME) AS COMMON_DATETIME,
+        close, round(ta_sma(close,2), 5) AS SMA2
+  FROM oanda_historical_EUR_USD_60 AS TF60
+  WHERE datetime >= '2005-06-02 13:30:00' AND datetime < '2005-06-02 13:40:00'
+) AS TF60
+LEFT JOIN (
+  SELECT DATASET_300.datetime AS COMMON_DATETIME, DATASET_300.close, round(ta_sma(DATASET_300.close, 2), 5) AS SMA2
+  FROM (
+    SELECT
+      CAST(CONCAT(year(datetime), '-', month(datetime), '-', day(datetime), ' ',  hour(datetime), ':', floor(minute(datetime) / 5) * 5, ':00') AS DATETIME) AS datetime,
+      CAST(SUBSTRING_INDEX(GROUP_CONCAT(CAST(open AS CHAR) ORDER BY datetime), ',', 1) AS DECIMAL(10,4)) as open,
+      MAX(high) as high,
+      MIN(low) as low,
+      CAST(SUBSTRING_INDEX(GROUP_CONCAT(CAST(close AS CHAR) ORDER BY datetime DESC), ',', 1) AS DECIMAL(10,4)) as close
+    FROM oanda_historical_EUR_USD_300
+    WHERE datetime >= '2005-06-02 13:30:00' AND datetime < '2005-06-02 13:40:00'
+    GROUP BY CAST(CONCAT(year(datetime), '-', month(datetime), '-', day(datetime), ' ',  hour(datetime), ':', floor(minute(datetime) / 5) * 5, ':00') AS DATETIME)
+    ORDER BY datetime ASC
+  ) AS DATASET_300
+) AS TF300
+ON TF60.COMMON_DATETIME = TF300.COMMON_DATETIME;
+
+=cut
+
 use strict;
 use warnings;
 
