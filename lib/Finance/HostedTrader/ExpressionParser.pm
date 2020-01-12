@@ -338,7 +338,7 @@ LIMIT 18446744073709551615 -- See https://mariadb.com/kb/en/why-is-order-by-in-a
         # This is not:
         #   4hour(close > ema(close,21)) and 2hour(close > ema(close,21)) or hour(close > ema(close,21))
 
-        # In other words, currently, if a signal expression has multiple timeframes, the all need to be 'and' or 'or'.
+        # In other words, currently, if a signal expression has multiple timeframes, they all need to be 'and' or 'or'.
         # I haven't figured out how to write a query to mix and match them.
         # This validates for that condition and returns an appropriate error.
 
