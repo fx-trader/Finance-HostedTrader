@@ -445,7 +445,7 @@ SELECT $result FROM (
   LIMIT $maxLoadedItems
 ) AS R
 ORDER BY datetime ASC
-LIMIT 100000000 -- See https://mariadb.com/kb/en/why-is-order-by-in-a-from-subquery-ignored/
+LIMIT 18446744073709551615 -- See https://mariadb.com/kb/en/why-is-order-by-in-a-from-subquery-ignored/
 ) AS LIMIT_ROWS
 ORDER BY datetime DESC
 LIMIT $itemCount
