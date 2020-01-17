@@ -143,6 +143,8 @@ foreach my $provider_type (@provider_types) {
 }
 
 # print "GRANT ALL ON $dbname.* TO '$dbuser'@'$userhost'" . ($dbpasswd ? " IDENTIFIED BY '$dbpasswd'": '') . ";\n";
+# The view that consists of an UNION of all instruments in the weekly timeframe was created with:
+# fx-all-tables.pl --provider=oanda --timeframes=604800 --template="SELECT *, 'TABLE_NAME' AS label FROM TABLE_NAME" --join=$'\n'" UNION ALL "$'\n' --prefix "CREATE OR REPLACE VIEW oanda_ALL_604800 AS " --suffix=";" | fx-db-client.pl
 
 =pod
 
