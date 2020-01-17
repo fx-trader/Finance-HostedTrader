@@ -44,13 +44,16 @@ use Getopt::Long;
 use Pod::Usage;
 use Finance::HostedTrader::Datasource;
 
-my ($template,$timeframes_txt, $instruments_txt, $providers_txt, $help) = ('TABLE_NAME');
+my ($template, $join, $prefix, $suffix, $timeframes_txt, $instruments_txt, $providers_txt, $help) = ('TABLE_NAME', "\n", "", "");
 
 my $result = GetOptions(
                         "timeframes=s", \$timeframes_txt,
-                        "instruments=s", \$instruments_txt,
-                        "providers=s", \$providers_txt,
-                        "template=s", \$template,
+                        "instruments=s",\$instruments_txt,
+                        "providers=s",  \$providers_txt,
+                        "template=s",   \$template,
+                        "join=s",       \$join,
+                        "prefix=s",     \$prefix,
+                        "suffix=s",     \$suffix,
                         "help", \$help,
                     )  or pod2usage(1);
 
@@ -73,14 +76,16 @@ $db->cfg->forEachProvider( sub {
 
     my @instruments = ($instruments_txt ? split(/,/, $instruments_txt) : $provider->getAllInstruments());
 
+    my @lines;
     foreach my $instrument (@instruments) {
         foreach my $tf (@$timeframes) {
             my $tableName = $provider->getTableName($instrument, $tf);
             my $s = $template;
             $s =~ s/TABLE_NAME/$tableName/g;
-            print $s,"\n";
+            push @lines, $s;
         }
     }
+    print $prefix, join($join, @lines), $suffix;
 });
 
 
