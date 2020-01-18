@@ -24,7 +24,9 @@ Defaults to all instruments supported by the provider.
 =item C<--template=s>
 
 Optional, but most likely fundamental.  The template for what statment will be output.
-The string "TABLE_NAME" will be replaced by the name of the db table that supports a given symbol/timeframe.
+The string "TABLE_NAME" will be replaced by the name of the db table that supports a given instrument/timeframe.
+The string "INSTRUMENT_NAME" will be replaced by the name of the instrument.
+The string "TIMEFRAME_NAME" will be replaced by the name of the timeframe.
 Defaults to "TABLE_NAME".
 
 =item C<--help>
@@ -82,6 +84,8 @@ $db->cfg->forEachProvider( sub {
             my $tableName = $provider->getTableName($instrument, $tf);
             my $s = $template;
             $s =~ s/TABLE_NAME/$tableName/g;
+            $s =~ s/INSTRUMENT_NAME/$instrument/g;
+            $s =~ s/TIMEFRAME_NAME/$tf/g;
             push @lines, $s;
         }
     }
