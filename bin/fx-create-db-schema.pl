@@ -144,10 +144,14 @@ foreach my $provider_type (@provider_types) {
 
 # print "GRANT ALL ON $dbname.* TO '$dbuser'@'$userhost'" . ($dbpasswd ? " IDENTIFIED BY '$dbpasswd'": '') . ";\n";
 # The view that consists of an UNION of all instruments in the weekly timeframe was created with:
-# fx-all-tables.pl --provider=oanda --timeframes=604800 --template="SELECT *, 'INSTRUMENT_NAME' AS label FROM TABLE_NAME" --join=$'\n'" UNION ALL "$'\n' --prefix "CREATE OR REPLACE VIEW oanda_ALL_604800 AS " --suffix=";" | fx-db-client.pl
 
 =pod
 
+fx-all-tables.pl --provider=oanda_historical \
+                 --timeframes=604800 \
+                 --template="SELECT * FROM (SELECT 'INSTRUMENT_NAME' AS label, datetime, open, high, low, close, ta_rsi(close,14) AS RSI14 FROM TABLE_NAME ORDER BY datetime LIMIT 1850000000000000000) AS T" \
+                 --join=$'\n'" UNION ALL "$'\n' \
+                 --prefix "CREATE OR REPLACE VIEW PROVIDER_NAME_ALL_604800 AS " \
+                 --suffix=";" | fx-db-client.pl
 
 =cut
-
