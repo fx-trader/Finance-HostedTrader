@@ -52,6 +52,18 @@ LEFT JOIN (
 ) AS TF300
 ON TF60.COMMON_DATETIME = TF300.COMMON_DATETIME;
 
+# Query to calculate running high/low/close of 5minute timeframe based on 1minute timeframe
+
+SELECT datetime, CAST(CONCAT(year(datetime), '-', month(datetime), '-', day(datetime), ' ',  hour(datetime), ':', floor(minute(datetime) / 5) * 5, ':00') AS DATETIME) AS COMMON_DATETIME,
+      open, high, low, close, round(ta_sma(close,2), 5) AS SMA2,
+      FIRST_VALUE(open) OVER (PARTITION BY COMMON_DATETIME ORDER BY datetime) as open_300,
+      MAX(high) OVER (PARTITION BY COMMON_DATETIME ORDER BY datetime) as high_300,
+      MIN(low) OVER (PARTITION BY COMMON_DATETIME ORDER BY datetime) as low_300,
+      LAST_VALUE(close) OVER (PARTITION BY COMMON_DATETIME ORDER BY datetime) as close_300
+FROM oanda_historical_EUR_USD_60
+WHERE datetime >= '2005-06-02 13:30:00' AND datetime < '2005-06-02 13:40:00'
+ORDER BY datetime ASC
+
 =cut
 
 use strict;
