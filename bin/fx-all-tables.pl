@@ -72,8 +72,9 @@ my @providers_filter = split(/,/, $providers_txt // '');
 $db->cfg->forEachProvider( sub {
     my $provider = shift;
 
+    my $provider_name = $provider->id;
     if (@providers_filter) {
-        return unless (grep { $_ eq $provider->id } @providers_filter);
+        return unless (grep { $_ eq $provider_name } @providers_filter);
     }
 
     my @instruments = ($instruments_txt ? split(/,/, $instruments_txt) : $provider->getAllInstruments());
@@ -89,6 +90,7 @@ $db->cfg->forEachProvider( sub {
             push @lines, $s;
         }
     }
+    $prefix =~ s/PROVIDER_NAME/$provider_name/g;
     print $prefix, join($join, @lines), $suffix;
 });
 
