@@ -3,9 +3,10 @@
 use strict;
 use warnings;
 
-use Log::Log4perl;
 use Finance::HostedTrader::Datasource;
+use Log::Log4perl;
 use Date::Manip;
+use Statistics::Descriptive;
 use Data::Dumper;
 
 my $log_level = $ENV{LOG_LEVEL} // 'INFO';
@@ -29,6 +30,8 @@ my $dbh = $ds->dbh;
 my $lookback = 300;
 
 $l->info("Start");
+
+my %account = ( balance => 10000, currency => 'GBP' );
 
 my @trades;
 while ($lookback > 0) {
@@ -54,10 +57,15 @@ while ($lookback > 0) {
 
     get_close(\%trade, $start_date);
     $l->info("Close $instrument on $trade{close}{datetime} at price $trade{close}{price}");
+
+    my $pl = ($trade{close}->{price} - $trade{open}->{price}) * $trade{open}->{size};
+    $trade{stats} = { return => $pl / $account{balance}, pl => $pl};
     push @trades, \%trade;
 }
 
 print Dumper(\@trades);
+my $analysis = analyse_trades(\@trades);
+print Dumper($analysis);
 
 $l->info("Done");
 
@@ -130,3 +138,71 @@ $data->[1][2] = $data->[0][2]; # Return 'previous' period RSI value that trigger
 
 return $data->[1];
 }
+
+sub analyse_trades {
+    my $trades = shift;
+
+    my @winners = grep { $_->{stats}{pl} > 0 } @$trades;
+    my @loosers = grep { $_->{stats}{pl} < 0 } @$trades;
+    my @neutral = grep { $_->{stats}{pl} == 0 } @$trades;
+
+    my $trade_returns       = Statistics::Descriptive::Full->new();
+    my $positive_returns    = Statistics::Descriptive::Full->new();
+    my $negative_returns    = Statistics::Descriptive::Full->new();
+    my $positive_pl         = Statistics::Descriptive::Full->new();
+    my $negative_pl         = Statistics::Descriptive::Full->new();
+
+    $trade_returns->add_data( map { $_->{stats}{return} } @$trades );
+    $positive_returns->add_data( map { $_->{stats}{return} } @winners );
+    $negative_returns->add_data( map { $_->{stats}{return} } @loosers );
+    $positive_pl->add_data( map {$_->{stats}{pl} } @winners );
+    $negative_pl->add_data( map {$_->{stats}{pl} } @loosers );
+
+    my $trade_stats = {
+        total       => scalar(@$trades),
+        winners     => scalar(@winners),
+        loosers     => scalar(@loosers),
+        neutral     => scalar(@neutral),
+        win_percent => scalar(@winners) / scalar(@$trades),
+        loss_percent=> scalar(@loosers) / scalar(@$trades),
+        average_win => $positive_pl->mean(),
+        average_loss=> $negative_pl->mean(),
+        largest_win => $positive_pl->max(),
+        largest_loss=> $negative_pl->min(),
+    };
+
+    my $initial_balance = $account{balance};
+    my $balance = $initial_balance;
+    my $max_drawdown = 0;
+    my $balance_high = $balance;
+
+    foreach my $trade (@$trades) {
+        $balance += $trade->{stats}{pl};
+        if ($balance > $balance_high) {
+            $balance_high = $balance;
+        } else {
+            my $current_drawdown = $balance_high - $balance;
+            if ($current_drawdown > $max_drawdown) {
+                $max_drawdown = $current_drawdown;
+            }
+        }
+    }
+
+    my $system_stats = {
+        expectancy    => ($trade_stats->{win_percent} * $trade_stats->{average_win}) + ($trade_stats->{loss_percent} * $trade_stats->{average_loss}),
+        max_drawdown  => $max_drawdown,
+        return        => ( $balance / $initial_balance) - 1,
+        volatility    => $trade_returns->standard_deviation,
+    };
+
+    my $stats = {
+        trades  => $trade_stats,
+        system  => $system_stats,
+        ratios  => {
+            'sharpe'    => $system_stats->{return} / $system_stats->{volatility},
+            'sortino'   => $system_stats->{return} / $negative_returns->standard_deviation,
+        },
+    };
+    return $stats;
+}
+
