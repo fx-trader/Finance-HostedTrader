@@ -228,7 +228,7 @@ sub getInstrumentsFromProvider {
     my $response = $self->{_client}->get($url) or $self->log->logconfess("Unable to get $url:\n$!");
     my $obj = $self->_handle_oanda_response($response);
 
-    return map { $_->{name} } @{$obj->{instruments}};
+    return { map { $_->{name}, $_ } @{$obj->{instruments}} };
 }
 
 sub getAccountSummary {
