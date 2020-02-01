@@ -83,10 +83,15 @@ sub get_synthetic_symbol {
         }
         $sql = qq{
             SELECT T1.datetime,
-            ROUND(T1.open $op T2.open,4) AS open,
-            ROUND(T1.high $op T2.${high},4) AS high,
-            ROUND(T1.low  $op T2.${low},4) AS low,
-            ROUND(T1.close $op T2.close,4) AS close
+            ROUND(T1.ask_open $op T2.ask_open,4) AS ask_open,
+            ROUND(T1.ask_high $op T2.ask_${high},4) AS ask_high,
+            ROUND(T1.ask_low  $op T2.ask_${low},4) AS ask_low,
+            ROUND(T1.ask_close $op T2.ask_close,4) AS ask_close,
+            ROUND(T1.bid_open $op T2.bid_open,4) AS bid_open,
+            ROUND(T1.bid_high $op T2.bid_${high},4) AS bid_high,
+            ROUND(T1.bid_low  $op T2.bid_${low},4) AS bid_low,
+            ROUND(T1.bid_close $op T2.bid_close,4) AS bid_close,
+            0 AS volume
             FROM ${leftop} AS T1, ${rightop} AS T2
             WHERE T1.datetime = T2.datetime $incremental_sql_filter
         };
@@ -98,10 +103,15 @@ sub get_synthetic_symbol {
         }
         $sql = qq{
             SELECT T2.datetime,
-            ROUND(1 $op T2.open,4) AS open,
-            ROUND(1 $op T2.${high},4) AS high,
-            ROUND(1 $op T2.${low},4) AS low,
-            ROUND(1 $op T2.close,4) AS close
+            ROUND(1 $op T2.ask_open,4) AS ask_open,
+            ROUND(1 $op T2.ask_${high},4) AS ask_high,
+            ROUND(1 $op T2.ask_${low},4) AS ask_low,
+            ROUND(1 $op T2.ask_close,4) AS ask_close,
+            ROUND(1 $op T2.bid_open,4) AS bid_open,
+            ROUND(1 $op T2.bid_${high},4) AS bid_high,
+            ROUND(1 $op T2.bid_${low},4) AS bid_low,
+            ROUND(1 $op T2.bid_close,4) AS bid_close,
+            T2.volume AS volume
             FROM $rightop AS T2
             $incremental_sql_filter
             ORDER BY T2.datetime DESC
@@ -135,10 +145,15 @@ sub get_synthetic_timeframe {
 
     return qq/SELECT
       $date_format AS datetime,
-      CAST(SUBSTRING_INDEX(GROUP_CONCAT(CAST(open AS CHAR) ORDER BY datetime), ',', 1) AS DECIMAL(10,4)) as open,
-      MAX(high) as high,
-      MIN(low) as low,
-      CAST(SUBSTRING_INDEX(GROUP_CONCAT(CAST(close AS CHAR) ORDER BY datetime DESC), ',', 1) AS DECIMAL(10,4)) as close
+      CAST(SUBSTRING_INDEX(GROUP_CONCAT(CAST(ask_open AS CHAR) ORDER BY datetime), ',', 1) AS DECIMAL(10,4)) as ask_open,
+      MAX(ask_high) as ask_high,
+      MIN(ask_low) as ask_low,
+      CAST(SUBSTRING_INDEX(GROUP_CONCAT(CAST(ask_close AS CHAR) ORDER BY datetime DESC), ',', 1) AS DECIMAL(10,4)) as ask_close,
+      CAST(SUBSTRING_INDEX(GROUP_CONCAT(CAST(bid_open AS CHAR) ORDER BY datetime), ',', 1) AS DECIMAL(10,4)) as bid_open,
+      MAX(bid_high) as bid_high,
+      MIN(bid_low) as bid_low,
+      CAST(SUBSTRING_INDEX(GROUP_CONCAT(CAST(bid_close AS CHAR) ORDER BY datetime DESC), ',', 1) AS DECIMAL(10,4)) as bid_close,
+      SUM(volume) as volume
     FROM ${table}
     $where_clause
     GROUP BY $date_group

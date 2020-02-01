@@ -278,6 +278,7 @@ sub saveHistoricalDataToFile {
             granularity => $tf,
             count       => ($numberOfItems > 5000 ? 5000 : $numberOfItems),
             to          => $timeTo,
+            price       => 'BA',
         };
 
         my $qq = URI::Query->new($oanda_args);
@@ -285,8 +286,18 @@ sub saveHistoricalDataToFile {
         my $response = $self->{_client}->get("https://${server_url}/v3/instruments/$instrument/candles?" . $qq->stringify);
         my $obj = $self->_handle_oanda_response($response);
         foreach my $candle ( @{ $obj->{candles} } ) {
-            my $price = $candle->{mid};
-            print $fh $candle->{time}, "\t", $price->{o}, "\t", $price->{h}, "\t", $price->{l}, "\t", $price->{c}, "\n";
+            my $price_bid = $candle->{bid};
+            my $price_ask = $candle->{ask};
+            print $fh   $candle->{time}, "\t",
+                        $price_ask->{o}, "\t",
+                        $price_ask->{h}, "\t",
+                        $price_ask->{l}, "\t",
+                        $price_ask->{c}, "\t",
+                        $price_bid->{o}, "\t",
+                        $price_bid->{h}, "\t",
+                        $price_bid->{l}, "\t",
+                        $price_bid->{c}, "\t",
+                        $candle->{volume}, "\n";
         }
 
         $numberOfItems -= scalar(@{$obj->{candles}});
