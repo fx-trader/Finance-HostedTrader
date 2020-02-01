@@ -88,14 +88,14 @@ foreach my $provider_type (@provider_types) {
                 print qq /
     CREATE TABLE IF NOT EXISTS `$tableName` (
     `datetime` DATETIME NOT NULL ,
-    `ask_open` DECIMAL(10,4) NOT NULL ,
-    `ask_high` DECIMAL(10,4) NOT NULL ,
-    `ask_low` DECIMAL(10,4) NOT NULL ,
-    `ask_close` DECIMAL(10,4) NOT NULL ,
-    `bid_open` DECIMAL(10,4) NOT NULL ,
-    `bid_high` DECIMAL(10,4) NOT NULL ,
-    `bid_low` DECIMAL(10,4) NOT NULL ,
-    `bid_close` DECIMAL(10,4) NOT NULL ,
+    `ask_open` DECIMAL(12,6) UNSIGNED NOT NULL ,
+    `ask_high` DECIMAL(12,6) UNSIGNED NOT NULL ,
+    `ask_low` DECIMAL(12,6) UNSIGNED NOT NULL ,
+    `ask_close` DECIMAL(12,6) UNSIGNED NOT NULL ,
+    `bid_open` DECIMAL(12,6) UNSIGNED NOT NULL ,
+    `bid_high` DECIMAL(12,6) UNSIGNED NOT NULL ,
+    `bid_low` DECIMAL(12,6) UNSIGNED NOT NULL ,
+    `bid_close` DECIMAL(12,6) UNSIGNED NOT NULL ,
     `volume` MEDIUMINT UNSIGNED NOT NULL ,
     PRIMARY KEY ( `datetime` )
     ) ENGINE = $table_type ;/;
@@ -113,14 +113,14 @@ foreach my $provider_type (@provider_types) {
             print qq /
         CREATE TABLE IF NOT EXISTS `$tableName` (
         `datetime` DATETIME NOT NULL ,
-        `ask_open` DECIMAL(10,4) NOT NULL ,
-        `ask_high` DECIMAL(10,4) NOT NULL ,
-        `ask_low` DECIMAL(10,4) NOT NULL ,
-        `ask_close` DECIMAL(10,4) NOT NULL ,
-        `bid_open` DECIMAL(10,4) NOT NULL ,
-        `bid_high` DECIMAL(10,4) NOT NULL ,
-        `bid_low` DECIMAL(10,4) NOT NULL ,
-        `bid_close` DECIMAL(10,4) NOT NULL ,
+        `ask_open` DECIMAL(12,6) UNSIGNED NOT NULL ,
+        `ask_high` DECIMAL(12,6) UNSIGNED NOT NULL ,
+        `ask_low` DECIMAL(12,6) UNSIGNED NOT NULL ,
+        `ask_close` DECIMAL(12,6) UNSIGNED NOT NULL ,
+        `bid_open` DECIMAL(12,6) UNSIGNED NOT NULL ,
+        `bid_high` DECIMAL(12,6) UNSIGNED NOT NULL ,
+        `bid_low` DECIMAL(12,6) UNSIGNED NOT NULL ,
+        `bid_close` DECIMAL(12,6) UNSIGNED NOT NULL ,
         `volume` MEDIUMINT UNSIGNED NOT NULL ,
         PRIMARY KEY ( `datetime` )
         ) ENGINE = $table_type ;
