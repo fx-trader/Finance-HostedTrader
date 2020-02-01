@@ -95,7 +95,7 @@ if (!$service || download_data()) {
                 ${select_sql};
             /;
 
-            $ds->dbh->do($sql) or die($!);
+            $ds->dbh->do($sql) or die("Error running '$sql'\n$!");
         }
 
         foreach my $instrument (@instruments, @instruments_synthetic) {
