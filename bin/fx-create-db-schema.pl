@@ -65,6 +65,8 @@ my $dbuser = $cfg->db->dbuser;
 my $dbpasswd = $cfg->db->dbpasswd;
 my $userhost = '%';
 
+print "CREATE DATABASE IF NOT EXISTS $dbname;\n";
+print "GRANT ALL ON $dbname.* TO '$dbuser'\@'$userhost'" . ($dbpasswd ? " IDENTIFIED BY '$dbpasswd'": '') . ";\n";
 print qq{
     use $dbname;
 };
