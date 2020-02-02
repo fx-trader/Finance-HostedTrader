@@ -96,6 +96,10 @@ foreach my $provider_type (@provider_types) {
     `bid_high` DECIMAL(12,6) UNSIGNED NOT NULL ,
     `bid_low` DECIMAL(12,6) UNSIGNED NOT NULL ,
     `bid_close` DECIMAL(12,6) UNSIGNED NOT NULL ,
+    `mid_open` DECIMAL(12,6) UNSIGNED NOT NULL ,
+    `mid_high` DECIMAL(12,6) UNSIGNED NOT NULL ,
+    `mid_low` DECIMAL(12,6) UNSIGNED NOT NULL ,
+    `mid_close` DECIMAL(12,6) UNSIGNED NOT NULL ,
     `volume` MEDIUMINT UNSIGNED NOT NULL ,
     PRIMARY KEY ( `datetime` )
     ) ENGINE = $table_type ;/;
@@ -121,6 +125,10 @@ foreach my $provider_type (@provider_types) {
         `bid_high` DECIMAL(12,6) UNSIGNED NOT NULL ,
         `bid_low` DECIMAL(12,6) UNSIGNED NOT NULL ,
         `bid_close` DECIMAL(12,6) UNSIGNED NOT NULL ,
+        `mid_open` DECIMAL(12,6) UNSIGNED NOT NULL ,
+        `mid_high` DECIMAL(12,6) UNSIGNED NOT NULL ,
+        `mid_low` DECIMAL(12,6) UNSIGNED NOT NULL ,
+        `mid_close` DECIMAL(12,6) UNSIGNED NOT NULL ,
         `volume` MEDIUMINT UNSIGNED NOT NULL ,
         PRIMARY KEY ( `datetime` )
         ) ENGINE = $table_type ;

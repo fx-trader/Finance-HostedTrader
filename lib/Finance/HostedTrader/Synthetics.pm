@@ -91,6 +91,10 @@ sub get_synthetic_symbol {
             ROUND(T1.bid_high $op T2.bid_${high},4) AS bid_high,
             ROUND(T1.bid_low  $op T2.bid_${low},4) AS bid_low,
             ROUND(T1.bid_close $op T2.bid_close,4) AS bid_close,
+            ROUND(T1.mid_open $op T2.mid_open,4) AS mid_open,
+            ROUND(T1.mid_high $op T2.mid_${high},4) AS mid_high,
+            ROUND(T1.mid_low  $op T2.mid_${low},4) AS mid_low,
+            ROUND(T1.mid_close $op T2.mid_close,4) AS mid_close,
             0 AS volume
             FROM ${leftop} AS T1, ${rightop} AS T2
             WHERE T1.datetime = T2.datetime $incremental_sql_filter
@@ -111,6 +115,10 @@ sub get_synthetic_symbol {
             ROUND(1 $op T2.bid_${high},4) AS bid_high,
             ROUND(1 $op T2.bid_${low},4) AS bid_low,
             ROUND(1 $op T2.bid_close,4) AS bid_close,
+            ROUND(1 $op T2.mid_open,4) AS mid_open,
+            ROUND(1 $op T2.mid_${high},4) AS mid_high,
+            ROUND(1 $op T2.mid_${low},4) AS mid_low,
+            ROUND(1 $op T2.mid_close,4) AS mid_close,
             T2.volume AS volume
             FROM $rightop AS T2
             $incremental_sql_filter
@@ -153,6 +161,10 @@ sub get_synthetic_timeframe {
       MAX(bid_high) as bid_high,
       MIN(bid_low) as bid_low,
       CAST(SUBSTRING_INDEX(GROUP_CONCAT(CAST(bid_close AS CHAR) ORDER BY datetime DESC), ',', 1) AS DECIMAL(10,4)) as bid_close,
+      CAST(SUBSTRING_INDEX(GROUP_CONCAT(CAST(mid_open AS CHAR) ORDER BY datetime), ',', 1) AS DECIMAL(10,4)) as mid_open,
+      MAX(mid_high) as mid_high,
+      MIN(mid_low) as mid_low,
+      CAST(SUBSTRING_INDEX(GROUP_CONCAT(CAST(mid_close AS CHAR) ORDER BY datetime DESC), ',', 1) AS DECIMAL(10,4)) as mid_close,
       SUM(volume) as volume
     FROM ${table}
     $where_clause
