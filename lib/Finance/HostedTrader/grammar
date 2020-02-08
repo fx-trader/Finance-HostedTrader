@@ -61,7 +61,7 @@ function:
 		'max(' expression ',' number ')' { "ta_max($item[2],$item[4])" } |
 		'min(' expression ',' number ')' { "ta_min($item[2],$item[4])" } |
 		'tr(' ')'  { "round(ta_tr(high,low,close), 4)" } |
-		'atr(' number ')'  { "round(ta_ema(ta_tr(high,low,close),$item[2]), 4)" } |
+		'atr(' number ')'  { "round(ta_ssma(ta_tr(high,low,close),$item[2]), 4)" } |
 		'stddev(' expression ',' number ')' { "round(ta_stddevp($item[2],$item[4]), 4)" } |
 		'previous(' expression ',' number ')' { "ta_previous($item[2],$item[4])" } |
 		'bolhigh(' expression ',' number ',' number ')' { "round(ta_sma($item[2],$item[4]) + $item[6]*ta_stddevp($item[2], $item[4]), 4)" } |
