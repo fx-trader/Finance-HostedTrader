@@ -2414,7 +2414,7 @@ sub Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::functio
                         if defined $::RD_TRACE;
         
 
-        $_tok = ($_noactions) ? 0 : do { "round(ta_ema(ta_tr(high,low,close),$item[2]), 4)" };
+        $_tok = ($_noactions) ? 0 : do { "round(ta_ssma(ta_tr(high,low,close),$item[2]), 4)" };
         unless (defined $_tok)
         {
             Parse::RecDescent::_trace(q{<<Didn't match action>> (return value: [undef])})
@@ -11803,7 +11803,7 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                                  'pattern' => ')'
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
-                                                                                                 'code' => '{ "round(ta_ema(ta_tr(high,low,close),$item[2]), 4)" }',
+                                                                                                 'code' => '{ "round(ta_ssma(ta_tr(high,low,close),$item[2]), 4)" }',
                                                                                                  'hashname' => '__ACTION1__',
                                                                                                  'line' => 64,
                                                                                                  'lookahead' => 0
