@@ -95,7 +95,7 @@ if (!$service || download_data()) {
                 ${select_sql};
             /;
 
-            $ds->dbh->do($sql) or die($!);
+            $ds->dbh->do($sql) or die("Error running '$sql'\n$!");
         }
 
         foreach my $instrument (@instruments, @instruments_synthetic) {
@@ -152,7 +152,7 @@ version 0.022
 
 =head1 SYNOPSIS
 
-    fx-download.pl --timeframes=$TF1[,$TF2] [--instruments=SYM,...] [--verbose] [--help] [--start="15 days ago"] [--end="today] [--numItems=i] [--mode=all|data_only|synthetics_only]
+    fx-download.pl --timeframes=$TF1[,$TF2] [--instruments=SYM,...] [--verbose] [--help] [--numItems=i] [--mode=all|data_only|synthetics_only]
 
 =head2 OPTIONS
 

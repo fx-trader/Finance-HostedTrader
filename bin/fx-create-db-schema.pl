@@ -65,6 +65,8 @@ my $dbuser = $cfg->db->dbuser;
 my $dbpasswd = $cfg->db->dbpasswd;
 my $userhost = '%';
 
+#print "CREATE DATABASE IF NOT EXISTS $dbname;\n";
+#print "GRANT ALL ON $dbname.* TO '$dbuser'\@'$userhost'" . ($dbpasswd ? " IDENTIFIED BY '$dbpasswd'": '') . ";\n";
 print qq{
     use $dbname;
 };
@@ -86,10 +88,19 @@ foreach my $provider_type (@provider_types) {
                 print qq /
     CREATE TABLE IF NOT EXISTS `$tableName` (
     `datetime` DATETIME NOT NULL ,
-    `open` DECIMAL(10,4) NOT NULL ,
-    `high` DECIMAL(10,4) NOT NULL ,
-    `low` DECIMAL(10,4) NOT NULL ,
-    `close` DECIMAL(10,4) NOT NULL ,
+    `ask_open` DECIMAL(12,6) UNSIGNED NOT NULL ,
+    `ask_high` DECIMAL(12,6) UNSIGNED NOT NULL ,
+    `ask_low` DECIMAL(12,6) UNSIGNED NOT NULL ,
+    `ask_close` DECIMAL(12,6) UNSIGNED NOT NULL ,
+    `bid_open` DECIMAL(12,6) UNSIGNED NOT NULL ,
+    `bid_high` DECIMAL(12,6) UNSIGNED NOT NULL ,
+    `bid_low` DECIMAL(12,6) UNSIGNED NOT NULL ,
+    `bid_close` DECIMAL(12,6) UNSIGNED NOT NULL ,
+    `mid_open` DECIMAL(12,6) UNSIGNED NOT NULL ,
+    `mid_high` DECIMAL(12,6) UNSIGNED NOT NULL ,
+    `mid_low` DECIMAL(12,6) UNSIGNED NOT NULL ,
+    `mid_close` DECIMAL(12,6) UNSIGNED NOT NULL ,
+    `volume` MEDIUMINT UNSIGNED NOT NULL ,
     PRIMARY KEY ( `datetime` )
     ) ENGINE = $table_type ;/;
             }
@@ -106,10 +117,19 @@ foreach my $provider_type (@provider_types) {
             print qq /
         CREATE TABLE IF NOT EXISTS `$tableName` (
         `datetime` DATETIME NOT NULL ,
-        `open` DECIMAL(10,4) NOT NULL ,
-        `high` DECIMAL(10,4) NOT NULL ,
-        `low` DECIMAL(10,4) NOT NULL ,
-        `close` DECIMAL(10,4) NOT NULL ,
+        `ask_open` DECIMAL(12,6) UNSIGNED NOT NULL ,
+        `ask_high` DECIMAL(12,6) UNSIGNED NOT NULL ,
+        `ask_low` DECIMAL(12,6) UNSIGNED NOT NULL ,
+        `ask_close` DECIMAL(12,6) UNSIGNED NOT NULL ,
+        `bid_open` DECIMAL(12,6) UNSIGNED NOT NULL ,
+        `bid_high` DECIMAL(12,6) UNSIGNED NOT NULL ,
+        `bid_low` DECIMAL(12,6) UNSIGNED NOT NULL ,
+        `bid_close` DECIMAL(12,6) UNSIGNED NOT NULL ,
+        `mid_open` DECIMAL(12,6) UNSIGNED NOT NULL ,
+        `mid_high` DECIMAL(12,6) UNSIGNED NOT NULL ,
+        `mid_low` DECIMAL(12,6) UNSIGNED NOT NULL ,
+        `mid_close` DECIMAL(12,6) UNSIGNED NOT NULL ,
+        `volume` MEDIUMINT UNSIGNED NOT NULL ,
         PRIMARY KEY ( `datetime` )
         ) ENGINE = $table_type ;
         /;
