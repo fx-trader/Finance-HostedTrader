@@ -236,6 +236,7 @@ my ($self, $args) = @_;
     %INDICATORS = ();
     @VALUES     = ();
     my $results = $self->{_parser}->start_signal( $expr );
+
     #use Data::Dumper;
     #print "TIMEFRAMES = " . Dumper(\%TIMEFRAMES);
     #print "INDICATORS = " . Dumper(\%INDICATORS);
@@ -290,6 +291,11 @@ my ($self, $args) = @_;
                 $result_str .= ' ' . $result_signal . ' ';
             }
         }
+        #TODO These substitutions should be provider specific
+        $result_str =~ s/open/mid_open/g;
+        $result_str =~ s/high/mid_high/g;
+        $result_str =~ s/low/mid_low/g;
+        $result_str =~ s/close/mid_close/g;
 
         my %unique_fields = map { $_ => undef } @fields;
 
@@ -428,6 +434,11 @@ sub _getIndicatorSql {
 
     #TODO: Refactor the parser bit so that it can be called independently. This will be usefull to validate expressions before running them.
     $result     = $self->{_parser}->start_indicator($expr);
+#TODO These substitutions should be provider specific
+    $result =~ s/open/mid_open/g;
+    $result =~ s/high/mid_high/g;
+    $result =~ s/low/mid_low/g;
+    $result =~ s/close/mid_close/g;
 
     #TODO: Need a more meaningfull error message describing what's wrong with the given expression
     $self->{_logger}->logdie("Syntax error in indicator \n\n$expr\n")
