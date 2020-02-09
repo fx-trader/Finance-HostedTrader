@@ -291,16 +291,16 @@ my ($self, $args) = @_;
                 $result_str .= ' ' . $result_signal . ' ';
             }
         }
-        #TODO These substitutions should be provider specific
-        $result_str =~ s/open/mid_open/g;
-        $result_str =~ s/high/mid_high/g;
-        $result_str =~ s/low/mid_low/g;
-        $result_str =~ s/close/mid_close/g;
 
         my %unique_fields = map { $_ => undef } @fields;
 
         my $select_fields = join( ', ', keys %unique_fields );
         $select_fields = ',' . $select_fields if ($select_fields);
+        #TODO These substitutions should be provider specific
+        $select_fields =~ s/open/mid_open/g;
+        $select_fields =~ s/high/mid_high/g;
+        $select_fields =~ s/low/mid_low/g;
+        $select_fields =~ s/close/mid_close/g;
 
         my $WHERE_FILTER = " WHERE datetime <= '$endPeriod'";
         $WHERE_FILTER .= ' AND dayofweek(datetime) <> 1' if ( $tf != 604800 );
