@@ -4,7 +4,7 @@
 
 =head1 SYNOPSIS
 
-    fx-all-tables.pl [--template "TRUNCATE TABLE TABLE_NAME" --timeframes=$TF1[,$TF2] --instruments=EURUSD,[GBPUSD]] --providers=oanda,[fxcm]
+    fx-all-tables.pl --template "TABLE_NAME INSTRUMENT_NAME TIMEFRAME_NAME" --timeframes=$TF1[,$TF2] --instruments=EURUSD,[GBPUSD]] --providers=oanda,[oanda_historical,fxcm]
 
 =head2 OPTIONS
 
@@ -23,10 +23,18 @@ Defaults to all instruments supported by the provider.
 
 =item C<--template=s>
 
-Optional, but most likely fundamental.  The template for what statment will be output.
-The string "TABLE_NAME" will be replaced by the name of the db table that supports a given instrument/timeframe.
-The string "INSTRUMENT_NAME" will be replaced by the name of the instrument.
-The string "TIMEFRAME_NAME" will be replaced by the name of the timeframe.
+Required.  The template for what statment will be output.
+
+=over 4
+
+=item * The string "TABLE_NAME" will be replaced by the name of the db table that supports a given provider/instrument/timeframe, ie: oanda_EUR_USD_60.
+
+=item * The string "INSTRUMENT_NAME" will be replaced by the name of the instrument, ie: EUR_USD.
+
+=item * The string "TIMEFRAME_NAME" will be replaced by the name of the timeframe, ie: 60.
+
+=back
+
 Defaults to "TABLE_NAME".
 
 =item C<--help>
@@ -46,7 +54,7 @@ use Getopt::Long;
 use Pod::Usage;
 use Finance::HostedTrader::Datasource;
 
-my ($template, $join, $prefix, $suffix, $timeframes_txt, $instruments_txt, $providers_txt, $help) = ('TABLE_NAME', "\n", "", "");
+my ($template, $join, $prefix, $suffix, $timeframes_txt, $instruments_txt, $providers_txt, $help) = ("", "\n", "", "");
 
 my $result = GetOptions(
                         "timeframes=s", \$timeframes_txt,
@@ -60,6 +68,7 @@ my $result = GetOptions(
                     )  or pod2usage(1);
 
 pod2usage(1) if ( $help );
+pod2usage(1) if (!$template);
 
 my $db = Finance::HostedTrader::Datasource->new();
 
