@@ -83,7 +83,7 @@ sub getLastClose {
     my $tableName = $data_provider->getTableName($instrument, $timeframe);
     my $sql = qq{
             SELECT T1.datetime,
-            ROUND(T1.close,4) AS close
+            ROUND(T1.mid_close,4) AS close
             FROM $tableName AS T1
             ORDER BY T1.datetime DESC
             LIMIT 1
