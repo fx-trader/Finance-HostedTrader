@@ -169,7 +169,7 @@ foreach my $provider_type (@provider_types) {
 
 fx-all-tables.pl --provider=oanda_historical \
                  --timeframes=604800 \
-                 --template="SELECT * FROM (SELECT 'INSTRUMENT_NAME' AS label, datetime, open, high, low, close, ta_rsi(close,14) AS RSI14 FROM TABLE_NAME ORDER BY datetime LIMIT 1850000000000000000) AS T" \
+                 --template="SELECT * FROM (SELECT 'INSTRUMENT_NAME' AS label, datetime, open, high, low, close, ta_rsi(close,14) AS RSI14 FROM TABLE_NAME ORDER BY datetime LIMIT 18446744073709551615) AS T" \
                  --join=$'\n'" UNION ALL "$'\n' \
                  --prefix "CREATE OR REPLACE VIEW PROVIDER_NAME_ALL_604800 AS " \
                  --suffix=";" | fx-db-client.pl
