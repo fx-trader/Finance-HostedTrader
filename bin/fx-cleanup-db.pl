@@ -44,7 +44,7 @@ my $db = Finance::HostedTrader::Datasource->new();
 
 
 my %records_to_keep_in_timeframe = (
-    60  => 20000,
+    60  => 30000,
 );
 
 my $timeframes = $db->cfg->timeframes->all;
