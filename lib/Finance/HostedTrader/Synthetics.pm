@@ -46,6 +46,53 @@ my %tfMap = (
     },
 );
 
+sub multiple_timeframes {
+    my %options = @_;
+    my $instrument = $options{instrument} // die("Instrument required");
+    my $timeframes = $options{timeframes} // die("List of timeframes required");
+    my $provider   = $options{provider} // 'oanda';
+    my $max_loaded_items = $options{max_loaded_items} // 18446744073709551615;
+
+    my $datetime_data_clauses = "  datetime,\n";
+    my $datetime_indi_clauses = "  datetime,\n";
+    my $rsi_clauses = "  ta_rsi(close, 14) AS rsi_60,\n";
+    my @filters;
+    foreach my $timeframe (keys %{$timeframes}) {
+        push @filters, "rsi_${timeframe} " . $timeframes->{$timeframe}{filter};
+        next if ($timeframe eq $lowerTf);
+        my $date_format = $tfMap{$timeframe}->{date_format} || die("Unknown timeframe: $timeframe");
+        $datetime_data_clauses .= "    $date_format AS datetime_${timeframe},\n";
+        $datetime_indi_clauses .= "    datetime_${timeframe},\n";
+        $rsi_clauses .= "    ta_rsi_win(close, 14) OVER (PARTITION BY datetime_${timeframe} ORDER BY datetime) AS rsi_${timeframe},\n";
+    }
+
+    my $sql = "
+WITH T AS (
+  SELECT datetime, mid_open AS open, mid_high AS high, mid_low AS low, mid_close AS close
+  FROM ${provider}_${instrument}_${lowerTf}
+  ORDER BY datetime
+  LIMIT $max_loaded_items
+),
+data AS (
+  SELECT
+${datetime_data_clauses}  close
+FROM T
+),
+indicators AS (
+  SELECT
+  $datetime_indi_clauses  $rsi_clauses    close
+  FROM data
+)
+SELECT * FROM indicators
+";
+
+if (@filters) {
+    my $filter = join(" AND ", @filters);
+    $sql .= "WHERE $filter";
+}
+return $sql;
+}
+
 sub get_synthetic_symbol {
     my %options = @_;
 
