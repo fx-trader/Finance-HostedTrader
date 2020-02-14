@@ -175,3 +175,6 @@ fx-all-tables.pl --provider=oanda_historical \
                  --suffix=";" | fx-db-client.pl
 
 =cut
+
+# To copy data from the oanda_historical_ tables to oanda_ tables use:
+# time fx-all-tables.pl --providers=oanda --template "INSERT INTO TABLE_NAME SELECT * FROM ( SELECT * FROM oanda_historical_INSTRUMENT_NAME_TIMEFRAME_NAME ORDER BY datetime DESC LIMIT 50000) AS T ORDER BY datetime ASC;" | fx-db-client.pl
