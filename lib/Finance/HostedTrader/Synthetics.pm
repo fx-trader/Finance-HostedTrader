@@ -184,6 +184,7 @@ sub get_synthetic_timeframe {
     my $p  = $options{provider} || die("missing provider");
     my $incremental_base_table  = $options{incremental_base_table};
 
+    die("Don't know how to handle timeframe $tf") unless ($tfMap{$tf});
     my $date_format = $tfMap{$tf}->{date_format};
     my $date_group  = $tfMap{$tf}->{date_group} || $date_format;
     my $where_clause= $tfMap{$tf}->{where_clause};
