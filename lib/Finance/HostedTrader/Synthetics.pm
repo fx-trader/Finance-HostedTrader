@@ -33,6 +33,9 @@ my %tfMap = (
     14400 => {
         date_format => "CAST(CONCAT(year(datetime), '-', month(datetime), '-', day(datetime), ' ',  floor(hour(datetime) / 4) * 4, ':00:00') AS DATETIME)",
     },
+    28800 => {
+        date_format => "CAST(CONCAT(year(datetime), '-', month(datetime), '-', day(datetime), ' ',  floor(hour(datetime) / 8) * 8, ':00:00') AS DATETIME)",
+    },
     86400 => {
         date_format => "date_format(datetime, '%Y-%m-%d 00:00:00')",
         where_clause => "dayofweek(datetime) != 1",
