@@ -29,6 +29,7 @@ my %timeframes = (
     '2hour' => [7200, "CAST(CONCAT(year(datetime), '-', month(datetime), '-', day(datetime), ' ',  floor(hour(datetime) / 2) * 2, ':00:00') AS DATETIME)"],
     '3hour' => [10800, "CAST(CONCAT(year(datetime), '-', month(datetime), '-', day(datetime), ' ',  floor(hour(datetime) / 3) * 3, ':00:00') AS DATETIME)"],
     '4hour' => [14400, "CAST(CONCAT(year(datetime), '-', month(datetime), '-', day(datetime), ' ',  floor(hour(datetime) / 4) * 4, ':00:00') AS DATETIME)"],
+    '8hour' => [28800, "CAST(CONCAT(year(datetime), '-', month(datetime), '-', day(datetime), ' ',  floor(hour(datetime) / 8) * 8, ':00:00') AS DATETIME)"],
     'day'   => [86400, "date_format(datetime, '%Y-%m-%d 00:00:00')"],
     '2day'  => [172800, undef],
     'week'  => [604800, "date_format(date_sub(datetime, interval weekday(datetime)+1 DAY), '%Y-%m-%d 00:00:00')"],
