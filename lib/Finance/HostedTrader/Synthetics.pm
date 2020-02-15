@@ -49,6 +49,14 @@ my %tfMap = (
     },
 );
 
+sub getDateFormat {
+    my $tf = shift;
+
+    my $data = $tfMap{$tf};
+    die("Don't know how to handle timeframe $tf") unless($data->{date_format});
+    return $data->{date_format};
+}
+
 sub multiple_timeframes {
     my %options = @_;
     my $instrument = $options{instrument} // die("Instrument required");
