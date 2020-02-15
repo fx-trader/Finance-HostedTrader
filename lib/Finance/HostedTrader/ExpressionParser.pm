@@ -409,9 +409,9 @@ sub _getIndicatorSql {
     my ($self, %args) = @_;
     my ( $result );
 
-    my @obsolete_arg_names  = qw(tf fields maxLoadedItems endPeriod numItems);
+    my @obsolete_arg_names  = qw(tf fields maxLoadedItems endPeriod numItems symbol);
     $self->log_obsolete_argument_names(\@obsolete_arg_names, \%args);
-    my @good_args           = qw(provider timeframe expression symbol max_loaded_items start_period end_period item_count inner_sql_filter weekdays);
+    my @good_args           = qw(provider timeframe expression instrument max_loaded_items start_period end_period item_count inner_sql_filter weekdays);
 
     foreach my $key (keys %args) {
         $self->{_logger}->logconfess("invalid arg in getIndicatorData: $key") unless grep { /$key/ } @good_args, @obsolete_arg_names;
@@ -425,7 +425,7 @@ sub _getIndicatorSql {
     my $displayEndDate   = $args{end_period} || $args{end_period} || '9999-12-31';
     my $expr      = $args{expression} || $args{fields}          || $self->{_logger}->logconfess("No indicator expression set");
     $expr = lc($expr);
-    my $symbol    = $args{symbol}          || $self->{_logger}->logconfess("No symbol set for indicator");
+    my $symbol    = $args{instrument} || $args{symbol}          || $self->{_logger}->logconfess("No instrument set for indicator");
     my $itemCount = $args{item_count} || $args{numItems} || 10_000_000;
     my $sqlFilter = $args{inner_sql_filter} // '';
     my $provider  = $args{provider};
