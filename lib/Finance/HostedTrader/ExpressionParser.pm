@@ -434,15 +434,16 @@ sub _getIndicatorSql {
 
     #TODO: Refactor the parser bit so that it can be called independently. This will be usefull to validate expressions before running them.
     $result     = $self->{_parser}->start_indicator($expr);
+
+    #TODO: Need a more meaningfull error message describing what's wrong with the given expression
+    $self->{_logger}->logdie("Syntax error in indicator \n\n$expr\n")
+        unless ( defined($result) );
+
 #TODO These substitutions should be provider specific
     $result =~ s/open/mid_open/g;
     $result =~ s/high/mid_high/g;
     $result =~ s/low/mid_low/g;
     $result =~ s/close/mid_close/g;
-
-    #TODO: Need a more meaningfull error message describing what's wrong with the given expression
-    $self->{_logger}->logdie("Syntax error in indicator \n\n$expr\n")
-        unless ( defined($result) );
 
     my $WHERE_FILTER = "WHERE datetime >= '$displayStartDate' AND datetime <= '$displayEndDate'";
     $WHERE_FILTER .= " AND ($sqlFilter)" if ($sqlFilter);
