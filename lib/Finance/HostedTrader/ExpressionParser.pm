@@ -474,6 +474,7 @@ sub _getIndicatorSql2 {
     my $datetime_labels = join(', ', map {"datetime_${_}"} keys %DATETIMES);
     use Finance::HostedTrader::Synthetics;
     my $datetime_expressions = join(', ', map { Finance::HostedTrader::Synthetics::getDateFormat($_) . " AS datetime_${_}" } keys %DATETIMES);
+    $datetime_expressions .= ',' if ($datetime_expressions);
 
     my $sql = "
 WITH T AS (
@@ -485,7 +486,7 @@ WITH T AS (
 ),
 data AS (
   SELECT
-  datetime, ${datetime_expressions}, open, high, low, close
+  datetime, ${datetime_expressions} open, high, low, close
   FROM T
   ORDER BY datetime ASC
   LIMIT 18446744073709551615 -- See https://mariadb.com/kb/en/why-is-order-by-in-a-from-subquery-ignored/
@@ -494,6 +495,8 @@ indicators AS (
   SELECT
   $result
   FROM data
+  ORDER BY datetime ASC
+  LIMIT 18446744073709551615 -- See https://mariadb.com/kb/en/why-is-order-by-in-a-from-subquery-ignored/
 )
 SELECT * FROM indicators
 ORDER BY datetime DESC
