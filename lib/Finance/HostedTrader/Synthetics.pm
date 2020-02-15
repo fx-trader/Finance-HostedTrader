@@ -59,14 +59,18 @@ sub multiple_timeframes {
     my $datetime_data_clauses = "  datetime,\n";
     my $datetime_indi_clauses = "  datetime,\n";
     my $rsi_clauses = "  ta_rsi(close, 14) AS rsi_60,\n";
+    my $sma_clauses = "  ta_sma(close, 200) AS sma_200,\n";
+    my $atr_clauses = "  ta_ssma(ta_tr(high, low, close), 14) AS atr_200,\n";
     my @filters;
-    foreach my $timeframe (keys %{$timeframes}) {
-        push @filters, "rsi_${timeframe} " . $timeframes->{$timeframe}{filter};
+    foreach my $timeframe (sort {$a <=> $b} keys %{$timeframes}) {
+        push @filters, "rsi_${timeframe} " . $timeframes->{$timeframe}{filter} if ($timeframes->{$timeframe}{filter});
         next if ($timeframe eq $lowerTf);
         my $date_format = $tfMap{$timeframe}->{date_format} || die("Unknown timeframe: $timeframe");
         $datetime_data_clauses .= "    $date_format AS datetime_${timeframe},\n";
         $datetime_indi_clauses .= "    datetime_${timeframe},\n";
         $rsi_clauses .= "    ta_rsi_win(close, 14) OVER (PARTITION BY datetime_${timeframe} ORDER BY datetime) AS rsi_${timeframe},\n";
+        $sma_clauses .= "    ta_sma_win(close, 200) OVER (PARTITION BY datetime_${timeframe} ORDER BY datetime) AS sma_${timeframe},\n";
+        $atr_clauses .= "    ta_atr_win(high, low, close, 14) OVER (PARTITION BY datetime_${timeframe} ORDER BY datetime) AS atr_${timeframe},\n";
     }
 
     my $sql = "
@@ -78,12 +82,12 @@ WITH T AS (
 ),
 data AS (
   SELECT
-${datetime_data_clauses}  close
+${datetime_data_clauses}  open, high, low, close
 FROM T
 ),
 indicators AS (
   SELECT
-  $datetime_indi_clauses  $rsi_clauses    close
+  $datetime_indi_clauses  $rsi_clauses  $sma_clauses  $atr_clauses    close
   FROM data
 )
 SELECT * FROM indicators
