@@ -45,6 +45,9 @@ expression:     term math_op expression      {"$item[1] $item[2] $item[3]"}
 
 math_op:        '+' | '-' | '*' | '/'
 
+#Timeframes can start with a number, ie: 4hour, hence, the 'number'
+#term needs to come after the 'timeframe' term otherwise the 'number'
+#term consumes the 4 and timeframe term consumes hour instead of 4hour
 term:           timeframe
               | number
               | field
