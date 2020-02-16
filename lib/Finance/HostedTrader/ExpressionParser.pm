@@ -293,7 +293,7 @@ WITH T AS (
   SELECT datetime, mid_open AS open, mid_high AS high, mid_low AS low, mid_close AS close
   FROM ${tableName}
   $WHERE_FILTER
-  ORDER BY datetime
+  ORDER BY datetime DESC
   LIMIT $maxLoadedItems
 ),
 data AS (
