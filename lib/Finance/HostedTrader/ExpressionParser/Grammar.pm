@@ -5360,289 +5360,6 @@ sub Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::number
 }
 
 # ARGS ARE: ($parser, $text; $repeating, $_noactions, \@args, $_itempos)
-sub Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::recursive_timeframe_statement_signal
-{
-	my $thisparser = $_[0];
-	use vars q{$tracelevel};
-	local $tracelevel = ($tracelevel||0)+1;
-	$ERRORS = 0;
-    my $thisrule = $thisparser->{"rules"}{"recursive_timeframe_statement_signal"};
-
-    Parse::RecDescent::_trace(q{Trying rule: [recursive_timeframe_statement_signal]},
-                  Parse::RecDescent::_tracefirst($_[1]),
-                  q{recursive_timeframe_statement_signal},
-                  $tracelevel)
-                    if defined $::RD_TRACE;
-
-    
-    my $err_at = @{$thisparser->{errors}};
-
-    my $score;
-    my $score_return;
-    my $_tok;
-    my $return = undef;
-    my $_matched=0;
-    my $commit=0;
-    my @item = ();
-    my %item = ();
-    my $repeating =  $_[2];
-    my $_noactions = $_[3];
-    my @arg =    defined $_[4] ? @{ &{$_[4]} } : ();
-    my $_itempos = $_[5];
-    my %arg =    ($#arg & 01) ? @arg : (@arg, undef);
-    my $text;
-    my $lastsep;
-    my $current_match;
-    my $expectation = new Parse::RecDescent::Expectation(q{<leftop: timeframe_statement_signal boolop timeframe_statement_signal>});
-    $expectation->at($_[1]);
-    
-    my $thisline;
-    tie $thisline, q{Parse::RecDescent::LineCounter}, \$text, $thisparser;
-
-    
-
-    while (!$_matched && !$commit)
-    {
-        
-        Parse::RecDescent::_trace(q{Trying production: [<leftop: timeframe_statement_signal boolop timeframe_statement_signal>]},
-                      Parse::RecDescent::_tracefirst($_[1]),
-                      q{recursive_timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        my $thisprod = $thisrule->{"prods"}[0];
-        $text = $_[1];
-        my $_savetext;
-        @item = (q{recursive_timeframe_statement_signal});
-        %item = (__RULE__ => q{recursive_timeframe_statement_signal});
-        my $repcount = 0;
-
-
-        Parse::RecDescent::_trace(q{Trying operator: [<leftop: timeframe_statement_signal boolop timeframe_statement_signal>]},
-                  Parse::RecDescent::_tracefirst($text),
-                  q{recursive_timeframe_statement_signal},
-                  $tracelevel)
-                    if defined $::RD_TRACE;
-        $expectation->is(q{})->at($text);
-
-        $_tok = undef;
-        OPLOOP: while (1)
-        {
-          $repcount = 0;
-          my @item;
-          my %item;
-
-          # MATCH LEFTARG
-          
-        Parse::RecDescent::_trace(q{Trying subrule: [timeframe_statement_signal]},
-                  Parse::RecDescent::_tracefirst($text),
-                  q{recursive_timeframe_statement_signal},
-                  $tracelevel)
-                    if defined $::RD_TRACE;
-        if (1) { no strict qw{refs};
-        $expectation->is(q{timeframe_statement_signal})->at($text);
-        unless (defined ($_tok = Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::timeframe_statement_signal($thisparser,$text,$repeating,$_noactions,sub { \@arg },undef)))
-        {
-            
-            Parse::RecDescent::_trace(q{<<Didn't match subrule: [timeframe_statement_signal]>>},
-                          Parse::RecDescent::_tracefirst($text),
-                          q{recursive_timeframe_statement_signal},
-                          $tracelevel)
-                            if defined $::RD_TRACE;
-            $expectation->failed();
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched subrule: [timeframe_statement_signal]<< (return value: [}
-                    . $_tok . q{]},
-
-                      Parse::RecDescent::_tracefirst($text),
-                      q{recursive_timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        $item{q{timeframe_statement_signal}} = $_tok;
-        push @item, $_tok;
-        
-        }
-
-
-
-          $repcount++;
-
-          my $savetext = $text;
-          my $backtrack;
-
-          # MATCH (OP RIGHTARG)(s)
-          while ($repcount < 100000000)
-          {
-            $backtrack = 0;
-            
-        Parse::RecDescent::_trace(q{Trying subrule: [boolop]},
-                  Parse::RecDescent::_tracefirst($text),
-                  q{recursive_timeframe_statement_signal},
-                  $tracelevel)
-                    if defined $::RD_TRACE;
-        if (1) { no strict qw{refs};
-        $expectation->is(q{boolop})->at($text);
-        unless (defined ($_tok = Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::boolop($thisparser,$text,$repeating,$_noactions,sub { \@arg },undef)))
-        {
-            
-            Parse::RecDescent::_trace(q{<<Didn't match subrule: [boolop]>>},
-                          Parse::RecDescent::_tracefirst($text),
-                          q{recursive_timeframe_statement_signal},
-                          $tracelevel)
-                            if defined $::RD_TRACE;
-            $expectation->failed();
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched subrule: [boolop]<< (return value: [}
-                    . $_tok . q{]},
-
-                      Parse::RecDescent::_tracefirst($text),
-                      q{recursive_timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        $item{q{boolop}} = $_tok;
-        push @item, $_tok;
-        
-        }
-
-            $backtrack=1;
-            
-            
-        Parse::RecDescent::_trace(q{Trying subrule: [timeframe_statement_signal]},
-                  Parse::RecDescent::_tracefirst($text),
-                  q{recursive_timeframe_statement_signal},
-                  $tracelevel)
-                    if defined $::RD_TRACE;
-        if (1) { no strict qw{refs};
-        $expectation->is(q{timeframe_statement_signal})->at($text);
-        unless (defined ($_tok = Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::timeframe_statement_signal($thisparser,$text,$repeating,$_noactions,sub { \@arg },undef)))
-        {
-            
-            Parse::RecDescent::_trace(q{<<Didn't match subrule: [timeframe_statement_signal]>>},
-                          Parse::RecDescent::_tracefirst($text),
-                          q{recursive_timeframe_statement_signal},
-                          $tracelevel)
-                            if defined $::RD_TRACE;
-            $expectation->failed();
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched subrule: [timeframe_statement_signal]<< (return value: [}
-                    . $_tok . q{]},
-
-                      Parse::RecDescent::_tracefirst($text),
-                      q{recursive_timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        $item{q{timeframe_statement_signal}} = $_tok;
-        push @item, $_tok;
-        
-        }
-
-            $savetext = $text;
-            $repcount++;
-          }
-          $text = $savetext;
-          pop @item if $backtrack;
-
-          unless (@item) { undef $_tok; last }
-          $_tok = [ @item ];
-
-          last;
-        } # end of OPLOOP
-
-        unless ($repcount>=1)
-        {
-            Parse::RecDescent::_trace(q{<<Didn't match operator: [<leftop: timeframe_statement_signal boolop timeframe_statement_signal>]>>},
-                          Parse::RecDescent::_tracefirst($text),
-                          q{recursive_timeframe_statement_signal},
-                          $tracelevel)
-                            if defined $::RD_TRACE;
-            $expectation->failed();
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched operator: [<leftop: timeframe_statement_signal boolop timeframe_statement_signal>]<< (return value: [}
-                      . qq{@{$_tok||[]}} . q{]},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{recursive_timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-
-        push @item, $item{__DIRECTIVE1__}=$_tok||[];
-
-        Parse::RecDescent::_trace(q{Trying action},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{recursive_timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        
-
-        $_tok = ($_noactions) ? 0 : do { $item[1] };
-        unless (defined $_tok)
-        {
-            Parse::RecDescent::_trace(q{<<Didn't match action>> (return value: [undef])})
-                    if defined $::RD_TRACE;
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched action<< (return value: [}
-                      . $_tok . q{])},
-                      Parse::RecDescent::_tracefirst($text))
-                        if defined $::RD_TRACE;
-        push @item, $_tok;
-        $item{__ACTION1__}=$_tok;
-        
-
-        Parse::RecDescent::_trace(q{>>Matched production: [<leftop: timeframe_statement_signal boolop timeframe_statement_signal>]<<},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{recursive_timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-
-
-
-        $_matched = 1;
-        last;
-    }
-
-
-    unless ( $_matched || defined($score) )
-    {
-        
-
-        $_[1] = $text;  # NOT SURE THIS IS NEEDED
-        Parse::RecDescent::_trace(q{<<Didn't match rule>>},
-                     Parse::RecDescent::_tracefirst($_[1]),
-                     q{recursive_timeframe_statement_signal},
-                     $tracelevel)
-                    if defined $::RD_TRACE;
-        return undef;
-    }
-    if (!defined($return) && defined($score))
-    {
-        Parse::RecDescent::_trace(q{>>Accepted scored production<<}, "",
-                      q{recursive_timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        $return = $score_return;
-    }
-    splice @{$thisparser->{errors}}, $err_at;
-    $return = $item[$#item] unless defined $return;
-    if (defined $::RD_TRACE)
-    {
-        Parse::RecDescent::_trace(q{>>Matched rule<< (return value: [} .
-                      $return . q{])}, "",
-                      q{recursive_timeframe_statement_signal},
-                      $tracelevel);
-        Parse::RecDescent::_trace(q{(consumed: [} .
-                      Parse::RecDescent::_tracemax(substr($_[1],0,-length($text))) . q{])},
-                      Parse::RecDescent::_tracefirst($text),
-                      , q{recursive_timeframe_statement_signal},
-                      $tracelevel)
-    }
-    $_[1] = $text;
-    return $return;
-}
-
-# ARGS ARE: ($parser, $text; $repeating, $_noactions, \@args, $_itempos)
 sub Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::signal
 {
 	my $thisparser = $_[0];
@@ -7036,7 +6753,7 @@ sub Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::start_s
     my $text;
     my $lastsep;
     my $current_match;
-    my $expectation = new Parse::RecDescent::Expectation(q{recursive_timeframe_statement_signal});
+    my $expectation = new Parse::RecDescent::Expectation(q{statement_signal});
     $expectation->at($_[1]);
     
     my $thisline;
@@ -7047,7 +6764,7 @@ sub Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::start_s
     while (!$_matched && !$commit)
     {
         
-        Parse::RecDescent::_trace(q{Trying production: [recursive_timeframe_statement_signal /\\Z/]},
+        Parse::RecDescent::_trace(q{Trying production: [statement_signal /\\Z/]},
                       Parse::RecDescent::_tracefirst($_[1]),
                       q{start_signal},
                       $tracelevel)
@@ -7060,17 +6777,17 @@ sub Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::start_s
         my $repcount = 0;
 
 
-        Parse::RecDescent::_trace(q{Trying subrule: [recursive_timeframe_statement_signal]},
+        Parse::RecDescent::_trace(q{Trying subrule: [statement_signal]},
                   Parse::RecDescent::_tracefirst($text),
                   q{start_signal},
                   $tracelevel)
                     if defined $::RD_TRACE;
         if (1) { no strict qw{refs};
         $expectation->is(q{})->at($text);
-        unless (defined ($_tok = Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::recursive_timeframe_statement_signal($thisparser,$text,$repeating,$_noactions,sub { \@arg },undef)))
+        unless (defined ($_tok = Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::statement_signal($thisparser,$text,$repeating,$_noactions,sub { \@arg },undef)))
         {
             
-            Parse::RecDescent::_trace(q{<<Didn't match subrule: [recursive_timeframe_statement_signal]>>},
+            Parse::RecDescent::_trace(q{<<Didn't match subrule: [statement_signal]>>},
                           Parse::RecDescent::_tracefirst($text),
                           q{start_signal},
                           $tracelevel)
@@ -7078,14 +6795,14 @@ sub Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::start_s
             $expectation->failed();
             last;
         }
-        Parse::RecDescent::_trace(q{>>Matched subrule: [recursive_timeframe_statement_signal]<< (return value: [}
+        Parse::RecDescent::_trace(q{>>Matched subrule: [statement_signal]<< (return value: [}
                     . $_tok . q{]},
 
                       Parse::RecDescent::_tracefirst($text),
                       q{start_signal},
                       $tracelevel)
                         if defined $::RD_TRACE;
-        $item{q{recursive_timeframe_statement_signal}} = $_tok;
+        $item{q{statement_signal}} = $_tok;
         push @item, $_tok;
         
         }
@@ -7139,7 +6856,7 @@ sub Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::start_s
         $item{__ACTION1__}=$_tok;
         
 
-        Parse::RecDescent::_trace(q{>>Matched production: [recursive_timeframe_statement_signal /\\Z/]<<},
+        Parse::RecDescent::_trace(q{>>Matched production: [statement_signal /\\Z/]<<},
                       Parse::RecDescent::_tracefirst($text),
                       q{start_signal},
                       $tracelevel)
@@ -9716,2785 +9433,6 @@ sub Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::timefra
     $_[1] = $text;
     return $return;
 }
-
-# ARGS ARE: ($parser, $text; $repeating, $_noactions, \@args, $_itempos)
-sub Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::timeframe_statement_signal
-{
-	my $thisparser = $_[0];
-	use vars q{$tracelevel};
-	local $tracelevel = ($tracelevel||0)+1;
-	$ERRORS = 0;
-    my $thisrule = $thisparser->{"rules"}{"timeframe_statement_signal"};
-
-    Parse::RecDescent::_trace(q{Trying rule: [timeframe_statement_signal]},
-                  Parse::RecDescent::_tracefirst($_[1]),
-                  q{timeframe_statement_signal},
-                  $tracelevel)
-                    if defined $::RD_TRACE;
-
-    
-    my $err_at = @{$thisparser->{errors}};
-
-    my $score;
-    my $score_return;
-    my $_tok;
-    my $return = undef;
-    my $_matched=0;
-    my $commit=0;
-    my @item = ();
-    my %item = ();
-    my $repeating =  $_[2];
-    my $_noactions = $_[3];
-    my @arg =    defined $_[4] ? @{ &{$_[4]} } : ();
-    my $_itempos = $_[5];
-    my %arg =    ($#arg & 01) ? @arg : (@arg, undef);
-    my $text;
-    my $lastsep;
-    my $current_match;
-    my $expectation = new Parse::RecDescent::Expectation(q{'month', or 'week', or 'day', or '4hour', or '3hour', or '2hour', or 'hour', or '30minute', or '15minute', or '5minute', or '2minute', or 'minute', or '30second', or '15second', or '5second', or 'second', or statement_signal});
-    $expectation->at($_[1]);
-    
-    my $thisline;
-    tie $thisline, q{Parse::RecDescent::LineCounter}, \$text, $thisparser;
-
-    
-
-    while (!$_matched && !$commit)
-    {
-        
-        Parse::RecDescent::_trace(q{Trying production: ['month' '(' statement_signal ')']},
-                      Parse::RecDescent::_tracefirst($_[1]),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        my $thisprod = $thisrule->{"prods"}[0];
-        $text = $_[1];
-        my $_savetext;
-        @item = (q{timeframe_statement_signal});
-        %item = (__RULE__ => q{timeframe_statement_signal});
-        my $repcount = 0;
-
-
-        Parse::RecDescent::_trace(q{Trying terminal: ['month']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\Amonth/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING1__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying terminal: ['(']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{'('})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A\(/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING2__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying subrule: [statement_signal]},
-                  Parse::RecDescent::_tracefirst($text),
-                  q{timeframe_statement_signal},
-                  $tracelevel)
-                    if defined $::RD_TRACE;
-        if (1) { no strict qw{refs};
-        $expectation->is(q{statement_signal})->at($text);
-        unless (defined ($_tok = Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::statement_signal($thisparser,$text,$repeating,$_noactions,sub { \@arg },undef)))
-        {
-            
-            Parse::RecDescent::_trace(q{<<Didn't match subrule: [statement_signal]>>},
-                          Parse::RecDescent::_tracefirst($text),
-                          q{timeframe_statement_signal},
-                          $tracelevel)
-                            if defined $::RD_TRACE;
-            $expectation->failed();
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched subrule: [statement_signal]<< (return value: [}
-                    . $_tok . q{]},
-
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        $item{q{statement_signal}} = $_tok;
-        push @item, $_tok;
-        
-        }
-
-        Parse::RecDescent::_trace(q{Trying terminal: [')']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{')'})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A\)/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING3__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying action},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        
-
-        $_tok = ($_noactions) ? 0 : do { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 18144000); $item[3] };
-        unless (defined $_tok)
-        {
-            Parse::RecDescent::_trace(q{<<Didn't match action>> (return value: [undef])})
-                    if defined $::RD_TRACE;
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched action<< (return value: [}
-                      . $_tok . q{])},
-                      Parse::RecDescent::_tracefirst($text))
-                        if defined $::RD_TRACE;
-        push @item, $_tok;
-        $item{__ACTION1__}=$_tok;
-        
-
-        Parse::RecDescent::_trace(q{>>Matched production: ['month' '(' statement_signal ')']<<},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-
-
-
-        $_matched = 1;
-        last;
-    }
-
-
-    while (!$_matched && !$commit)
-    {
-        
-        Parse::RecDescent::_trace(q{Trying production: ['week' '(' statement_signal ')']},
-                      Parse::RecDescent::_tracefirst($_[1]),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        my $thisprod = $thisrule->{"prods"}[1];
-        $text = $_[1];
-        my $_savetext;
-        @item = (q{timeframe_statement_signal});
-        %item = (__RULE__ => q{timeframe_statement_signal});
-        my $repcount = 0;
-
-
-        Parse::RecDescent::_trace(q{Trying terminal: ['week']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\Aweek/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING1__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying terminal: ['(']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{'('})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A\(/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING2__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying subrule: [statement_signal]},
-                  Parse::RecDescent::_tracefirst($text),
-                  q{timeframe_statement_signal},
-                  $tracelevel)
-                    if defined $::RD_TRACE;
-        if (1) { no strict qw{refs};
-        $expectation->is(q{statement_signal})->at($text);
-        unless (defined ($_tok = Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::statement_signal($thisparser,$text,$repeating,$_noactions,sub { \@arg },undef)))
-        {
-            
-            Parse::RecDescent::_trace(q{<<Didn't match subrule: [statement_signal]>>},
-                          Parse::RecDescent::_tracefirst($text),
-                          q{timeframe_statement_signal},
-                          $tracelevel)
-                            if defined $::RD_TRACE;
-            $expectation->failed();
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched subrule: [statement_signal]<< (return value: [}
-                    . $_tok . q{]},
-
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        $item{q{statement_signal}} = $_tok;
-        push @item, $_tok;
-        
-        }
-
-        Parse::RecDescent::_trace(q{Trying terminal: [')']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{')'})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A\)/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING3__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying action},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        
-
-        $_tok = ($_noactions) ? 0 : do { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 604800); $item[3] };
-        unless (defined $_tok)
-        {
-            Parse::RecDescent::_trace(q{<<Didn't match action>> (return value: [undef])})
-                    if defined $::RD_TRACE;
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched action<< (return value: [}
-                      . $_tok . q{])},
-                      Parse::RecDescent::_tracefirst($text))
-                        if defined $::RD_TRACE;
-        push @item, $_tok;
-        $item{__ACTION1__}=$_tok;
-        
-
-        Parse::RecDescent::_trace(q{>>Matched production: ['week' '(' statement_signal ')']<<},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-
-
-
-        $_matched = 1;
-        last;
-    }
-
-
-    while (!$_matched && !$commit)
-    {
-        
-        Parse::RecDescent::_trace(q{Trying production: ['day' '(' statement_signal ')']},
-                      Parse::RecDescent::_tracefirst($_[1]),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        my $thisprod = $thisrule->{"prods"}[2];
-        $text = $_[1];
-        my $_savetext;
-        @item = (q{timeframe_statement_signal});
-        %item = (__RULE__ => q{timeframe_statement_signal});
-        my $repcount = 0;
-
-
-        Parse::RecDescent::_trace(q{Trying terminal: ['day']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\Aday/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING1__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying terminal: ['(']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{'('})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A\(/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING2__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying subrule: [statement_signal]},
-                  Parse::RecDescent::_tracefirst($text),
-                  q{timeframe_statement_signal},
-                  $tracelevel)
-                    if defined $::RD_TRACE;
-        if (1) { no strict qw{refs};
-        $expectation->is(q{statement_signal})->at($text);
-        unless (defined ($_tok = Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::statement_signal($thisparser,$text,$repeating,$_noactions,sub { \@arg },undef)))
-        {
-            
-            Parse::RecDescent::_trace(q{<<Didn't match subrule: [statement_signal]>>},
-                          Parse::RecDescent::_tracefirst($text),
-                          q{timeframe_statement_signal},
-                          $tracelevel)
-                            if defined $::RD_TRACE;
-            $expectation->failed();
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched subrule: [statement_signal]<< (return value: [}
-                    . $_tok . q{]},
-
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        $item{q{statement_signal}} = $_tok;
-        push @item, $_tok;
-        
-        }
-
-        Parse::RecDescent::_trace(q{Trying terminal: [')']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{')'})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A\)/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING3__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying action},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        
-
-        $_tok = ($_noactions) ? 0 : do { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 86400); $item[3] };
-        unless (defined $_tok)
-        {
-            Parse::RecDescent::_trace(q{<<Didn't match action>> (return value: [undef])})
-                    if defined $::RD_TRACE;
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched action<< (return value: [}
-                      . $_tok . q{])},
-                      Parse::RecDescent::_tracefirst($text))
-                        if defined $::RD_TRACE;
-        push @item, $_tok;
-        $item{__ACTION1__}=$_tok;
-        
-
-        Parse::RecDescent::_trace(q{>>Matched production: ['day' '(' statement_signal ')']<<},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-
-
-
-        $_matched = 1;
-        last;
-    }
-
-
-    while (!$_matched && !$commit)
-    {
-        
-        Parse::RecDescent::_trace(q{Trying production: ['4hour' '(' statement_signal ')']},
-                      Parse::RecDescent::_tracefirst($_[1]),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        my $thisprod = $thisrule->{"prods"}[3];
-        $text = $_[1];
-        my $_savetext;
-        @item = (q{timeframe_statement_signal});
-        %item = (__RULE__ => q{timeframe_statement_signal});
-        my $repcount = 0;
-
-
-        Parse::RecDescent::_trace(q{Trying terminal: ['4hour']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A4hour/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING1__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying terminal: ['(']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{'('})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A\(/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING2__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying subrule: [statement_signal]},
-                  Parse::RecDescent::_tracefirst($text),
-                  q{timeframe_statement_signal},
-                  $tracelevel)
-                    if defined $::RD_TRACE;
-        if (1) { no strict qw{refs};
-        $expectation->is(q{statement_signal})->at($text);
-        unless (defined ($_tok = Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::statement_signal($thisparser,$text,$repeating,$_noactions,sub { \@arg },undef)))
-        {
-            
-            Parse::RecDescent::_trace(q{<<Didn't match subrule: [statement_signal]>>},
-                          Parse::RecDescent::_tracefirst($text),
-                          q{timeframe_statement_signal},
-                          $tracelevel)
-                            if defined $::RD_TRACE;
-            $expectation->failed();
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched subrule: [statement_signal]<< (return value: [}
-                    . $_tok . q{]},
-
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        $item{q{statement_signal}} = $_tok;
-        push @item, $_tok;
-        
-        }
-
-        Parse::RecDescent::_trace(q{Trying terminal: [')']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{')'})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A\)/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING3__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying action},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        
-
-        $_tok = ($_noactions) ? 0 : do { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 14400); $item[3] };
-        unless (defined $_tok)
-        {
-            Parse::RecDescent::_trace(q{<<Didn't match action>> (return value: [undef])})
-                    if defined $::RD_TRACE;
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched action<< (return value: [}
-                      . $_tok . q{])},
-                      Parse::RecDescent::_tracefirst($text))
-                        if defined $::RD_TRACE;
-        push @item, $_tok;
-        $item{__ACTION1__}=$_tok;
-        
-
-        Parse::RecDescent::_trace(q{>>Matched production: ['4hour' '(' statement_signal ')']<<},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-
-
-
-        $_matched = 1;
-        last;
-    }
-
-
-    while (!$_matched && !$commit)
-    {
-        
-        Parse::RecDescent::_trace(q{Trying production: ['3hour' '(' statement_signal ')']},
-                      Parse::RecDescent::_tracefirst($_[1]),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        my $thisprod = $thisrule->{"prods"}[4];
-        $text = $_[1];
-        my $_savetext;
-        @item = (q{timeframe_statement_signal});
-        %item = (__RULE__ => q{timeframe_statement_signal});
-        my $repcount = 0;
-
-
-        Parse::RecDescent::_trace(q{Trying terminal: ['3hour']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A3hour/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING1__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying terminal: ['(']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{'('})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A\(/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING2__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying subrule: [statement_signal]},
-                  Parse::RecDescent::_tracefirst($text),
-                  q{timeframe_statement_signal},
-                  $tracelevel)
-                    if defined $::RD_TRACE;
-        if (1) { no strict qw{refs};
-        $expectation->is(q{statement_signal})->at($text);
-        unless (defined ($_tok = Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::statement_signal($thisparser,$text,$repeating,$_noactions,sub { \@arg },undef)))
-        {
-            
-            Parse::RecDescent::_trace(q{<<Didn't match subrule: [statement_signal]>>},
-                          Parse::RecDescent::_tracefirst($text),
-                          q{timeframe_statement_signal},
-                          $tracelevel)
-                            if defined $::RD_TRACE;
-            $expectation->failed();
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched subrule: [statement_signal]<< (return value: [}
-                    . $_tok . q{]},
-
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        $item{q{statement_signal}} = $_tok;
-        push @item, $_tok;
-        
-        }
-
-        Parse::RecDescent::_trace(q{Trying terminal: [')']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{')'})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A\)/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING3__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying action},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        
-
-        $_tok = ($_noactions) ? 0 : do { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 10800); $item[3] };
-        unless (defined $_tok)
-        {
-            Parse::RecDescent::_trace(q{<<Didn't match action>> (return value: [undef])})
-                    if defined $::RD_TRACE;
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched action<< (return value: [}
-                      . $_tok . q{])},
-                      Parse::RecDescent::_tracefirst($text))
-                        if defined $::RD_TRACE;
-        push @item, $_tok;
-        $item{__ACTION1__}=$_tok;
-        
-
-        Parse::RecDescent::_trace(q{>>Matched production: ['3hour' '(' statement_signal ')']<<},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-
-
-
-        $_matched = 1;
-        last;
-    }
-
-
-    while (!$_matched && !$commit)
-    {
-        
-        Parse::RecDescent::_trace(q{Trying production: ['2hour' '(' statement_signal ')']},
-                      Parse::RecDescent::_tracefirst($_[1]),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        my $thisprod = $thisrule->{"prods"}[5];
-        $text = $_[1];
-        my $_savetext;
-        @item = (q{timeframe_statement_signal});
-        %item = (__RULE__ => q{timeframe_statement_signal});
-        my $repcount = 0;
-
-
-        Parse::RecDescent::_trace(q{Trying terminal: ['2hour']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A2hour/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING1__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying terminal: ['(']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{'('})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A\(/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING2__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying subrule: [statement_signal]},
-                  Parse::RecDescent::_tracefirst($text),
-                  q{timeframe_statement_signal},
-                  $tracelevel)
-                    if defined $::RD_TRACE;
-        if (1) { no strict qw{refs};
-        $expectation->is(q{statement_signal})->at($text);
-        unless (defined ($_tok = Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::statement_signal($thisparser,$text,$repeating,$_noactions,sub { \@arg },undef)))
-        {
-            
-            Parse::RecDescent::_trace(q{<<Didn't match subrule: [statement_signal]>>},
-                          Parse::RecDescent::_tracefirst($text),
-                          q{timeframe_statement_signal},
-                          $tracelevel)
-                            if defined $::RD_TRACE;
-            $expectation->failed();
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched subrule: [statement_signal]<< (return value: [}
-                    . $_tok . q{]},
-
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        $item{q{statement_signal}} = $_tok;
-        push @item, $_tok;
-        
-        }
-
-        Parse::RecDescent::_trace(q{Trying terminal: [')']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{')'})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A\)/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING3__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying action},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        
-
-        $_tok = ($_noactions) ? 0 : do { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 7200); $item[3] };
-        unless (defined $_tok)
-        {
-            Parse::RecDescent::_trace(q{<<Didn't match action>> (return value: [undef])})
-                    if defined $::RD_TRACE;
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched action<< (return value: [}
-                      . $_tok . q{])},
-                      Parse::RecDescent::_tracefirst($text))
-                        if defined $::RD_TRACE;
-        push @item, $_tok;
-        $item{__ACTION1__}=$_tok;
-        
-
-        Parse::RecDescent::_trace(q{>>Matched production: ['2hour' '(' statement_signal ')']<<},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-
-
-
-        $_matched = 1;
-        last;
-    }
-
-
-    while (!$_matched && !$commit)
-    {
-        
-        Parse::RecDescent::_trace(q{Trying production: ['hour' '(' statement_signal ')']},
-                      Parse::RecDescent::_tracefirst($_[1]),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        my $thisprod = $thisrule->{"prods"}[6];
-        $text = $_[1];
-        my $_savetext;
-        @item = (q{timeframe_statement_signal});
-        %item = (__RULE__ => q{timeframe_statement_signal});
-        my $repcount = 0;
-
-
-        Parse::RecDescent::_trace(q{Trying terminal: ['hour']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\Ahour/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING1__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying terminal: ['(']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{'('})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A\(/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING2__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying subrule: [statement_signal]},
-                  Parse::RecDescent::_tracefirst($text),
-                  q{timeframe_statement_signal},
-                  $tracelevel)
-                    if defined $::RD_TRACE;
-        if (1) { no strict qw{refs};
-        $expectation->is(q{statement_signal})->at($text);
-        unless (defined ($_tok = Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::statement_signal($thisparser,$text,$repeating,$_noactions,sub { \@arg },undef)))
-        {
-            
-            Parse::RecDescent::_trace(q{<<Didn't match subrule: [statement_signal]>>},
-                          Parse::RecDescent::_tracefirst($text),
-                          q{timeframe_statement_signal},
-                          $tracelevel)
-                            if defined $::RD_TRACE;
-            $expectation->failed();
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched subrule: [statement_signal]<< (return value: [}
-                    . $_tok . q{]},
-
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        $item{q{statement_signal}} = $_tok;
-        push @item, $_tok;
-        
-        }
-
-        Parse::RecDescent::_trace(q{Trying terminal: [')']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{')'})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A\)/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING3__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying action},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        
-
-        $_tok = ($_noactions) ? 0 : do { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 3600); $item[3] };
-        unless (defined $_tok)
-        {
-            Parse::RecDescent::_trace(q{<<Didn't match action>> (return value: [undef])})
-                    if defined $::RD_TRACE;
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched action<< (return value: [}
-                      . $_tok . q{])},
-                      Parse::RecDescent::_tracefirst($text))
-                        if defined $::RD_TRACE;
-        push @item, $_tok;
-        $item{__ACTION1__}=$_tok;
-        
-
-        Parse::RecDescent::_trace(q{>>Matched production: ['hour' '(' statement_signal ')']<<},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-
-
-
-        $_matched = 1;
-        last;
-    }
-
-
-    while (!$_matched && !$commit)
-    {
-        
-        Parse::RecDescent::_trace(q{Trying production: ['30minute' '(' statement_signal ')']},
-                      Parse::RecDescent::_tracefirst($_[1]),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        my $thisprod = $thisrule->{"prods"}[7];
-        $text = $_[1];
-        my $_savetext;
-        @item = (q{timeframe_statement_signal});
-        %item = (__RULE__ => q{timeframe_statement_signal});
-        my $repcount = 0;
-
-
-        Parse::RecDescent::_trace(q{Trying terminal: ['30minute']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A30minute/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING1__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying terminal: ['(']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{'('})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A\(/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING2__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying subrule: [statement_signal]},
-                  Parse::RecDescent::_tracefirst($text),
-                  q{timeframe_statement_signal},
-                  $tracelevel)
-                    if defined $::RD_TRACE;
-        if (1) { no strict qw{refs};
-        $expectation->is(q{statement_signal})->at($text);
-        unless (defined ($_tok = Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::statement_signal($thisparser,$text,$repeating,$_noactions,sub { \@arg },undef)))
-        {
-            
-            Parse::RecDescent::_trace(q{<<Didn't match subrule: [statement_signal]>>},
-                          Parse::RecDescent::_tracefirst($text),
-                          q{timeframe_statement_signal},
-                          $tracelevel)
-                            if defined $::RD_TRACE;
-            $expectation->failed();
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched subrule: [statement_signal]<< (return value: [}
-                    . $_tok . q{]},
-
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        $item{q{statement_signal}} = $_tok;
-        push @item, $_tok;
-        
-        }
-
-        Parse::RecDescent::_trace(q{Trying terminal: [')']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{')'})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A\)/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING3__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying action},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        
-
-        $_tok = ($_noactions) ? 0 : do { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 1800); $item[3] };
-        unless (defined $_tok)
-        {
-            Parse::RecDescent::_trace(q{<<Didn't match action>> (return value: [undef])})
-                    if defined $::RD_TRACE;
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched action<< (return value: [}
-                      . $_tok . q{])},
-                      Parse::RecDescent::_tracefirst($text))
-                        if defined $::RD_TRACE;
-        push @item, $_tok;
-        $item{__ACTION1__}=$_tok;
-        
-
-        Parse::RecDescent::_trace(q{>>Matched production: ['30minute' '(' statement_signal ')']<<},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-
-
-
-        $_matched = 1;
-        last;
-    }
-
-
-    while (!$_matched && !$commit)
-    {
-        
-        Parse::RecDescent::_trace(q{Trying production: ['15minute' '(' statement_signal ')']},
-                      Parse::RecDescent::_tracefirst($_[1]),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        my $thisprod = $thisrule->{"prods"}[8];
-        $text = $_[1];
-        my $_savetext;
-        @item = (q{timeframe_statement_signal});
-        %item = (__RULE__ => q{timeframe_statement_signal});
-        my $repcount = 0;
-
-
-        Parse::RecDescent::_trace(q{Trying terminal: ['15minute']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A15minute/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING1__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying terminal: ['(']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{'('})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A\(/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING2__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying subrule: [statement_signal]},
-                  Parse::RecDescent::_tracefirst($text),
-                  q{timeframe_statement_signal},
-                  $tracelevel)
-                    if defined $::RD_TRACE;
-        if (1) { no strict qw{refs};
-        $expectation->is(q{statement_signal})->at($text);
-        unless (defined ($_tok = Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::statement_signal($thisparser,$text,$repeating,$_noactions,sub { \@arg },undef)))
-        {
-            
-            Parse::RecDescent::_trace(q{<<Didn't match subrule: [statement_signal]>>},
-                          Parse::RecDescent::_tracefirst($text),
-                          q{timeframe_statement_signal},
-                          $tracelevel)
-                            if defined $::RD_TRACE;
-            $expectation->failed();
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched subrule: [statement_signal]<< (return value: [}
-                    . $_tok . q{]},
-
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        $item{q{statement_signal}} = $_tok;
-        push @item, $_tok;
-        
-        }
-
-        Parse::RecDescent::_trace(q{Trying terminal: [')']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{')'})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A\)/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING3__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying action},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        
-
-        $_tok = ($_noactions) ? 0 : do { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 900); $item[3] };
-        unless (defined $_tok)
-        {
-            Parse::RecDescent::_trace(q{<<Didn't match action>> (return value: [undef])})
-                    if defined $::RD_TRACE;
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched action<< (return value: [}
-                      . $_tok . q{])},
-                      Parse::RecDescent::_tracefirst($text))
-                        if defined $::RD_TRACE;
-        push @item, $_tok;
-        $item{__ACTION1__}=$_tok;
-        
-
-        Parse::RecDescent::_trace(q{>>Matched production: ['15minute' '(' statement_signal ')']<<},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-
-
-
-        $_matched = 1;
-        last;
-    }
-
-
-    while (!$_matched && !$commit)
-    {
-        
-        Parse::RecDescent::_trace(q{Trying production: ['5minute' '(' statement_signal ')']},
-                      Parse::RecDescent::_tracefirst($_[1]),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        my $thisprod = $thisrule->{"prods"}[9];
-        $text = $_[1];
-        my $_savetext;
-        @item = (q{timeframe_statement_signal});
-        %item = (__RULE__ => q{timeframe_statement_signal});
-        my $repcount = 0;
-
-
-        Parse::RecDescent::_trace(q{Trying terminal: ['5minute']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A5minute/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING1__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying terminal: ['(']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{'('})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A\(/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING2__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying subrule: [statement_signal]},
-                  Parse::RecDescent::_tracefirst($text),
-                  q{timeframe_statement_signal},
-                  $tracelevel)
-                    if defined $::RD_TRACE;
-        if (1) { no strict qw{refs};
-        $expectation->is(q{statement_signal})->at($text);
-        unless (defined ($_tok = Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::statement_signal($thisparser,$text,$repeating,$_noactions,sub { \@arg },undef)))
-        {
-            
-            Parse::RecDescent::_trace(q{<<Didn't match subrule: [statement_signal]>>},
-                          Parse::RecDescent::_tracefirst($text),
-                          q{timeframe_statement_signal},
-                          $tracelevel)
-                            if defined $::RD_TRACE;
-            $expectation->failed();
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched subrule: [statement_signal]<< (return value: [}
-                    . $_tok . q{]},
-
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        $item{q{statement_signal}} = $_tok;
-        push @item, $_tok;
-        
-        }
-
-        Parse::RecDescent::_trace(q{Trying terminal: [')']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{')'})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A\)/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING3__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying action},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        
-
-        $_tok = ($_noactions) ? 0 : do { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 300); $item[3] };
-        unless (defined $_tok)
-        {
-            Parse::RecDescent::_trace(q{<<Didn't match action>> (return value: [undef])})
-                    if defined $::RD_TRACE;
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched action<< (return value: [}
-                      . $_tok . q{])},
-                      Parse::RecDescent::_tracefirst($text))
-                        if defined $::RD_TRACE;
-        push @item, $_tok;
-        $item{__ACTION1__}=$_tok;
-        
-
-        Parse::RecDescent::_trace(q{>>Matched production: ['5minute' '(' statement_signal ')']<<},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-
-
-
-        $_matched = 1;
-        last;
-    }
-
-
-    while (!$_matched && !$commit)
-    {
-        
-        Parse::RecDescent::_trace(q{Trying production: ['2minute' '(' statement_signal ')']},
-                      Parse::RecDescent::_tracefirst($_[1]),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        my $thisprod = $thisrule->{"prods"}[10];
-        $text = $_[1];
-        my $_savetext;
-        @item = (q{timeframe_statement_signal});
-        %item = (__RULE__ => q{timeframe_statement_signal});
-        my $repcount = 0;
-
-
-        Parse::RecDescent::_trace(q{Trying terminal: ['2minute']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A2minute/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING1__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying terminal: ['(']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{'('})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A\(/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING2__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying subrule: [statement_signal]},
-                  Parse::RecDescent::_tracefirst($text),
-                  q{timeframe_statement_signal},
-                  $tracelevel)
-                    if defined $::RD_TRACE;
-        if (1) { no strict qw{refs};
-        $expectation->is(q{statement_signal})->at($text);
-        unless (defined ($_tok = Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::statement_signal($thisparser,$text,$repeating,$_noactions,sub { \@arg },undef)))
-        {
-            
-            Parse::RecDescent::_trace(q{<<Didn't match subrule: [statement_signal]>>},
-                          Parse::RecDescent::_tracefirst($text),
-                          q{timeframe_statement_signal},
-                          $tracelevel)
-                            if defined $::RD_TRACE;
-            $expectation->failed();
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched subrule: [statement_signal]<< (return value: [}
-                    . $_tok . q{]},
-
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        $item{q{statement_signal}} = $_tok;
-        push @item, $_tok;
-        
-        }
-
-        Parse::RecDescent::_trace(q{Trying terminal: [')']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{')'})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A\)/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING3__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying action},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        
-
-        $_tok = ($_noactions) ? 0 : do { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 120); $item[3] };
-        unless (defined $_tok)
-        {
-            Parse::RecDescent::_trace(q{<<Didn't match action>> (return value: [undef])})
-                    if defined $::RD_TRACE;
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched action<< (return value: [}
-                      . $_tok . q{])},
-                      Parse::RecDescent::_tracefirst($text))
-                        if defined $::RD_TRACE;
-        push @item, $_tok;
-        $item{__ACTION1__}=$_tok;
-        
-
-        Parse::RecDescent::_trace(q{>>Matched production: ['2minute' '(' statement_signal ')']<<},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-
-
-
-        $_matched = 1;
-        last;
-    }
-
-
-    while (!$_matched && !$commit)
-    {
-        
-        Parse::RecDescent::_trace(q{Trying production: ['minute' '(' statement_signal ')']},
-                      Parse::RecDescent::_tracefirst($_[1]),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        my $thisprod = $thisrule->{"prods"}[11];
-        $text = $_[1];
-        my $_savetext;
-        @item = (q{timeframe_statement_signal});
-        %item = (__RULE__ => q{timeframe_statement_signal});
-        my $repcount = 0;
-
-
-        Parse::RecDescent::_trace(q{Trying terminal: ['minute']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\Aminute/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING1__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying terminal: ['(']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{'('})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A\(/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING2__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying subrule: [statement_signal]},
-                  Parse::RecDescent::_tracefirst($text),
-                  q{timeframe_statement_signal},
-                  $tracelevel)
-                    if defined $::RD_TRACE;
-        if (1) { no strict qw{refs};
-        $expectation->is(q{statement_signal})->at($text);
-        unless (defined ($_tok = Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::statement_signal($thisparser,$text,$repeating,$_noactions,sub { \@arg },undef)))
-        {
-            
-            Parse::RecDescent::_trace(q{<<Didn't match subrule: [statement_signal]>>},
-                          Parse::RecDescent::_tracefirst($text),
-                          q{timeframe_statement_signal},
-                          $tracelevel)
-                            if defined $::RD_TRACE;
-            $expectation->failed();
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched subrule: [statement_signal]<< (return value: [}
-                    . $_tok . q{]},
-
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        $item{q{statement_signal}} = $_tok;
-        push @item, $_tok;
-        
-        }
-
-        Parse::RecDescent::_trace(q{Trying terminal: [')']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{')'})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A\)/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING3__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying action},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        
-
-        $_tok = ($_noactions) ? 0 : do { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 60); $item[3] };
-        unless (defined $_tok)
-        {
-            Parse::RecDescent::_trace(q{<<Didn't match action>> (return value: [undef])})
-                    if defined $::RD_TRACE;
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched action<< (return value: [}
-                      . $_tok . q{])},
-                      Parse::RecDescent::_tracefirst($text))
-                        if defined $::RD_TRACE;
-        push @item, $_tok;
-        $item{__ACTION1__}=$_tok;
-        
-
-        Parse::RecDescent::_trace(q{>>Matched production: ['minute' '(' statement_signal ')']<<},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-
-
-
-        $_matched = 1;
-        last;
-    }
-
-
-    while (!$_matched && !$commit)
-    {
-        
-        Parse::RecDescent::_trace(q{Trying production: ['30second' '(' statement_signal ')']},
-                      Parse::RecDescent::_tracefirst($_[1]),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        my $thisprod = $thisrule->{"prods"}[12];
-        $text = $_[1];
-        my $_savetext;
-        @item = (q{timeframe_statement_signal});
-        %item = (__RULE__ => q{timeframe_statement_signal});
-        my $repcount = 0;
-
-
-        Parse::RecDescent::_trace(q{Trying terminal: ['30second']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A30second/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING1__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying terminal: ['(']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{'('})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A\(/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING2__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying subrule: [statement_signal]},
-                  Parse::RecDescent::_tracefirst($text),
-                  q{timeframe_statement_signal},
-                  $tracelevel)
-                    if defined $::RD_TRACE;
-        if (1) { no strict qw{refs};
-        $expectation->is(q{statement_signal})->at($text);
-        unless (defined ($_tok = Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::statement_signal($thisparser,$text,$repeating,$_noactions,sub { \@arg },undef)))
-        {
-            
-            Parse::RecDescent::_trace(q{<<Didn't match subrule: [statement_signal]>>},
-                          Parse::RecDescent::_tracefirst($text),
-                          q{timeframe_statement_signal},
-                          $tracelevel)
-                            if defined $::RD_TRACE;
-            $expectation->failed();
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched subrule: [statement_signal]<< (return value: [}
-                    . $_tok . q{]},
-
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        $item{q{statement_signal}} = $_tok;
-        push @item, $_tok;
-        
-        }
-
-        Parse::RecDescent::_trace(q{Trying terminal: [')']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{')'})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A\)/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING3__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying action},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        
-
-        $_tok = ($_noactions) ? 0 : do { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 30); $item[3] };
-        unless (defined $_tok)
-        {
-            Parse::RecDescent::_trace(q{<<Didn't match action>> (return value: [undef])})
-                    if defined $::RD_TRACE;
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched action<< (return value: [}
-                      . $_tok . q{])},
-                      Parse::RecDescent::_tracefirst($text))
-                        if defined $::RD_TRACE;
-        push @item, $_tok;
-        $item{__ACTION1__}=$_tok;
-        
-
-        Parse::RecDescent::_trace(q{>>Matched production: ['30second' '(' statement_signal ')']<<},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-
-
-
-        $_matched = 1;
-        last;
-    }
-
-
-    while (!$_matched && !$commit)
-    {
-        
-        Parse::RecDescent::_trace(q{Trying production: ['15second' '(' statement_signal ')']},
-                      Parse::RecDescent::_tracefirst($_[1]),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        my $thisprod = $thisrule->{"prods"}[13];
-        $text = $_[1];
-        my $_savetext;
-        @item = (q{timeframe_statement_signal});
-        %item = (__RULE__ => q{timeframe_statement_signal});
-        my $repcount = 0;
-
-
-        Parse::RecDescent::_trace(q{Trying terminal: ['15second']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A15second/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING1__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying terminal: ['(']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{'('})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A\(/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING2__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying subrule: [statement_signal]},
-                  Parse::RecDescent::_tracefirst($text),
-                  q{timeframe_statement_signal},
-                  $tracelevel)
-                    if defined $::RD_TRACE;
-        if (1) { no strict qw{refs};
-        $expectation->is(q{statement_signal})->at($text);
-        unless (defined ($_tok = Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::statement_signal($thisparser,$text,$repeating,$_noactions,sub { \@arg },undef)))
-        {
-            
-            Parse::RecDescent::_trace(q{<<Didn't match subrule: [statement_signal]>>},
-                          Parse::RecDescent::_tracefirst($text),
-                          q{timeframe_statement_signal},
-                          $tracelevel)
-                            if defined $::RD_TRACE;
-            $expectation->failed();
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched subrule: [statement_signal]<< (return value: [}
-                    . $_tok . q{]},
-
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        $item{q{statement_signal}} = $_tok;
-        push @item, $_tok;
-        
-        }
-
-        Parse::RecDescent::_trace(q{Trying terminal: [')']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{')'})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A\)/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING3__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying action},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        
-
-        $_tok = ($_noactions) ? 0 : do { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 15); $item[3] };
-        unless (defined $_tok)
-        {
-            Parse::RecDescent::_trace(q{<<Didn't match action>> (return value: [undef])})
-                    if defined $::RD_TRACE;
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched action<< (return value: [}
-                      . $_tok . q{])},
-                      Parse::RecDescent::_tracefirst($text))
-                        if defined $::RD_TRACE;
-        push @item, $_tok;
-        $item{__ACTION1__}=$_tok;
-        
-
-        Parse::RecDescent::_trace(q{>>Matched production: ['15second' '(' statement_signal ')']<<},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-
-
-
-        $_matched = 1;
-        last;
-    }
-
-
-    while (!$_matched && !$commit)
-    {
-        
-        Parse::RecDescent::_trace(q{Trying production: ['5second' '(' statement_signal ')']},
-                      Parse::RecDescent::_tracefirst($_[1]),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        my $thisprod = $thisrule->{"prods"}[14];
-        $text = $_[1];
-        my $_savetext;
-        @item = (q{timeframe_statement_signal});
-        %item = (__RULE__ => q{timeframe_statement_signal});
-        my $repcount = 0;
-
-
-        Parse::RecDescent::_trace(q{Trying terminal: ['5second']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A5second/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING1__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying terminal: ['(']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{'('})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A\(/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING2__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying subrule: [statement_signal]},
-                  Parse::RecDescent::_tracefirst($text),
-                  q{timeframe_statement_signal},
-                  $tracelevel)
-                    if defined $::RD_TRACE;
-        if (1) { no strict qw{refs};
-        $expectation->is(q{statement_signal})->at($text);
-        unless (defined ($_tok = Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::statement_signal($thisparser,$text,$repeating,$_noactions,sub { \@arg },undef)))
-        {
-            
-            Parse::RecDescent::_trace(q{<<Didn't match subrule: [statement_signal]>>},
-                          Parse::RecDescent::_tracefirst($text),
-                          q{timeframe_statement_signal},
-                          $tracelevel)
-                            if defined $::RD_TRACE;
-            $expectation->failed();
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched subrule: [statement_signal]<< (return value: [}
-                    . $_tok . q{]},
-
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        $item{q{statement_signal}} = $_tok;
-        push @item, $_tok;
-        
-        }
-
-        Parse::RecDescent::_trace(q{Trying terminal: [')']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{')'})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A\)/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING3__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying action},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        
-
-        $_tok = ($_noactions) ? 0 : do { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 5); $item[3] };
-        unless (defined $_tok)
-        {
-            Parse::RecDescent::_trace(q{<<Didn't match action>> (return value: [undef])})
-                    if defined $::RD_TRACE;
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched action<< (return value: [}
-                      . $_tok . q{])},
-                      Parse::RecDescent::_tracefirst($text))
-                        if defined $::RD_TRACE;
-        push @item, $_tok;
-        $item{__ACTION1__}=$_tok;
-        
-
-        Parse::RecDescent::_trace(q{>>Matched production: ['5second' '(' statement_signal ')']<<},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-
-
-
-        $_matched = 1;
-        last;
-    }
-
-
-    while (!$_matched && !$commit)
-    {
-        
-        Parse::RecDescent::_trace(q{Trying production: ['second' '(' statement_signal ')']},
-                      Parse::RecDescent::_tracefirst($_[1]),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        my $thisprod = $thisrule->{"prods"}[15];
-        $text = $_[1];
-        my $_savetext;
-        @item = (q{timeframe_statement_signal});
-        %item = (__RULE__ => q{timeframe_statement_signal});
-        my $repcount = 0;
-
-
-        Parse::RecDescent::_trace(q{Trying terminal: ['second']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\Asecond/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING1__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying terminal: ['(']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{'('})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A\(/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING2__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying subrule: [statement_signal]},
-                  Parse::RecDescent::_tracefirst($text),
-                  q{timeframe_statement_signal},
-                  $tracelevel)
-                    if defined $::RD_TRACE;
-        if (1) { no strict qw{refs};
-        $expectation->is(q{statement_signal})->at($text);
-        unless (defined ($_tok = Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::statement_signal($thisparser,$text,$repeating,$_noactions,sub { \@arg },undef)))
-        {
-            
-            Parse::RecDescent::_trace(q{<<Didn't match subrule: [statement_signal]>>},
-                          Parse::RecDescent::_tracefirst($text),
-                          q{timeframe_statement_signal},
-                          $tracelevel)
-                            if defined $::RD_TRACE;
-            $expectation->failed();
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched subrule: [statement_signal]<< (return value: [}
-                    . $_tok . q{]},
-
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        $item{q{statement_signal}} = $_tok;
-        push @item, $_tok;
-        
-        }
-
-        Parse::RecDescent::_trace(q{Trying terminal: [')']},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        undef $lastsep;
-        $expectation->is(q{')'})->at($text);
-        
-
-        unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ m/\A\)/)
-        {
-            $text = $lastsep . $text if defined $lastsep;
-            
-            $expectation->failed();
-            Parse::RecDescent::_trace(qq{<<Didn't match terminal>>},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-            last;
-        }
-        $current_match = substr($text, $-[0], $+[0] - $-[0]);
-        substr($text,0,length($current_match),q{});
-        Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
-                        . $current_match . q{])},
-                          Parse::RecDescent::_tracefirst($text))
-                            if defined $::RD_TRACE;
-        push @item, $item{__STRING3__}=$current_match;
-        
-
-        Parse::RecDescent::_trace(q{Trying action},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        
-
-        $_tok = ($_noactions) ? 0 : do { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 1); $item[3] };
-        unless (defined $_tok)
-        {
-            Parse::RecDescent::_trace(q{<<Didn't match action>> (return value: [undef])})
-                    if defined $::RD_TRACE;
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched action<< (return value: [}
-                      . $_tok . q{])},
-                      Parse::RecDescent::_tracefirst($text))
-                        if defined $::RD_TRACE;
-        push @item, $_tok;
-        $item{__ACTION1__}=$_tok;
-        
-
-        Parse::RecDescent::_trace(q{>>Matched production: ['second' '(' statement_signal ')']<<},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-
-
-
-        $_matched = 1;
-        last;
-    }
-
-
-    while (!$_matched && !$commit)
-    {
-        
-        Parse::RecDescent::_trace(q{Trying production: [statement_signal]},
-                      Parse::RecDescent::_tracefirst($_[1]),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        my $thisprod = $thisrule->{"prods"}[16];
-        $text = $_[1];
-        my $_savetext;
-        @item = (q{timeframe_statement_signal});
-        %item = (__RULE__ => q{timeframe_statement_signal});
-        my $repcount = 0;
-
-
-        Parse::RecDescent::_trace(q{Trying subrule: [statement_signal]},
-                  Parse::RecDescent::_tracefirst($text),
-                  q{timeframe_statement_signal},
-                  $tracelevel)
-                    if defined $::RD_TRACE;
-        if (1) { no strict qw{refs};
-        $expectation->is(q{})->at($text);
-        unless (defined ($_tok = Parse::RecDescent::Finance::HostedTrader::ExpressionParser::Grammar::statement_signal($thisparser,$text,$repeating,$_noactions,sub { \@arg },undef)))
-        {
-            
-            Parse::RecDescent::_trace(q{<<Didn't match subrule: [statement_signal]>>},
-                          Parse::RecDescent::_tracefirst($text),
-                          q{timeframe_statement_signal},
-                          $tracelevel)
-                            if defined $::RD_TRACE;
-            $expectation->failed();
-            last;
-        }
-        Parse::RecDescent::_trace(q{>>Matched subrule: [statement_signal]<< (return value: [}
-                    . $_tok . q{]},
-
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        $item{q{statement_signal}} = $_tok;
-        push @item, $_tok;
-        
-        }
-
-        Parse::RecDescent::_trace(q{>>Matched production: [statement_signal]<<},
-                      Parse::RecDescent::_tracefirst($text),
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-
-
-
-        $_matched = 1;
-        last;
-    }
-
-
-    unless ( $_matched || defined($score) )
-    {
-        
-
-        $_[1] = $text;  # NOT SURE THIS IS NEEDED
-        Parse::RecDescent::_trace(q{<<Didn't match rule>>},
-                     Parse::RecDescent::_tracefirst($_[1]),
-                     q{timeframe_statement_signal},
-                     $tracelevel)
-                    if defined $::RD_TRACE;
-        return undef;
-    }
-    if (!defined($return) && defined($score))
-    {
-        Parse::RecDescent::_trace(q{>>Accepted scored production<<}, "",
-                      q{timeframe_statement_signal},
-                      $tracelevel)
-                        if defined $::RD_TRACE;
-        $return = $score_return;
-    }
-    splice @{$thisparser->{errors}}, $err_at;
-    $return = $item[$#item] unless defined $return;
-    if (defined $::RD_TRACE)
-    {
-        Parse::RecDescent::_trace(q{>>Matched rule<< (return value: [} .
-                      $return . q{])}, "",
-                      q{timeframe_statement_signal},
-                      $tracelevel);
-        Parse::RecDescent::_trace(q{(consumed: [} .
-                      Parse::RecDescent::_tracemax(substr($_[1],0,-length($text))) . q{])},
-                      Parse::RecDescent::_tracefirst($text),
-                      , q{timeframe_statement_signal},
-                      $tracelevel)
-    }
-    $_[1] = $text;
-    return $return;
-}
 }
 package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = bless( {
                  '_AUTOACTION' => undef,
@@ -12514,7 +9452,7 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                    'calls' => [],
                                                    'changed' => 0,
                                                    'impcount' => 0,
-                                                   'line' => 31,
+                                                   'line' => 11,
                                                    'name' => 'boolop',
                                                    'opcount' => 0,
                                                    'prods' => [
@@ -12526,7 +9464,7 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                       bless( {
                                                                                                'description' => '\'and\'',
                                                                                                'hashname' => '__STRING1__',
-                                                                                               'line' => 31,
+                                                                                               'line' => 11,
                                                                                                'lookahead' => 0,
                                                                                                'pattern' => 'and'
                                                                                              }, 'Parse::RecDescent::Literal' )
@@ -12545,12 +9483,12 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                       bless( {
                                                                                                'description' => '\'or\'',
                                                                                                'hashname' => '__STRING1__',
-                                                                                               'line' => 31,
+                                                                                               'line' => 11,
                                                                                                'lookahead' => 0,
                                                                                                'pattern' => 'or'
                                                                                              }, 'Parse::RecDescent::Literal' )
                                                                                     ],
-                                                                         'line' => 31,
+                                                                         'line' => 11,
                                                                          'number' => 1,
                                                                          'patcount' => 0,
                                                                          'strcount' => 1,
@@ -12563,7 +9501,7 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                    'calls' => [],
                                                    'changed' => 0,
                                                    'impcount' => 0,
-                                                   'line' => 41,
+                                                   'line' => 21,
                                                    'name' => 'cmp_op',
                                                    'opcount' => 0,
                                                    'prods' => [
@@ -12575,7 +9513,7 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                       bless( {
                                                                                                'description' => '\'>=\'',
                                                                                                'hashname' => '__STRING1__',
-                                                                                               'line' => 41,
+                                                                                               'line' => 21,
                                                                                                'lookahead' => 0,
                                                                                                'pattern' => '>='
                                                                                              }, 'Parse::RecDescent::Literal' )
@@ -12594,12 +9532,12 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                       bless( {
                                                                                                'description' => '\'>\'',
                                                                                                'hashname' => '__STRING1__',
-                                                                                               'line' => 41,
+                                                                                               'line' => 21,
                                                                                                'lookahead' => 0,
                                                                                                'pattern' => '>'
                                                                                              }, 'Parse::RecDescent::Literal' )
                                                                                     ],
-                                                                         'line' => 41,
+                                                                         'line' => 21,
                                                                          'number' => 1,
                                                                          'patcount' => 0,
                                                                          'strcount' => 1,
@@ -12613,12 +9551,12 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                       bless( {
                                                                                                'description' => '\'<=\'',
                                                                                                'hashname' => '__STRING1__',
-                                                                                               'line' => 41,
+                                                                                               'line' => 21,
                                                                                                'lookahead' => 0,
                                                                                                'pattern' => '<='
                                                                                              }, 'Parse::RecDescent::Literal' )
                                                                                     ],
-                                                                         'line' => 41,
+                                                                         'line' => 21,
                                                                          'number' => 2,
                                                                          'patcount' => 0,
                                                                          'strcount' => 1,
@@ -12632,12 +9570,12 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                       bless( {
                                                                                                'description' => '\'<\'',
                                                                                                'hashname' => '__STRING1__',
-                                                                                               'line' => 41,
+                                                                                               'line' => 21,
                                                                                                'lookahead' => 0,
                                                                                                'pattern' => '<'
                                                                                              }, 'Parse::RecDescent::Literal' )
                                                                                     ],
-                                                                         'line' => 41,
+                                                                         'line' => 21,
                                                                          'number' => 3,
                                                                          'patcount' => 0,
                                                                          'strcount' => 1,
@@ -12654,7 +9592,7 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                   ],
                                                        'changed' => 0,
                                                        'impcount' => 0,
-                                                       'line' => 43,
+                                                       'line' => 23,
                                                        'name' => 'expression',
                                                        'opcount' => 0,
                                                        'prods' => [
@@ -12666,7 +9604,7 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                           bless( {
                                                                                                    'argcode' => undef,
                                                                                                    'implicit' => undef,
-                                                                                                   'line' => 43,
+                                                                                                   'line' => 23,
                                                                                                    'lookahead' => 0,
                                                                                                    'matchrule' => 0,
                                                                                                    'subrule' => 'term'
@@ -12674,7 +9612,7 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                           bless( {
                                                                                                    'argcode' => undef,
                                                                                                    'implicit' => undef,
-                                                                                                   'line' => 43,
+                                                                                                   'line' => 23,
                                                                                                    'lookahead' => 0,
                                                                                                    'matchrule' => 0,
                                                                                                    'subrule' => 'math_op'
@@ -12682,7 +9620,7 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                           bless( {
                                                                                                    'argcode' => undef,
                                                                                                    'implicit' => undef,
-                                                                                                   'line' => 43,
+                                                                                                   'line' => 23,
                                                                                                    'lookahead' => 0,
                                                                                                    'matchrule' => 0,
                                                                                                    'subrule' => 'expression'
@@ -12690,7 +9628,7 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                           bless( {
                                                                                                    'code' => '{"$item[1] $item[2] $item[3]"}',
                                                                                                    'hashname' => '__ACTION1__',
-                                                                                                   'line' => 43,
+                                                                                                   'line' => 23,
                                                                                                    'lookahead' => 0
                                                                                                  }, 'Parse::RecDescent::Action' )
                                                                                         ],
@@ -12708,13 +9646,13 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                           bless( {
                                                                                                    'argcode' => undef,
                                                                                                    'implicit' => undef,
-                                                                                                   'line' => 44,
+                                                                                                   'line' => 24,
                                                                                                    'lookahead' => 0,
                                                                                                    'matchrule' => 0,
                                                                                                    'subrule' => 'term'
                                                                                                  }, 'Parse::RecDescent::Subrule' )
                                                                                         ],
-                                                                             'line' => 44,
+                                                                             'line' => 24,
                                                                              'number' => 1,
                                                                              'patcount' => 0,
                                                                              'strcount' => 0,
@@ -12727,7 +9665,7 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                   'calls' => [],
                                                   'changed' => 0,
                                                   'impcount' => 0,
-                                                  'line' => 56,
+                                                  'line' => 39,
                                                   'name' => 'field',
                                                   'opcount' => 0,
                                                   'prods' => [
@@ -12739,7 +9677,7 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                      bless( {
                                                                                               'description' => '\'datetime\'',
                                                                                               'hashname' => '__STRING1__',
-                                                                                              'line' => 56,
+                                                                                              'line' => 39,
                                                                                               'lookahead' => 0,
                                                                                               'pattern' => 'datetime'
                                                                                             }, 'Parse::RecDescent::InterpLit' )
@@ -12758,12 +9696,12 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                      bless( {
                                                                                               'description' => '\'open\'',
                                                                                               'hashname' => '__STRING1__',
-                                                                                              'line' => 56,
+                                                                                              'line' => 39,
                                                                                               'lookahead' => 0,
                                                                                               'pattern' => 'open'
                                                                                             }, 'Parse::RecDescent::InterpLit' )
                                                                                    ],
-                                                                        'line' => 56,
+                                                                        'line' => 39,
                                                                         'number' => 1,
                                                                         'patcount' => 0,
                                                                         'strcount' => 1,
@@ -12777,12 +9715,12 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                      bless( {
                                                                                               'description' => '\'high\'',
                                                                                               'hashname' => '__STRING1__',
-                                                                                              'line' => 56,
+                                                                                              'line' => 39,
                                                                                               'lookahead' => 0,
                                                                                               'pattern' => 'high'
                                                                                             }, 'Parse::RecDescent::InterpLit' )
                                                                                    ],
-                                                                        'line' => 56,
+                                                                        'line' => 39,
                                                                         'number' => 2,
                                                                         'patcount' => 0,
                                                                         'strcount' => 1,
@@ -12796,12 +9734,12 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                      bless( {
                                                                                               'description' => '\'low\'',
                                                                                               'hashname' => '__STRING1__',
-                                                                                              'line' => 56,
+                                                                                              'line' => 39,
                                                                                               'lookahead' => 0,
                                                                                               'pattern' => 'low'
                                                                                             }, 'Parse::RecDescent::InterpLit' )
                                                                                    ],
-                                                                        'line' => 56,
+                                                                        'line' => 39,
                                                                         'number' => 3,
                                                                         'patcount' => 0,
                                                                         'strcount' => 1,
@@ -12815,12 +9753,12 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                      bless( {
                                                                                               'description' => '\'close\'',
                                                                                               'hashname' => '__STRING1__',
-                                                                                              'line' => 56,
+                                                                                              'line' => 39,
                                                                                               'lookahead' => 0,
                                                                                               'pattern' => 'close'
                                                                                             }, 'Parse::RecDescent::InterpLit' )
                                                                                    ],
-                                                                        'line' => 56,
+                                                                        'line' => 39,
                                                                         'number' => 4,
                                                                         'patcount' => 0,
                                                                         'strcount' => 1,
@@ -12836,7 +9774,7 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                 ],
                                                      'changed' => 0,
                                                      'impcount' => 0,
-                                                     'line' => 69,
+                                                     'line' => 52,
                                                      'name' => 'function',
                                                      'opcount' => 0,
                                                      'prods' => [
@@ -12848,14 +9786,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\'ema(\'',
                                                                                                  'hashname' => '__STRING1__',
-                                                                                                 'line' => 70,
+                                                                                                 'line' => 53,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => 'ema('
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 70,
+                                                                                                 'line' => 53,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'expression'
@@ -12863,14 +9801,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\',\'',
                                                                                                  'hashname' => '__STRING2__',
-                                                                                                 'line' => 70,
+                                                                                                 'line' => 53,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ','
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 70,
+                                                                                                 'line' => 53,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'number'
@@ -12878,14 +9816,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\')\'',
                                                                                                  'hashname' => '__STRING3__',
-                                                                                                 'line' => 70,
+                                                                                                 'line' => 53,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ')'
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'code' => '{ "round(ta_ema($item[2],$item[4]), 4)" }',
                                                                                                  'hashname' => '__ACTION1__',
-                                                                                                 'line' => 70,
+                                                                                                 'line' => 53,
                                                                                                  'lookahead' => 0
                                                                                                }, 'Parse::RecDescent::Action' )
                                                                                       ],
@@ -12903,14 +9841,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\'sma(\'',
                                                                                                  'hashname' => '__STRING1__',
-                                                                                                 'line' => 71,
+                                                                                                 'line' => 54,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => 'sma('
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 71,
+                                                                                                 'line' => 54,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'expression'
@@ -12918,14 +9856,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\',\'',
                                                                                                  'hashname' => '__STRING2__',
-                                                                                                 'line' => 71,
+                                                                                                 'line' => 54,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ','
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 71,
+                                                                                                 'line' => 54,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'number'
@@ -12933,18 +9871,18 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\')\'',
                                                                                                  'hashname' => '__STRING3__',
-                                                                                                 'line' => 71,
+                                                                                                 'line' => 54,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ')'
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'code' => '{ "round(" . Finance::HostedTrader::ExpressionParser::GetIndicatorTimeframe("ta_sma($item[2],$item[4])", "ta_sma_win($item[2],$item[4]) OVER (PARTITION BY datetime_TIMEFRAME ORDER BY datetime)") . ", 4)" }',
                                                                                                  'hashname' => '__ACTION1__',
-                                                                                                 'line' => 71,
+                                                                                                 'line' => 54,
                                                                                                  'lookahead' => 0
                                                                                                }, 'Parse::RecDescent::Action' )
                                                                                       ],
-                                                                           'line' => 70,
+                                                                           'line' => 53,
                                                                            'number' => 1,
                                                                            'patcount' => 0,
                                                                            'strcount' => 3,
@@ -12958,14 +9896,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\'rsi(\'',
                                                                                                  'hashname' => '__STRING1__',
-                                                                                                 'line' => 72,
+                                                                                                 'line' => 55,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => 'rsi('
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 72,
+                                                                                                 'line' => 55,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'expression'
@@ -12973,14 +9911,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\',\'',
                                                                                                  'hashname' => '__STRING2__',
-                                                                                                 'line' => 72,
+                                                                                                 'line' => 55,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ','
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 72,
+                                                                                                 'line' => 55,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'number'
@@ -12988,18 +9926,18 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\')\'',
                                                                                                  'hashname' => '__STRING3__',
-                                                                                                 'line' => 72,
+                                                                                                 'line' => 55,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ')'
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'code' => '{ "round(" . Finance::HostedTrader::ExpressionParser::GetIndicatorTimeframe("ta_rsi($item[2],$item[4])", "ta_rsi_win($item[2],$item[4]) OVER (PARTITION BY datetime_TIMEFRAME ORDER BY datetime)") . ", 2)" }',
                                                                                                  'hashname' => '__ACTION1__',
-                                                                                                 'line' => 72,
+                                                                                                 'line' => 55,
                                                                                                  'lookahead' => 0
                                                                                                }, 'Parse::RecDescent::Action' )
                                                                                       ],
-                                                                           'line' => 71,
+                                                                           'line' => 54,
                                                                            'number' => 2,
                                                                            'patcount' => 0,
                                                                            'strcount' => 3,
@@ -13013,14 +9951,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\'max(\'',
                                                                                                  'hashname' => '__STRING1__',
-                                                                                                 'line' => 73,
+                                                                                                 'line' => 56,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => 'max('
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 73,
+                                                                                                 'line' => 56,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'expression'
@@ -13028,14 +9966,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\',\'',
                                                                                                  'hashname' => '__STRING2__',
-                                                                                                 'line' => 73,
+                                                                                                 'line' => 56,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ','
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 73,
+                                                                                                 'line' => 56,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'number'
@@ -13043,18 +9981,18 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\')\'',
                                                                                                  'hashname' => '__STRING3__',
-                                                                                                 'line' => 73,
+                                                                                                 'line' => 56,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ')'
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'code' => '{ "ta_max($item[2],$item[4])" }',
                                                                                                  'hashname' => '__ACTION1__',
-                                                                                                 'line' => 73,
+                                                                                                 'line' => 56,
                                                                                                  'lookahead' => 0
                                                                                                }, 'Parse::RecDescent::Action' )
                                                                                       ],
-                                                                           'line' => 72,
+                                                                           'line' => 55,
                                                                            'number' => 3,
                                                                            'patcount' => 0,
                                                                            'strcount' => 3,
@@ -13068,14 +10006,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\'min(\'',
                                                                                                  'hashname' => '__STRING1__',
-                                                                                                 'line' => 74,
+                                                                                                 'line' => 57,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => 'min('
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 74,
+                                                                                                 'line' => 57,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'expression'
@@ -13083,14 +10021,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\',\'',
                                                                                                  'hashname' => '__STRING2__',
-                                                                                                 'line' => 74,
+                                                                                                 'line' => 57,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ','
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 74,
+                                                                                                 'line' => 57,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'number'
@@ -13098,18 +10036,18 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\')\'',
                                                                                                  'hashname' => '__STRING3__',
-                                                                                                 'line' => 74,
+                                                                                                 'line' => 57,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ')'
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'code' => '{ "ta_min($item[2],$item[4])" }',
                                                                                                  'hashname' => '__ACTION1__',
-                                                                                                 'line' => 74,
+                                                                                                 'line' => 57,
                                                                                                  'lookahead' => 0
                                                                                                }, 'Parse::RecDescent::Action' )
                                                                                       ],
-                                                                           'line' => 73,
+                                                                           'line' => 56,
                                                                            'number' => 4,
                                                                            'patcount' => 0,
                                                                            'strcount' => 3,
@@ -13123,25 +10061,25 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\'tr(\'',
                                                                                                  'hashname' => '__STRING1__',
-                                                                                                 'line' => 75,
+                                                                                                 'line' => 58,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => 'tr('
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'description' => '\')\'',
                                                                                                  'hashname' => '__STRING2__',
-                                                                                                 'line' => 75,
+                                                                                                 'line' => 58,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ')'
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'code' => '{ "round(ta_tr(high,low,close), 4)" }',
                                                                                                  'hashname' => '__ACTION1__',
-                                                                                                 'line' => 75,
+                                                                                                 'line' => 58,
                                                                                                  'lookahead' => 0
                                                                                                }, 'Parse::RecDescent::Action' )
                                                                                       ],
-                                                                           'line' => 74,
+                                                                           'line' => 57,
                                                                            'number' => 5,
                                                                            'patcount' => 0,
                                                                            'strcount' => 2,
@@ -13155,14 +10093,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\'atr(\'',
                                                                                                  'hashname' => '__STRING1__',
-                                                                                                 'line' => 76,
+                                                                                                 'line' => 59,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => 'atr('
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 76,
+                                                                                                 'line' => 59,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'number'
@@ -13170,18 +10108,18 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\')\'',
                                                                                                  'hashname' => '__STRING2__',
-                                                                                                 'line' => 76,
+                                                                                                 'line' => 59,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ')'
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'code' => '{ "round(" . Finance::HostedTrader::ExpressionParser::GetIndicatorTimeframe("ta_ssma(ta_tr(high,low,close),$item[2])", "ta_atr_win(high, low, close, $item[2]) OVER (PARTITION BY datetime_TIMEFRAME ORDER BY datetime)") . ", 4)" }',
                                                                                                  'hashname' => '__ACTION1__',
-                                                                                                 'line' => 76,
+                                                                                                 'line' => 59,
                                                                                                  'lookahead' => 0
                                                                                                }, 'Parse::RecDescent::Action' )
                                                                                       ],
-                                                                           'line' => 75,
+                                                                           'line' => 58,
                                                                            'number' => 6,
                                                                            'patcount' => 0,
                                                                            'strcount' => 2,
@@ -13195,14 +10133,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\'stddev(\'',
                                                                                                  'hashname' => '__STRING1__',
-                                                                                                 'line' => 77,
+                                                                                                 'line' => 60,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => 'stddev('
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 77,
+                                                                                                 'line' => 60,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'expression'
@@ -13210,14 +10148,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\',\'',
                                                                                                  'hashname' => '__STRING2__',
-                                                                                                 'line' => 77,
+                                                                                                 'line' => 60,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ','
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 77,
+                                                                                                 'line' => 60,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'number'
@@ -13225,18 +10163,18 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\')\'',
                                                                                                  'hashname' => '__STRING3__',
-                                                                                                 'line' => 77,
+                                                                                                 'line' => 60,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ')'
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'code' => '{ "round(ta_stddevp($item[2],$item[4]), 4)" }',
                                                                                                  'hashname' => '__ACTION1__',
-                                                                                                 'line' => 77,
+                                                                                                 'line' => 60,
                                                                                                  'lookahead' => 0
                                                                                                }, 'Parse::RecDescent::Action' )
                                                                                       ],
-                                                                           'line' => 76,
+                                                                           'line' => 59,
                                                                            'number' => 7,
                                                                            'patcount' => 0,
                                                                            'strcount' => 3,
@@ -13250,14 +10188,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\'previous(\'',
                                                                                                  'hashname' => '__STRING1__',
-                                                                                                 'line' => 78,
+                                                                                                 'line' => 61,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => 'previous('
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 78,
+                                                                                                 'line' => 61,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'expression'
@@ -13265,14 +10203,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\',\'',
                                                                                                  'hashname' => '__STRING2__',
-                                                                                                 'line' => 78,
+                                                                                                 'line' => 61,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ','
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 78,
+                                                                                                 'line' => 61,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'number'
@@ -13280,18 +10218,18 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\')\'',
                                                                                                  'hashname' => '__STRING3__',
-                                                                                                 'line' => 78,
+                                                                                                 'line' => 61,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ')'
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'code' => '{ "ta_previous($item[2],$item[4])" }',
                                                                                                  'hashname' => '__ACTION1__',
-                                                                                                 'line' => 78,
+                                                                                                 'line' => 61,
                                                                                                  'lookahead' => 0
                                                                                                }, 'Parse::RecDescent::Action' )
                                                                                       ],
-                                                                           'line' => 77,
+                                                                           'line' => 60,
                                                                            'number' => 8,
                                                                            'patcount' => 0,
                                                                            'strcount' => 3,
@@ -13305,14 +10243,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\'bolhigh(\'',
                                                                                                  'hashname' => '__STRING1__',
-                                                                                                 'line' => 79,
+                                                                                                 'line' => 62,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => 'bolhigh('
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 79,
+                                                                                                 'line' => 62,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'expression'
@@ -13320,14 +10258,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\',\'',
                                                                                                  'hashname' => '__STRING2__',
-                                                                                                 'line' => 79,
+                                                                                                 'line' => 62,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ','
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 79,
+                                                                                                 'line' => 62,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'number'
@@ -13335,14 +10273,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\',\'',
                                                                                                  'hashname' => '__STRING3__',
-                                                                                                 'line' => 79,
+                                                                                                 'line' => 62,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ','
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 79,
+                                                                                                 'line' => 62,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'number'
@@ -13350,18 +10288,18 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\')\'',
                                                                                                  'hashname' => '__STRING4__',
-                                                                                                 'line' => 79,
+                                                                                                 'line' => 62,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ')'
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'code' => '{ "round(ta_sma($item[2],$item[4]) + $item[6]*ta_stddevp($item[2], $item[4]), 4)" }',
                                                                                                  'hashname' => '__ACTION1__',
-                                                                                                 'line' => 79,
+                                                                                                 'line' => 62,
                                                                                                  'lookahead' => 0
                                                                                                }, 'Parse::RecDescent::Action' )
                                                                                       ],
-                                                                           'line' => 78,
+                                                                           'line' => 61,
                                                                            'number' => 9,
                                                                            'patcount' => 0,
                                                                            'strcount' => 4,
@@ -13375,14 +10313,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\'bollow(\'',
                                                                                                  'hashname' => '__STRING1__',
-                                                                                                 'line' => 80,
+                                                                                                 'line' => 63,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => 'bollow('
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 80,
+                                                                                                 'line' => 63,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'expression'
@@ -13390,14 +10328,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\',\'',
                                                                                                  'hashname' => '__STRING2__',
-                                                                                                 'line' => 80,
+                                                                                                 'line' => 63,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ','
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 80,
+                                                                                                 'line' => 63,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'number'
@@ -13405,14 +10343,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\',\'',
                                                                                                  'hashname' => '__STRING3__',
-                                                                                                 'line' => 80,
+                                                                                                 'line' => 63,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ','
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 80,
+                                                                                                 'line' => 63,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'number'
@@ -13420,18 +10358,18 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\')\'',
                                                                                                  'hashname' => '__STRING4__',
-                                                                                                 'line' => 80,
+                                                                                                 'line' => 63,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ')'
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'code' => '{ "round(ta_sma($item[2],$item[4]) - $item[6]*ta_stddevp($item[2], $item[4]), 4)" }',
                                                                                                  'hashname' => '__ACTION1__',
-                                                                                                 'line' => 80,
+                                                                                                 'line' => 63,
                                                                                                  'lookahead' => 0
                                                                                                }, 'Parse::RecDescent::Action' )
                                                                                       ],
-                                                                           'line' => 79,
+                                                                           'line' => 62,
                                                                            'number' => 10,
                                                                            'patcount' => 0,
                                                                            'strcount' => 4,
@@ -13445,14 +10383,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\'trend(\'',
                                                                                                  'hashname' => '__STRING1__',
-                                                                                                 'line' => 81,
+                                                                                                 'line' => 64,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => 'trend('
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 81,
+                                                                                                 'line' => 64,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'expression'
@@ -13460,14 +10398,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\',\'',
                                                                                                  'hashname' => '__STRING2__',
-                                                                                                 'line' => 81,
+                                                                                                 'line' => 64,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ','
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 81,
+                                                                                                 'line' => 64,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'number'
@@ -13475,18 +10413,18 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\')\'',
                                                                                                  'hashname' => '__STRING3__',
-                                                                                                 'line' => 81,
+                                                                                                 'line' => 64,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ')'
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'code' => '{ "round(($item[2] - ta_sma($item[2],$item[4])) / (SQRT(ta_sum(POW($item[2] - ta_sma($item[2], $item[4]), 2), $item[4])/$item[4])), 2)" }',
                                                                                                  'hashname' => '__ACTION1__',
-                                                                                                 'line' => 81,
+                                                                                                 'line' => 64,
                                                                                                  'lookahead' => 0
                                                                                                }, 'Parse::RecDescent::Action' )
                                                                                       ],
-                                                                           'line' => 80,
+                                                                           'line' => 63,
                                                                            'number' => 11,
                                                                            'patcount' => 0,
                                                                            'strcount' => 3,
@@ -13500,14 +10438,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\'macd(\'',
                                                                                                  'hashname' => '__STRING1__',
-                                                                                                 'line' => 82,
+                                                                                                 'line' => 65,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => 'macd('
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 82,
+                                                                                                 'line' => 65,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'expression'
@@ -13515,14 +10453,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\',\'',
                                                                                                  'hashname' => '__STRING2__',
-                                                                                                 'line' => 82,
+                                                                                                 'line' => 65,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ','
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 82,
+                                                                                                 'line' => 65,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'number'
@@ -13530,14 +10468,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\',\'',
                                                                                                  'hashname' => '__STRING3__',
-                                                                                                 'line' => 82,
+                                                                                                 'line' => 65,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ','
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 82,
+                                                                                                 'line' => 65,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'number'
@@ -13545,14 +10483,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\',\'',
                                                                                                  'hashname' => '__STRING4__',
-                                                                                                 'line' => 82,
+                                                                                                 'line' => 65,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ','
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 82,
+                                                                                                 'line' => 65,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'number'
@@ -13560,18 +10498,18 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\')\'',
                                                                                                  'hashname' => '__STRING5__',
-                                                                                                 'line' => 82,
+                                                                                                 'line' => 65,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ')'
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'code' => '{ "round(ta_ema($item[2],$item[4]) - ta_ema($item[2],$item[6]), 4)" }',
                                                                                                  'hashname' => '__ACTION1__',
-                                                                                                 'line' => 82,
+                                                                                                 'line' => 65,
                                                                                                  'lookahead' => 0
                                                                                                }, 'Parse::RecDescent::Action' )
                                                                                       ],
-                                                                           'line' => 81,
+                                                                           'line' => 64,
                                                                            'number' => 12,
                                                                            'patcount' => 0,
                                                                            'strcount' => 5,
@@ -13585,14 +10523,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\'macdsig(\'',
                                                                                                  'hashname' => '__STRING1__',
-                                                                                                 'line' => 83,
+                                                                                                 'line' => 66,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => 'macdsig('
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 83,
+                                                                                                 'line' => 66,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'expression'
@@ -13600,14 +10538,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\',\'',
                                                                                                  'hashname' => '__STRING2__',
-                                                                                                 'line' => 83,
+                                                                                                 'line' => 66,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ','
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 83,
+                                                                                                 'line' => 66,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'number'
@@ -13615,14 +10553,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\',\'',
                                                                                                  'hashname' => '__STRING3__',
-                                                                                                 'line' => 83,
+                                                                                                 'line' => 66,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ','
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 83,
+                                                                                                 'line' => 66,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'number'
@@ -13630,14 +10568,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\',\'',
                                                                                                  'hashname' => '__STRING4__',
-                                                                                                 'line' => 83,
+                                                                                                 'line' => 66,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ','
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 83,
+                                                                                                 'line' => 66,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'number'
@@ -13645,18 +10583,18 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\')\'',
                                                                                                  'hashname' => '__STRING5__',
-                                                                                                 'line' => 83,
+                                                                                                 'line' => 66,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ')'
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'code' => '{ "round(ta_ema(ta_ema($item[2],$item[4]) - ta_ema($item[2],$item[6]),$item[8]),4)" }',
                                                                                                  'hashname' => '__ACTION1__',
-                                                                                                 'line' => 83,
+                                                                                                 'line' => 66,
                                                                                                  'lookahead' => 0
                                                                                                }, 'Parse::RecDescent::Action' )
                                                                                       ],
-                                                                           'line' => 82,
+                                                                           'line' => 65,
                                                                            'number' => 13,
                                                                            'patcount' => 0,
                                                                            'strcount' => 5,
@@ -13670,14 +10608,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\'macddiff(\'',
                                                                                                  'hashname' => '__STRING1__',
-                                                                                                 'line' => 84,
+                                                                                                 'line' => 67,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => 'macddiff('
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 84,
+                                                                                                 'line' => 67,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'expression'
@@ -13685,14 +10623,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\',\'',
                                                                                                  'hashname' => '__STRING2__',
-                                                                                                 'line' => 84,
+                                                                                                 'line' => 67,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ','
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 84,
+                                                                                                 'line' => 67,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'number'
@@ -13700,14 +10638,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\',\'',
                                                                                                  'hashname' => '__STRING3__',
-                                                                                                 'line' => 84,
+                                                                                                 'line' => 67,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ','
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 84,
+                                                                                                 'line' => 67,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'number'
@@ -13715,14 +10653,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\',\'',
                                                                                                  'hashname' => '__STRING4__',
-                                                                                                 'line' => 84,
+                                                                                                 'line' => 67,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ','
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 84,
+                                                                                                 'line' => 67,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'number'
@@ -13730,18 +10668,18 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\')\'',
                                                                                                  'hashname' => '__STRING5__',
-                                                                                                 'line' => 84,
+                                                                                                 'line' => 67,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ')'
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'code' => '{ "round((ta_ema($item[2],$item[4]) - ta_ema($item[2],$item[6])) - (ta_ema(ta_ema($item[2],$item[4]) - ta_ema($item[2],$item[6]),$item[8])),4)" }',
                                                                                                  'hashname' => '__ACTION1__',
-                                                                                                 'line' => 84,
+                                                                                                 'line' => 67,
                                                                                                  'lookahead' => 0
                                                                                                }, 'Parse::RecDescent::Action' )
                                                                                       ],
-                                                                           'line' => 83,
+                                                                           'line' => 66,
                                                                            'number' => 14,
                                                                            'patcount' => 0,
                                                                            'strcount' => 5,
@@ -13755,14 +10693,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\'abs(\'',
                                                                                                  'hashname' => '__STRING1__',
-                                                                                                 'line' => 85,
+                                                                                                 'line' => 68,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => 'abs('
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 85,
+                                                                                                 'line' => 68,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'expression'
@@ -13770,18 +10708,18 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\')\'',
                                                                                                  'hashname' => '__STRING2__',
-                                                                                                 'line' => 85,
+                                                                                                 'line' => 68,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ')'
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'code' => '{ "round(abs($item[2]), 4)" }',
                                                                                                  'hashname' => '__ACTION1__',
-                                                                                                 'line' => 85,
+                                                                                                 'line' => 68,
                                                                                                  'lookahead' => 0
                                                                                                }, 'Parse::RecDescent::Action' )
                                                                                       ],
-                                                                           'line' => 84,
+                                                                           'line' => 67,
                                                                            'number' => 15,
                                                                            'patcount' => 0,
                                                                            'strcount' => 2,
@@ -13795,14 +10733,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\'weekday(\'',
                                                                                                  'hashname' => '__STRING1__',
-                                                                                                 'line' => 86,
+                                                                                                 'line' => 69,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => 'weekday('
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 86,
+                                                                                                 'line' => 69,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'expression'
@@ -13810,18 +10748,18 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\')\'',
                                                                                                  'hashname' => '__STRING2__',
-                                                                                                 'line' => 86,
+                                                                                                 'line' => 69,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ')'
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'code' => '{ "weekday($item[2])" }',
                                                                                                  'hashname' => '__ACTION1__',
-                                                                                                 'line' => 86,
+                                                                                                 'line' => 69,
                                                                                                  'lookahead' => 0
                                                                                                }, 'Parse::RecDescent::Action' )
                                                                                       ],
-                                                                           'line' => 85,
+                                                                           'line' => 68,
                                                                            'number' => 16,
                                                                            'patcount' => 0,
                                                                            'strcount' => 2,
@@ -13835,14 +10773,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\'dayname(\'',
                                                                                                  'hashname' => '__STRING1__',
-                                                                                                 'line' => 87,
+                                                                                                 'line' => 70,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => 'dayname('
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'argcode' => undef,
                                                                                                  'implicit' => undef,
-                                                                                                 'line' => 87,
+                                                                                                 'line' => 70,
                                                                                                  'lookahead' => 0,
                                                                                                  'matchrule' => 0,
                                                                                                  'subrule' => 'expression'
@@ -13850,18 +10788,18 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                         bless( {
                                                                                                  'description' => '\')\'',
                                                                                                  'hashname' => '__STRING2__',
-                                                                                                 'line' => 87,
+                                                                                                 'line' => 70,
                                                                                                  'lookahead' => 0,
                                                                                                  'pattern' => ')'
                                                                                                }, 'Parse::RecDescent::Literal' ),
                                                                                         bless( {
                                                                                                  'code' => '{ "dayname($item[2])" }',
                                                                                                  'hashname' => '__ACTION1__',
-                                                                                                 'line' => 87,
+                                                                                                 'line' => 70,
                                                                                                  'lookahead' => 0
                                                                                                }, 'Parse::RecDescent::Action' )
                                                                                       ],
-                                                                           'line' => 86,
+                                                                           'line' => 69,
                                                                            'number' => 17,
                                                                            'patcount' => 0,
                                                                            'strcount' => 2,
@@ -13874,7 +10812,7 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                     'calls' => [],
                                                     'changed' => 0,
                                                     'impcount' => 0,
-                                                    'line' => 46,
+                                                    'line' => 26,
                                                     'name' => 'math_op',
                                                     'opcount' => 0,
                                                     'prods' => [
@@ -13886,7 +10824,7 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                        bless( {
                                                                                                 'description' => '\'+\'',
                                                                                                 'hashname' => '__STRING1__',
-                                                                                                'line' => 46,
+                                                                                                'line' => 26,
                                                                                                 'lookahead' => 0,
                                                                                                 'pattern' => '+'
                                                                                               }, 'Parse::RecDescent::Literal' )
@@ -13905,12 +10843,12 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                        bless( {
                                                                                                 'description' => '\'-\'',
                                                                                                 'hashname' => '__STRING1__',
-                                                                                                'line' => 46,
+                                                                                                'line' => 26,
                                                                                                 'lookahead' => 0,
                                                                                                 'pattern' => '-'
                                                                                               }, 'Parse::RecDescent::Literal' )
                                                                                      ],
-                                                                          'line' => 46,
+                                                                          'line' => 26,
                                                                           'number' => 1,
                                                                           'patcount' => 0,
                                                                           'strcount' => 1,
@@ -13924,12 +10862,12 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                        bless( {
                                                                                                 'description' => '\'*\'',
                                                                                                 'hashname' => '__STRING1__',
-                                                                                                'line' => 46,
+                                                                                                'line' => 26,
                                                                                                 'lookahead' => 0,
                                                                                                 'pattern' => '*'
                                                                                               }, 'Parse::RecDescent::Literal' )
                                                                                      ],
-                                                                          'line' => 46,
+                                                                          'line' => 26,
                                                                           'number' => 2,
                                                                           'patcount' => 0,
                                                                           'strcount' => 1,
@@ -13943,12 +10881,12 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                        bless( {
                                                                                                 'description' => '\'/\'',
                                                                                                 'hashname' => '__STRING1__',
-                                                                                                'line' => 46,
+                                                                                                'line' => 26,
                                                                                                 'lookahead' => 0,
                                                                                                 'pattern' => '/'
                                                                                               }, 'Parse::RecDescent::Literal' )
                                                                                      ],
-                                                                          'line' => 46,
+                                                                          'line' => 26,
                                                                           'number' => 3,
                                                                           'patcount' => 0,
                                                                           'strcount' => 1,
@@ -13961,7 +10899,7 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                    'calls' => [],
                                                    'changed' => 0,
                                                    'impcount' => 0,
-                                                   'line' => 54,
+                                                   'line' => 37,
                                                    'name' => 'number',
                                                    'opcount' => 0,
                                                    'prods' => [
@@ -13974,7 +10912,7 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                                'description' => '/-?\\\\d+(\\\\.\\\\d+)?/',
                                                                                                'hashname' => '__PATTERN1__',
                                                                                                'ldelim' => '/',
-                                                                                               'line' => 54,
+                                                                                               'line' => 37,
                                                                                                'lookahead' => 0,
                                                                                                'mod' => '',
                                                                                                'pattern' => '-?\\d+(\\.\\d+)?',
@@ -13990,71 +10928,6 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                               ],
                                                    'vars' => ''
                                                  }, 'Parse::RecDescent::Rule' ),
-                              'recursive_timeframe_statement_signal' => bless( {
-                                                                                 'calls' => [
-                                                                                              'timeframe_statement_signal',
-                                                                                              'boolop'
-                                                                                            ],
-                                                                                 'changed' => 0,
-                                                                                 'impcount' => 0,
-                                                                                 'line' => 7,
-                                                                                 'name' => 'recursive_timeframe_statement_signal',
-                                                                                 'opcount' => 0,
-                                                                                 'prods' => [
-                                                                                              bless( {
-                                                                                                       'actcount' => 1,
-                                                                                                       'dircount' => 1,
-                                                                                                       'error' => undef,
-                                                                                                       'items' => [
-                                                                                                                    bless( {
-                                                                                                                             'expected' => '<leftop: timeframe_statement_signal boolop timeframe_statement_signal>',
-                                                                                                                             'hashname' => '__DIRECTIVE1__',
-                                                                                                                             'leftarg' => bless( {
-                                                                                                                                                   'argcode' => undef,
-                                                                                                                                                   'implicit' => undef,
-                                                                                                                                                   'line' => 7,
-                                                                                                                                                   'lookahead' => 0,
-                                                                                                                                                   'matchrule' => 0,
-                                                                                                                                                   'subrule' => 'timeframe_statement_signal'
-                                                                                                                                                 }, 'Parse::RecDescent::Subrule' ),
-                                                                                                                             'max' => 100000000,
-                                                                                                                             'min' => 1,
-                                                                                                                             'name' => '',
-                                                                                                                             'op' => bless( {
-                                                                                                                                              'argcode' => undef,
-                                                                                                                                              'implicit' => undef,
-                                                                                                                                              'line' => 7,
-                                                                                                                                              'lookahead' => 0,
-                                                                                                                                              'matchrule' => 0,
-                                                                                                                                              'subrule' => 'boolop'
-                                                                                                                                            }, 'Parse::RecDescent::Subrule' ),
-                                                                                                                             'rightarg' => bless( {
-                                                                                                                                                    'argcode' => undef,
-                                                                                                                                                    'implicit' => undef,
-                                                                                                                                                    'line' => 7,
-                                                                                                                                                    'lookahead' => 0,
-                                                                                                                                                    'matchrule' => 0,
-                                                                                                                                                    'subrule' => 'timeframe_statement_signal'
-                                                                                                                                                  }, 'Parse::RecDescent::Subrule' ),
-                                                                                                                             'type' => 'leftop'
-                                                                                                                           }, 'Parse::RecDescent::Operator' ),
-                                                                                                                    bless( {
-                                                                                                                             'code' => '{ $item[1] }',
-                                                                                                                             'hashname' => '__ACTION1__',
-                                                                                                                             'line' => 7,
-                                                                                                                             'lookahead' => 0
-                                                                                                                           }, 'Parse::RecDescent::Action' )
-                                                                                                                  ],
-                                                                                                       'line' => undef,
-                                                                                                       'number' => 0,
-                                                                                                       'op' => [],
-                                                                                                       'patcount' => 0,
-                                                                                                       'strcount' => 0,
-                                                                                                       'uncommit' => undef
-                                                                                                     }, 'Parse::RecDescent::Production' )
-                                                                                            ],
-                                                                                 'vars' => ''
-                                                                               }, 'Parse::RecDescent::Rule' ),
                               'signal' => bless( {
                                                    'calls' => [
                                                                 'expression',
@@ -14063,7 +10936,7 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                               ],
                                                    'changed' => 0,
                                                    'impcount' => 0,
-                                                   'line' => 33,
+                                                   'line' => 13,
                                                    'name' => 'signal',
                                                    'opcount' => 0,
                                                    'prods' => [
@@ -14075,21 +10948,21 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                       bless( {
                                                                                                'description' => '\'crossoverup\'',
                                                                                                'hashname' => '__STRING1__',
-                                                                                               'line' => 34,
+                                                                                               'line' => 14,
                                                                                                'lookahead' => 0,
                                                                                                'pattern' => 'crossoverup'
                                                                                              }, 'Parse::RecDescent::Literal' ),
                                                                                       bless( {
                                                                                                'description' => '\'(\'',
                                                                                                'hashname' => '__STRING2__',
-                                                                                               'line' => 34,
+                                                                                               'line' => 14,
                                                                                                'lookahead' => 0,
                                                                                                'pattern' => '('
                                                                                              }, 'Parse::RecDescent::Literal' ),
                                                                                       bless( {
                                                                                                'argcode' => undef,
                                                                                                'implicit' => undef,
-                                                                                               'line' => 34,
+                                                                                               'line' => 14,
                                                                                                'lookahead' => 0,
                                                                                                'matchrule' => 0,
                                                                                                'subrule' => 'expression'
@@ -14097,14 +10970,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                       bless( {
                                                                                                'description' => '\',\'',
                                                                                                'hashname' => '__STRING3__',
-                                                                                               'line' => 34,
+                                                                                               'line' => 14,
                                                                                                'lookahead' => 0,
                                                                                                'pattern' => ','
                                                                                              }, 'Parse::RecDescent::Literal' ),
                                                                                       bless( {
                                                                                                'argcode' => undef,
                                                                                                'implicit' => undef,
-                                                                                               'line' => 34,
+                                                                                               'line' => 14,
                                                                                                'lookahead' => 0,
                                                                                                'matchrule' => 0,
                                                                                                'subrule' => 'number'
@@ -14112,14 +10985,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                       bless( {
                                                                                                'description' => '\')\'',
                                                                                                'hashname' => '__STRING4__',
-                                                                                               'line' => 34,
+                                                                                               'line' => 14,
                                                                                                'lookahead' => 0,
                                                                                                'pattern' => ')'
                                                                                              }, 'Parse::RecDescent::Literal' ),
                                                                                       bless( {
                                                                                                'code' => '{ my $key = Finance::HostedTrader::ExpressionParser::getID("crossoverup","ta_previous($item[3],1)", $item[5], $item[3], $item[5]); $key }',
                                                                                                'hashname' => '__ACTION1__',
-                                                                                               'line' => 34,
+                                                                                               'line' => 14,
                                                                                                'lookahead' => 0
                                                                                              }, 'Parse::RecDescent::Action' )
                                                                                     ],
@@ -14137,21 +11010,21 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                       bless( {
                                                                                                'description' => '\'crossoverup\'',
                                                                                                'hashname' => '__STRING1__',
-                                                                                               'line' => 35,
+                                                                                               'line' => 15,
                                                                                                'lookahead' => 0,
                                                                                                'pattern' => 'crossoverup'
                                                                                              }, 'Parse::RecDescent::Literal' ),
                                                                                       bless( {
                                                                                                'description' => '\'(\'',
                                                                                                'hashname' => '__STRING2__',
-                                                                                               'line' => 35,
+                                                                                               'line' => 15,
                                                                                                'lookahead' => 0,
                                                                                                'pattern' => '('
                                                                                              }, 'Parse::RecDescent::Literal' ),
                                                                                       bless( {
                                                                                                'argcode' => undef,
                                                                                                'implicit' => undef,
-                                                                                               'line' => 35,
+                                                                                               'line' => 15,
                                                                                                'lookahead' => 0,
                                                                                                'matchrule' => 0,
                                                                                                'subrule' => 'expression'
@@ -14159,14 +11032,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                       bless( {
                                                                                                'description' => '\',\'',
                                                                                                'hashname' => '__STRING3__',
-                                                                                               'line' => 35,
+                                                                                               'line' => 15,
                                                                                                'lookahead' => 0,
                                                                                                'pattern' => ','
                                                                                              }, 'Parse::RecDescent::Literal' ),
                                                                                       bless( {
                                                                                                'argcode' => undef,
                                                                                                'implicit' => undef,
-                                                                                               'line' => 35,
+                                                                                               'line' => 15,
                                                                                                'lookahead' => 0,
                                                                                                'matchrule' => 0,
                                                                                                'subrule' => 'expression'
@@ -14174,18 +11047,18 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                       bless( {
                                                                                                'description' => '\')\'',
                                                                                                'hashname' => '__STRING4__',
-                                                                                               'line' => 35,
+                                                                                               'line' => 15,
                                                                                                'lookahead' => 0,
                                                                                                'pattern' => ')'
                                                                                              }, 'Parse::RecDescent::Literal' ),
                                                                                       bless( {
                                                                                                'code' => '{ my $key = Finance::HostedTrader::ExpressionParser::getID("crossoverup","ta_previous($item[3],1)", "ta_previous($item[5],1)", $item[3], $item[5]); $key }',
                                                                                                'hashname' => '__ACTION1__',
-                                                                                               'line' => 35,
+                                                                                               'line' => 15,
                                                                                                'lookahead' => 0
                                                                                              }, 'Parse::RecDescent::Action' )
                                                                                     ],
-                                                                         'line' => 35,
+                                                                         'line' => 15,
                                                                          'number' => 1,
                                                                          'patcount' => 0,
                                                                          'strcount' => 4,
@@ -14199,21 +11072,21 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                       bless( {
                                                                                                'description' => '\'crossoverdown\'',
                                                                                                'hashname' => '__STRING1__',
-                                                                                               'line' => 36,
+                                                                                               'line' => 16,
                                                                                                'lookahead' => 0,
                                                                                                'pattern' => 'crossoverdown'
                                                                                              }, 'Parse::RecDescent::Literal' ),
                                                                                       bless( {
                                                                                                'description' => '\'(\'',
                                                                                                'hashname' => '__STRING2__',
-                                                                                               'line' => 36,
+                                                                                               'line' => 16,
                                                                                                'lookahead' => 0,
                                                                                                'pattern' => '('
                                                                                              }, 'Parse::RecDescent::Literal' ),
                                                                                       bless( {
                                                                                                'argcode' => undef,
                                                                                                'implicit' => undef,
-                                                                                               'line' => 36,
+                                                                                               'line' => 16,
                                                                                                'lookahead' => 0,
                                                                                                'matchrule' => 0,
                                                                                                'subrule' => 'expression'
@@ -14221,14 +11094,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                       bless( {
                                                                                                'description' => '\',\'',
                                                                                                'hashname' => '__STRING3__',
-                                                                                               'line' => 36,
+                                                                                               'line' => 16,
                                                                                                'lookahead' => 0,
                                                                                                'pattern' => ','
                                                                                              }, 'Parse::RecDescent::Literal' ),
                                                                                       bless( {
                                                                                                'argcode' => undef,
                                                                                                'implicit' => undef,
-                                                                                               'line' => 36,
+                                                                                               'line' => 16,
                                                                                                'lookahead' => 0,
                                                                                                'matchrule' => 0,
                                                                                                'subrule' => 'number'
@@ -14236,18 +11109,18 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                       bless( {
                                                                                                'description' => '\')\'',
                                                                                                'hashname' => '__STRING4__',
-                                                                                               'line' => 36,
+                                                                                               'line' => 16,
                                                                                                'lookahead' => 0,
                                                                                                'pattern' => ')'
                                                                                              }, 'Parse::RecDescent::Literal' ),
                                                                                       bless( {
                                                                                                'code' => '{ my $key = Finance::HostedTrader::ExpressionParser::getID("crossoverdown","ta_previous($item[3],1)", $item[5], $item[3], $item[5]); $key }',
                                                                                                'hashname' => '__ACTION1__',
-                                                                                               'line' => 36,
+                                                                                               'line' => 16,
                                                                                                'lookahead' => 0
                                                                                              }, 'Parse::RecDescent::Action' )
                                                                                     ],
-                                                                         'line' => 36,
+                                                                         'line' => 16,
                                                                          'number' => 2,
                                                                          'patcount' => 0,
                                                                          'strcount' => 4,
@@ -14261,21 +11134,21 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                       bless( {
                                                                                                'description' => '\'crossoverdown\'',
                                                                                                'hashname' => '__STRING1__',
-                                                                                               'line' => 37,
+                                                                                               'line' => 17,
                                                                                                'lookahead' => 0,
                                                                                                'pattern' => 'crossoverdown'
                                                                                              }, 'Parse::RecDescent::Literal' ),
                                                                                       bless( {
                                                                                                'description' => '\'(\'',
                                                                                                'hashname' => '__STRING2__',
-                                                                                               'line' => 37,
+                                                                                               'line' => 17,
                                                                                                'lookahead' => 0,
                                                                                                'pattern' => '('
                                                                                              }, 'Parse::RecDescent::Literal' ),
                                                                                       bless( {
                                                                                                'argcode' => undef,
                                                                                                'implicit' => undef,
-                                                                                               'line' => 37,
+                                                                                               'line' => 17,
                                                                                                'lookahead' => 0,
                                                                                                'matchrule' => 0,
                                                                                                'subrule' => 'expression'
@@ -14283,14 +11156,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                       bless( {
                                                                                                'description' => '\',\'',
                                                                                                'hashname' => '__STRING3__',
-                                                                                               'line' => 37,
+                                                                                               'line' => 17,
                                                                                                'lookahead' => 0,
                                                                                                'pattern' => ','
                                                                                              }, 'Parse::RecDescent::Literal' ),
                                                                                       bless( {
                                                                                                'argcode' => undef,
                                                                                                'implicit' => undef,
-                                                                                               'line' => 37,
+                                                                                               'line' => 17,
                                                                                                'lookahead' => 0,
                                                                                                'matchrule' => 0,
                                                                                                'subrule' => 'expression'
@@ -14298,18 +11171,18 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                       bless( {
                                                                                                'description' => '\')\'',
                                                                                                'hashname' => '__STRING4__',
-                                                                                               'line' => 37,
+                                                                                               'line' => 17,
                                                                                                'lookahead' => 0,
                                                                                                'pattern' => ')'
                                                                                              }, 'Parse::RecDescent::Literal' ),
                                                                                       bless( {
                                                                                                'code' => '{ my $key = Finance::HostedTrader::ExpressionParser::getID("crossoverdown","ta_previous($item[3],1)", "ta_previous($item[5],1)", $item[3], $item[5]); $key }',
                                                                                                'hashname' => '__ACTION1__',
-                                                                                               'line' => 37,
+                                                                                               'line' => 17,
                                                                                                'lookahead' => 0
                                                                                              }, 'Parse::RecDescent::Action' )
                                                                                     ],
-                                                                         'line' => 37,
+                                                                         'line' => 17,
                                                                          'number' => 3,
                                                                          'patcount' => 0,
                                                                          'strcount' => 4,
@@ -14323,7 +11196,7 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                       bless( {
                                                                                                'argcode' => undef,
                                                                                                'implicit' => undef,
-                                                                                               'line' => 38,
+                                                                                               'line' => 18,
                                                                                                'lookahead' => 0,
                                                                                                'matchrule' => 0,
                                                                                                'subrule' => 'expression'
@@ -14331,7 +11204,7 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                       bless( {
                                                                                                'argcode' => undef,
                                                                                                'implicit' => undef,
-                                                                                               'line' => 38,
+                                                                                               'line' => 18,
                                                                                                'lookahead' => 0,
                                                                                                'matchrule' => 0,
                                                                                                'subrule' => 'cmp_op'
@@ -14339,7 +11212,7 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                       bless( {
                                                                                                'argcode' => undef,
                                                                                                'implicit' => undef,
-                                                                                               'line' => 38,
+                                                                                               'line' => 18,
                                                                                                'lookahead' => 0,
                                                                                                'matchrule' => 0,
                                                                                                'subrule' => 'expression'
@@ -14347,11 +11220,11 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                       bless( {
                                                                                                'code' => '{ my $key = Finance::HostedTrader::ExpressionParser::getID("cmpop$item[2]",$item[1],$item[3]); $key }',
                                                                                                'hashname' => '__ACTION1__',
-                                                                                               'line' => 38,
+                                                                                               'line' => 18,
                                                                                                'lookahead' => 0
                                                                                              }, 'Parse::RecDescent::Action' )
                                                                                     ],
-                                                                         'line' => 38,
+                                                                         'line' => 18,
                                                                          'number' => 4,
                                                                          'patcount' => 0,
                                                                          'strcount' => 0,
@@ -14365,13 +11238,13 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                       bless( {
                                                                                                'argcode' => undef,
                                                                                                'implicit' => undef,
-                                                                                               'line' => 39,
+                                                                                               'line' => 19,
                                                                                                'lookahead' => 0,
                                                                                                'matchrule' => 0,
                                                                                                'subrule' => 'expression'
                                                                                              }, 'Parse::RecDescent::Subrule' )
                                                                                     ],
-                                                                         'line' => 39,
+                                                                         'line' => 19,
                                                                          'number' => 5,
                                                                          'patcount' => 0,
                                                                          'strcount' => 0,
@@ -14431,7 +11304,7 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                           }, 'Parse::RecDescent::Rule' ),
                               'start_signal' => bless( {
                                                          'calls' => [
-                                                                      'recursive_timeframe_statement_signal'
+                                                                      'statement_signal'
                                                                     ],
                                                          'changed' => 0,
                                                          'impcount' => 0,
@@ -14450,7 +11323,7 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                                      'line' => 3,
                                                                                                      'lookahead' => 0,
                                                                                                      'matchrule' => 0,
-                                                                                                     'subrule' => 'recursive_timeframe_statement_signal'
+                                                                                                     'subrule' => 'statement_signal'
                                                                                                    }, 'Parse::RecDescent::Subrule' ),
                                                                                             bless( {
                                                                                                      'description' => '/\\\\Z/',
@@ -14485,7 +11358,7 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                  ],
                                                       'changed' => 0,
                                                       'impcount' => 0,
-                                                      'line' => 29,
+                                                      'line' => 9,
                                                       'name' => 'statement',
                                                       'opcount' => 0,
                                                       'prods' => [
@@ -14497,7 +11370,7 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                          bless( {
                                                                                                   'argcode' => undef,
                                                                                                   'implicit' => undef,
-                                                                                                  'line' => 29,
+                                                                                                  'line' => 9,
                                                                                                   'lookahead' => 0,
                                                                                                   'matchrule' => 0,
                                                                                                   'subrule' => 'statement_indicator'
@@ -14517,13 +11390,13 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                          bless( {
                                                                                                   'argcode' => undef,
                                                                                                   'implicit' => undef,
-                                                                                                  'line' => 29,
+                                                                                                  'line' => 9,
                                                                                                   'lookahead' => 0,
                                                                                                   'matchrule' => 0,
                                                                                                   'subrule' => 'statement_signal'
                                                                                                 }, 'Parse::RecDescent::Subrule' )
                                                                                        ],
-                                                                            'line' => 29,
+                                                                            'line' => 9,
                                                                             'number' => 1,
                                                                             'patcount' => 0,
                                                                             'strcount' => 0,
@@ -14605,7 +11478,7 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                         ],
                                                              'changed' => 0,
                                                              'impcount' => 0,
-                                                             'line' => 27,
+                                                             'line' => 7,
                                                              'name' => 'statement_signal',
                                                              'opcount' => 0,
                                                              'prods' => [
@@ -14620,7 +11493,7 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                                          'leftarg' => bless( {
                                                                                                                                'argcode' => undef,
                                                                                                                                'implicit' => undef,
-                                                                                                                               'line' => 27,
+                                                                                                                               'line' => 7,
                                                                                                                                'lookahead' => 0,
                                                                                                                                'matchrule' => 0,
                                                                                                                                'subrule' => 'signal'
@@ -14631,7 +11504,7 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                                          'op' => bless( {
                                                                                                                           'argcode' => undef,
                                                                                                                           'implicit' => undef,
-                                                                                                                          'line' => 27,
+                                                                                                                          'line' => 7,
                                                                                                                           'lookahead' => 0,
                                                                                                                           'matchrule' => 0,
                                                                                                                           'subrule' => 'boolop'
@@ -14639,7 +11512,7 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                                          'rightarg' => bless( {
                                                                                                                                 'argcode' => undef,
                                                                                                                                 'implicit' => undef,
-                                                                                                                                'line' => 27,
+                                                                                                                                'line' => 7,
                                                                                                                                 'lookahead' => 0,
                                                                                                                                 'matchrule' => 0,
                                                                                                                                 'subrule' => 'signal'
@@ -14649,7 +11522,7 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                                 bless( {
                                                                                                          'code' => '{ $item[1] }',
                                                                                                          'hashname' => '__ACTION1__',
-                                                                                                         'line' => 27,
+                                                                                                         'line' => 7,
                                                                                                          'lookahead' => 0
                                                                                                        }, 'Parse::RecDescent::Action' )
                                                                                               ],
@@ -14673,7 +11546,7 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                             ],
                                                  'changed' => 0,
                                                  'impcount' => 0,
-                                                 'line' => 48,
+                                                 'line' => 30,
                                                  'name' => 'term',
                                                  'opcount' => 0,
                                                  'prods' => [
@@ -14685,7 +11558,7 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                     bless( {
                                                                                              'argcode' => undef,
                                                                                              'implicit' => undef,
-                                                                                             'line' => 48,
+                                                                                             'line' => 31,
                                                                                              'lookahead' => 0,
                                                                                              'matchrule' => 0,
                                                                                              'subrule' => 'timeframe'
@@ -14705,13 +11578,13 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                     bless( {
                                                                                              'argcode' => undef,
                                                                                              'implicit' => undef,
-                                                                                             'line' => 49,
+                                                                                             'line' => 32,
                                                                                              'lookahead' => 0,
                                                                                              'matchrule' => 0,
                                                                                              'subrule' => 'number'
                                                                                            }, 'Parse::RecDescent::Subrule' )
                                                                                   ],
-                                                                       'line' => 49,
+                                                                       'line' => 32,
                                                                        'number' => 1,
                                                                        'patcount' => 0,
                                                                        'strcount' => 0,
@@ -14725,13 +11598,13 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                     bless( {
                                                                                              'argcode' => undef,
                                                                                              'implicit' => undef,
-                                                                                             'line' => 50,
+                                                                                             'line' => 33,
                                                                                              'lookahead' => 0,
                                                                                              'matchrule' => 0,
                                                                                              'subrule' => 'field'
                                                                                            }, 'Parse::RecDescent::Subrule' )
                                                                                   ],
-                                                                       'line' => 50,
+                                                                       'line' => 33,
                                                                        'number' => 2,
                                                                        'patcount' => 0,
                                                                        'strcount' => 0,
@@ -14745,13 +11618,13 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                     bless( {
                                                                                              'argcode' => undef,
                                                                                              'implicit' => undef,
-                                                                                             'line' => 51,
+                                                                                             'line' => 34,
                                                                                              'lookahead' => 0,
                                                                                              'matchrule' => 0,
                                                                                              'subrule' => 'function'
                                                                                            }, 'Parse::RecDescent::Subrule' )
                                                                                   ],
-                                                                       'line' => 51,
+                                                                       'line' => 34,
                                                                        'number' => 3,
                                                                        'patcount' => 0,
                                                                        'strcount' => 0,
@@ -14765,14 +11638,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                     bless( {
                                                                                              'description' => '\'(\'',
                                                                                              'hashname' => '__STRING1__',
-                                                                                             'line' => 52,
+                                                                                             'line' => 35,
                                                                                              'lookahead' => 0,
                                                                                              'pattern' => '('
                                                                                            }, 'Parse::RecDescent::Literal' ),
                                                                                     bless( {
                                                                                              'argcode' => undef,
                                                                                              'implicit' => undef,
-                                                                                             'line' => 52,
+                                                                                             'line' => 35,
                                                                                              'lookahead' => 0,
                                                                                              'matchrule' => 0,
                                                                                              'subrule' => 'statement'
@@ -14780,18 +11653,18 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                     bless( {
                                                                                              'description' => '\')\'',
                                                                                              'hashname' => '__STRING2__',
-                                                                                             'line' => 52,
+                                                                                             'line' => 35,
                                                                                              'lookahead' => 0,
                                                                                              'pattern' => ')'
                                                                                            }, 'Parse::RecDescent::Literal' ),
                                                                                     bless( {
                                                                                              'code' => '{"($item[2])"}',
                                                                                              'hashname' => '__ACTION1__',
-                                                                                             'line' => 52,
+                                                                                             'line' => 35,
                                                                                              'lookahead' => 0
                                                                                            }, 'Parse::RecDescent::Action' )
                                                                                   ],
-                                                                       'line' => 52,
+                                                                       'line' => 35,
                                                                        'number' => 4,
                                                                        'patcount' => 0,
                                                                        'strcount' => 2,
@@ -14806,7 +11679,7 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                  ],
                                                       'changed' => 0,
                                                       'impcount' => 0,
-                                                      'line' => 58,
+                                                      'line' => 41,
                                                       'name' => 'timeframe',
                                                       'opcount' => 0,
                                                       'prods' => [
@@ -14818,14 +11691,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                          bless( {
                                                                                                   'description' => '\'1minute(\'',
                                                                                                   'hashname' => '__STRING1__',
-                                                                                                  'line' => 59,
+                                                                                                  'line' => 42,
                                                                                                   'lookahead' => 0,
                                                                                                   'pattern' => '1minute('
                                                                                                 }, 'Parse::RecDescent::Literal' ),
                                                                                          bless( {
                                                                                                   'argcode' => undef,
                                                                                                   'implicit' => undef,
-                                                                                                  'line' => 59,
+                                                                                                  'line' => 42,
                                                                                                   'lookahead' => 0,
                                                                                                   'matchrule' => 0,
                                                                                                   'subrule' => 'function'
@@ -14833,14 +11706,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                          bless( {
                                                                                                   'description' => '\')\'',
                                                                                                   'hashname' => '__STRING2__',
-                                                                                                  'line' => 59,
+                                                                                                  'line' => 42,
                                                                                                   'lookahead' => 0,
                                                                                                   'pattern' => ')'
                                                                                                 }, 'Parse::RecDescent::Literal' ),
                                                                                          bless( {
                                                                                                   'code' => '{ Finance::HostedTrader::ExpressionParser::SetIndicatorTimeframe($item[2], 60); $item[2] }',
                                                                                                   'hashname' => '__ACTION1__',
-                                                                                                  'line' => 59,
+                                                                                                  'line' => 42,
                                                                                                   'lookahead' => 0
                                                                                                 }, 'Parse::RecDescent::Action' )
                                                                                        ],
@@ -14858,14 +11731,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                          bless( {
                                                                                                   'description' => '\'5minute(\'',
                                                                                                   'hashname' => '__STRING1__',
-                                                                                                  'line' => 60,
+                                                                                                  'line' => 43,
                                                                                                   'lookahead' => 0,
                                                                                                   'pattern' => '5minute('
                                                                                                 }, 'Parse::RecDescent::Literal' ),
                                                                                          bless( {
                                                                                                   'argcode' => undef,
                                                                                                   'implicit' => undef,
-                                                                                                  'line' => 60,
+                                                                                                  'line' => 43,
                                                                                                   'lookahead' => 0,
                                                                                                   'matchrule' => 0,
                                                                                                   'subrule' => 'function'
@@ -14873,18 +11746,18 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                          bless( {
                                                                                                   'description' => '\')\'',
                                                                                                   'hashname' => '__STRING2__',
-                                                                                                  'line' => 60,
+                                                                                                  'line' => 43,
                                                                                                   'lookahead' => 0,
                                                                                                   'pattern' => ')'
                                                                                                 }, 'Parse::RecDescent::Literal' ),
                                                                                          bless( {
                                                                                                   'code' => '{ Finance::HostedTrader::ExpressionParser::SetIndicatorTimeframe($item[2], 300); $item[2] }',
                                                                                                   'hashname' => '__ACTION1__',
-                                                                                                  'line' => 60,
+                                                                                                  'line' => 43,
                                                                                                   'lookahead' => 0
                                                                                                 }, 'Parse::RecDescent::Action' )
                                                                                        ],
-                                                                            'line' => 59,
+                                                                            'line' => 42,
                                                                             'number' => 1,
                                                                             'patcount' => 0,
                                                                             'strcount' => 2,
@@ -14898,14 +11771,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                          bless( {
                                                                                                   'description' => '\'15minute(\'',
                                                                                                   'hashname' => '__STRING1__',
-                                                                                                  'line' => 61,
+                                                                                                  'line' => 44,
                                                                                                   'lookahead' => 0,
                                                                                                   'pattern' => '15minute('
                                                                                                 }, 'Parse::RecDescent::Literal' ),
                                                                                          bless( {
                                                                                                   'argcode' => undef,
                                                                                                   'implicit' => undef,
-                                                                                                  'line' => 61,
+                                                                                                  'line' => 44,
                                                                                                   'lookahead' => 0,
                                                                                                   'matchrule' => 0,
                                                                                                   'subrule' => 'function'
@@ -14913,18 +11786,18 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                          bless( {
                                                                                                   'description' => '\')\'',
                                                                                                   'hashname' => '__STRING2__',
-                                                                                                  'line' => 61,
+                                                                                                  'line' => 44,
                                                                                                   'lookahead' => 0,
                                                                                                   'pattern' => ')'
                                                                                                 }, 'Parse::RecDescent::Literal' ),
                                                                                          bless( {
                                                                                                   'code' => '{ Finance::HostedTrader::ExpressionParser::SetIndicatorTimeframe($item[2], 900); $item[2] }',
                                                                                                   'hashname' => '__ACTION1__',
-                                                                                                  'line' => 61,
+                                                                                                  'line' => 44,
                                                                                                   'lookahead' => 0
                                                                                                 }, 'Parse::RecDescent::Action' )
                                                                                        ],
-                                                                            'line' => 60,
+                                                                            'line' => 43,
                                                                             'number' => 2,
                                                                             'patcount' => 0,
                                                                             'strcount' => 2,
@@ -14938,14 +11811,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                          bless( {
                                                                                                   'description' => '\'30minute(\'',
                                                                                                   'hashname' => '__STRING1__',
-                                                                                                  'line' => 62,
+                                                                                                  'line' => 45,
                                                                                                   'lookahead' => 0,
                                                                                                   'pattern' => '30minute('
                                                                                                 }, 'Parse::RecDescent::Literal' ),
                                                                                          bless( {
                                                                                                   'argcode' => undef,
                                                                                                   'implicit' => undef,
-                                                                                                  'line' => 62,
+                                                                                                  'line' => 45,
                                                                                                   'lookahead' => 0,
                                                                                                   'matchrule' => 0,
                                                                                                   'subrule' => 'function'
@@ -14953,18 +11826,18 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                          bless( {
                                                                                                   'description' => '\')\'',
                                                                                                   'hashname' => '__STRING2__',
-                                                                                                  'line' => 62,
+                                                                                                  'line' => 45,
                                                                                                   'lookahead' => 0,
                                                                                                   'pattern' => ')'
                                                                                                 }, 'Parse::RecDescent::Literal' ),
                                                                                          bless( {
                                                                                                   'code' => '{ Finance::HostedTrader::ExpressionParser::SetIndicatorTimeframe($item[2], 1800); $item[2] }',
                                                                                                   'hashname' => '__ACTION1__',
-                                                                                                  'line' => 62,
+                                                                                                  'line' => 45,
                                                                                                   'lookahead' => 0
                                                                                                 }, 'Parse::RecDescent::Action' )
                                                                                        ],
-                                                                            'line' => 61,
+                                                                            'line' => 44,
                                                                             'number' => 3,
                                                                             'patcount' => 0,
                                                                             'strcount' => 2,
@@ -14978,14 +11851,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                          bless( {
                                                                                                   'description' => '\'hour(\'',
                                                                                                   'hashname' => '__STRING1__',
-                                                                                                  'line' => 63,
+                                                                                                  'line' => 46,
                                                                                                   'lookahead' => 0,
                                                                                                   'pattern' => 'hour('
                                                                                                 }, 'Parse::RecDescent::Literal' ),
                                                                                          bless( {
                                                                                                   'argcode' => undef,
                                                                                                   'implicit' => undef,
-                                                                                                  'line' => 63,
+                                                                                                  'line' => 46,
                                                                                                   'lookahead' => 0,
                                                                                                   'matchrule' => 0,
                                                                                                   'subrule' => 'function'
@@ -14993,18 +11866,18 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                          bless( {
                                                                                                   'description' => '\')\'',
                                                                                                   'hashname' => '__STRING2__',
-                                                                                                  'line' => 63,
+                                                                                                  'line' => 46,
                                                                                                   'lookahead' => 0,
                                                                                                   'pattern' => ')'
                                                                                                 }, 'Parse::RecDescent::Literal' ),
                                                                                          bless( {
                                                                                                   'code' => '{ Finance::HostedTrader::ExpressionParser::SetIndicatorTimeframe($item[2], 3600); $item[2] }',
                                                                                                   'hashname' => '__ACTION1__',
-                                                                                                  'line' => 63,
+                                                                                                  'line' => 46,
                                                                                                   'lookahead' => 0
                                                                                                 }, 'Parse::RecDescent::Action' )
                                                                                        ],
-                                                                            'line' => 62,
+                                                                            'line' => 45,
                                                                             'number' => 4,
                                                                             'patcount' => 0,
                                                                             'strcount' => 2,
@@ -15018,14 +11891,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                          bless( {
                                                                                                   'description' => '\'2hour(\'',
                                                                                                   'hashname' => '__STRING1__',
-                                                                                                  'line' => 64,
+                                                                                                  'line' => 47,
                                                                                                   'lookahead' => 0,
                                                                                                   'pattern' => '2hour('
                                                                                                 }, 'Parse::RecDescent::Literal' ),
                                                                                          bless( {
                                                                                                   'argcode' => undef,
                                                                                                   'implicit' => undef,
-                                                                                                  'line' => 64,
+                                                                                                  'line' => 47,
                                                                                                   'lookahead' => 0,
                                                                                                   'matchrule' => 0,
                                                                                                   'subrule' => 'function'
@@ -15033,18 +11906,18 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                          bless( {
                                                                                                   'description' => '\')\'',
                                                                                                   'hashname' => '__STRING2__',
-                                                                                                  'line' => 64,
+                                                                                                  'line' => 47,
                                                                                                   'lookahead' => 0,
                                                                                                   'pattern' => ')'
                                                                                                 }, 'Parse::RecDescent::Literal' ),
                                                                                          bless( {
                                                                                                   'code' => '{ Finance::HostedTrader::ExpressionParser::SetIndicatorTimeframe($item[2], 7200); $item[2] }',
                                                                                                   'hashname' => '__ACTION1__',
-                                                                                                  'line' => 64,
+                                                                                                  'line' => 47,
                                                                                                   'lookahead' => 0
                                                                                                 }, 'Parse::RecDescent::Action' )
                                                                                        ],
-                                                                            'line' => 63,
+                                                                            'line' => 46,
                                                                             'number' => 5,
                                                                             'patcount' => 0,
                                                                             'strcount' => 2,
@@ -15058,14 +11931,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                          bless( {
                                                                                                   'description' => '\'3hour(\'',
                                                                                                   'hashname' => '__STRING1__',
-                                                                                                  'line' => 65,
+                                                                                                  'line' => 48,
                                                                                                   'lookahead' => 0,
                                                                                                   'pattern' => '3hour('
                                                                                                 }, 'Parse::RecDescent::Literal' ),
                                                                                          bless( {
                                                                                                   'argcode' => undef,
                                                                                                   'implicit' => undef,
-                                                                                                  'line' => 65,
+                                                                                                  'line' => 48,
                                                                                                   'lookahead' => 0,
                                                                                                   'matchrule' => 0,
                                                                                                   'subrule' => 'function'
@@ -15073,18 +11946,18 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                          bless( {
                                                                                                   'description' => '\')\'',
                                                                                                   'hashname' => '__STRING2__',
-                                                                                                  'line' => 65,
+                                                                                                  'line' => 48,
                                                                                                   'lookahead' => 0,
                                                                                                   'pattern' => ')'
                                                                                                 }, 'Parse::RecDescent::Literal' ),
                                                                                          bless( {
                                                                                                   'code' => '{ Finance::HostedTrader::ExpressionParser::SetIndicatorTimeframe($item[2], 10800); $item[2] }',
                                                                                                   'hashname' => '__ACTION1__',
-                                                                                                  'line' => 65,
+                                                                                                  'line' => 48,
                                                                                                   'lookahead' => 0
                                                                                                 }, 'Parse::RecDescent::Action' )
                                                                                        ],
-                                                                            'line' => 64,
+                                                                            'line' => 47,
                                                                             'number' => 6,
                                                                             'patcount' => 0,
                                                                             'strcount' => 2,
@@ -15098,14 +11971,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                          bless( {
                                                                                                   'description' => '\'4hour(\'',
                                                                                                   'hashname' => '__STRING1__',
-                                                                                                  'line' => 66,
+                                                                                                  'line' => 49,
                                                                                                   'lookahead' => 0,
                                                                                                   'pattern' => '4hour('
                                                                                                 }, 'Parse::RecDescent::Literal' ),
                                                                                          bless( {
                                                                                                   'argcode' => undef,
                                                                                                   'implicit' => undef,
-                                                                                                  'line' => 66,
+                                                                                                  'line' => 49,
                                                                                                   'lookahead' => 0,
                                                                                                   'matchrule' => 0,
                                                                                                   'subrule' => 'function'
@@ -15113,18 +11986,18 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                          bless( {
                                                                                                   'description' => '\')\'',
                                                                                                   'hashname' => '__STRING2__',
-                                                                                                  'line' => 66,
+                                                                                                  'line' => 49,
                                                                                                   'lookahead' => 0,
                                                                                                   'pattern' => ')'
                                                                                                 }, 'Parse::RecDescent::Literal' ),
                                                                                          bless( {
                                                                                                   'code' => '{ Finance::HostedTrader::ExpressionParser::SetIndicatorTimeframe($item[2], 14400); $item[2] }',
                                                                                                   'hashname' => '__ACTION1__',
-                                                                                                  'line' => 66,
+                                                                                                  'line' => 49,
                                                                                                   'lookahead' => 0
                                                                                                 }, 'Parse::RecDescent::Action' )
                                                                                        ],
-                                                                            'line' => 65,
+                                                                            'line' => 48,
                                                                             'number' => 7,
                                                                             'patcount' => 0,
                                                                             'strcount' => 2,
@@ -15138,14 +12011,14 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                          bless( {
                                                                                                   'description' => '\'8hour(\'',
                                                                                                   'hashname' => '__STRING1__',
-                                                                                                  'line' => 67,
+                                                                                                  'line' => 50,
                                                                                                   'lookahead' => 0,
                                                                                                   'pattern' => '8hour('
                                                                                                 }, 'Parse::RecDescent::Literal' ),
                                                                                          bless( {
                                                                                                   'argcode' => undef,
                                                                                                   'implicit' => undef,
-                                                                                                  'line' => 67,
+                                                                                                  'line' => 50,
                                                                                                   'lookahead' => 0,
                                                                                                   'matchrule' => 0,
                                                                                                   'subrule' => 'function'
@@ -15153,18 +12026,18 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                                          bless( {
                                                                                                   'description' => '\')\'',
                                                                                                   'hashname' => '__STRING2__',
-                                                                                                  'line' => 67,
+                                                                                                  'line' => 50,
                                                                                                   'lookahead' => 0,
                                                                                                   'pattern' => ')'
                                                                                                 }, 'Parse::RecDescent::Literal' ),
                                                                                          bless( {
                                                                                                   'code' => '{ Finance::HostedTrader::ExpressionParser::SetIndicatorTimeframe($item[2], 28800); $item[2] }',
                                                                                                   'hashname' => '__ACTION1__',
-                                                                                                  'line' => 67,
+                                                                                                  'line' => 50,
                                                                                                   'lookahead' => 0
                                                                                                 }, 'Parse::RecDescent::Action' )
                                                                                        ],
-                                                                            'line' => 66,
+                                                                            'line' => 49,
                                                                             'number' => 8,
                                                                             'patcount' => 0,
                                                                             'strcount' => 2,
@@ -15172,792 +12045,7 @@ package Finance::HostedTrader::ExpressionParser::Grammar; sub new { my $self = b
                                                                           }, 'Parse::RecDescent::Production' )
                                                                  ],
                                                       'vars' => ''
-                                                    }, 'Parse::RecDescent::Rule' ),
-                              'timeframe_statement_signal' => bless( {
-                                                                       'calls' => [
-                                                                                    'statement_signal'
-                                                                                  ],
-                                                                       'changed' => 0,
-                                                                       'impcount' => 0,
-                                                                       'line' => 9,
-                                                                       'name' => 'timeframe_statement_signal',
-                                                                       'opcount' => 0,
-                                                                       'prods' => [
-                                                                                    bless( {
-                                                                                             'actcount' => 1,
-                                                                                             'dircount' => 0,
-                                                                                             'error' => undef,
-                                                                                             'items' => [
-                                                                                                          bless( {
-                                                                                                                   'description' => '\'month\'',
-                                                                                                                   'hashname' => '__STRING1__',
-                                                                                                                   'line' => 9,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => 'month'
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'description' => '\'(\'',
-                                                                                                                   'hashname' => '__STRING2__',
-                                                                                                                   'line' => 9,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => '('
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'argcode' => undef,
-                                                                                                                   'implicit' => undef,
-                                                                                                                   'line' => 9,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'matchrule' => 0,
-                                                                                                                   'subrule' => 'statement_signal'
-                                                                                                                 }, 'Parse::RecDescent::Subrule' ),
-                                                                                                          bless( {
-                                                                                                                   'description' => '\')\'',
-                                                                                                                   'hashname' => '__STRING3__',
-                                                                                                                   'line' => 9,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => ')'
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'code' => '{ Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 18144000); $item[3] }',
-                                                                                                                   'hashname' => '__ACTION1__',
-                                                                                                                   'line' => 9,
-                                                                                                                   'lookahead' => 0
-                                                                                                                 }, 'Parse::RecDescent::Action' )
-                                                                                                        ],
-                                                                                             'line' => undef,
-                                                                                             'number' => 0,
-                                                                                             'patcount' => 0,
-                                                                                             'strcount' => 3,
-                                                                                             'uncommit' => undef
-                                                                                           }, 'Parse::RecDescent::Production' ),
-                                                                                    bless( {
-                                                                                             'actcount' => 1,
-                                                                                             'dircount' => 0,
-                                                                                             'error' => undef,
-                                                                                             'items' => [
-                                                                                                          bless( {
-                                                                                                                   'description' => '\'week\'',
-                                                                                                                   'hashname' => '__STRING1__',
-                                                                                                                   'line' => 10,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => 'week'
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'description' => '\'(\'',
-                                                                                                                   'hashname' => '__STRING2__',
-                                                                                                                   'line' => 10,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => '('
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'argcode' => undef,
-                                                                                                                   'implicit' => undef,
-                                                                                                                   'line' => 10,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'matchrule' => 0,
-                                                                                                                   'subrule' => 'statement_signal'
-                                                                                                                 }, 'Parse::RecDescent::Subrule' ),
-                                                                                                          bless( {
-                                                                                                                   'description' => '\')\'',
-                                                                                                                   'hashname' => '__STRING3__',
-                                                                                                                   'line' => 10,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => ')'
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'code' => '{ Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 604800); $item[3] }',
-                                                                                                                   'hashname' => '__ACTION1__',
-                                                                                                                   'line' => 10,
-                                                                                                                   'lookahead' => 0
-                                                                                                                 }, 'Parse::RecDescent::Action' )
-                                                                                                        ],
-                                                                                             'line' => 10,
-                                                                                             'number' => 1,
-                                                                                             'patcount' => 0,
-                                                                                             'strcount' => 3,
-                                                                                             'uncommit' => undef
-                                                                                           }, 'Parse::RecDescent::Production' ),
-                                                                                    bless( {
-                                                                                             'actcount' => 1,
-                                                                                             'dircount' => 0,
-                                                                                             'error' => undef,
-                                                                                             'items' => [
-                                                                                                          bless( {
-                                                                                                                   'description' => '\'day\'',
-                                                                                                                   'hashname' => '__STRING1__',
-                                                                                                                   'line' => 11,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => 'day'
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'description' => '\'(\'',
-                                                                                                                   'hashname' => '__STRING2__',
-                                                                                                                   'line' => 11,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => '('
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'argcode' => undef,
-                                                                                                                   'implicit' => undef,
-                                                                                                                   'line' => 11,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'matchrule' => 0,
-                                                                                                                   'subrule' => 'statement_signal'
-                                                                                                                 }, 'Parse::RecDescent::Subrule' ),
-                                                                                                          bless( {
-                                                                                                                   'description' => '\')\'',
-                                                                                                                   'hashname' => '__STRING3__',
-                                                                                                                   'line' => 11,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => ')'
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'code' => '{ Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 86400); $item[3] }',
-                                                                                                                   'hashname' => '__ACTION1__',
-                                                                                                                   'line' => 11,
-                                                                                                                   'lookahead' => 0
-                                                                                                                 }, 'Parse::RecDescent::Action' )
-                                                                                                        ],
-                                                                                             'line' => 11,
-                                                                                             'number' => 2,
-                                                                                             'patcount' => 0,
-                                                                                             'strcount' => 3,
-                                                                                             'uncommit' => undef
-                                                                                           }, 'Parse::RecDescent::Production' ),
-                                                                                    bless( {
-                                                                                             'actcount' => 1,
-                                                                                             'dircount' => 0,
-                                                                                             'error' => undef,
-                                                                                             'items' => [
-                                                                                                          bless( {
-                                                                                                                   'description' => '\'4hour\'',
-                                                                                                                   'hashname' => '__STRING1__',
-                                                                                                                   'line' => 12,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => '4hour'
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'description' => '\'(\'',
-                                                                                                                   'hashname' => '__STRING2__',
-                                                                                                                   'line' => 12,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => '('
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'argcode' => undef,
-                                                                                                                   'implicit' => undef,
-                                                                                                                   'line' => 12,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'matchrule' => 0,
-                                                                                                                   'subrule' => 'statement_signal'
-                                                                                                                 }, 'Parse::RecDescent::Subrule' ),
-                                                                                                          bless( {
-                                                                                                                   'description' => '\')\'',
-                                                                                                                   'hashname' => '__STRING3__',
-                                                                                                                   'line' => 12,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => ')'
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'code' => '{ Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 14400); $item[3] }',
-                                                                                                                   'hashname' => '__ACTION1__',
-                                                                                                                   'line' => 12,
-                                                                                                                   'lookahead' => 0
-                                                                                                                 }, 'Parse::RecDescent::Action' )
-                                                                                                        ],
-                                                                                             'line' => 12,
-                                                                                             'number' => 3,
-                                                                                             'patcount' => 0,
-                                                                                             'strcount' => 3,
-                                                                                             'uncommit' => undef
-                                                                                           }, 'Parse::RecDescent::Production' ),
-                                                                                    bless( {
-                                                                                             'actcount' => 1,
-                                                                                             'dircount' => 0,
-                                                                                             'error' => undef,
-                                                                                             'items' => [
-                                                                                                          bless( {
-                                                                                                                   'description' => '\'3hour\'',
-                                                                                                                   'hashname' => '__STRING1__',
-                                                                                                                   'line' => 13,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => '3hour'
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'description' => '\'(\'',
-                                                                                                                   'hashname' => '__STRING2__',
-                                                                                                                   'line' => 13,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => '('
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'argcode' => undef,
-                                                                                                                   'implicit' => undef,
-                                                                                                                   'line' => 13,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'matchrule' => 0,
-                                                                                                                   'subrule' => 'statement_signal'
-                                                                                                                 }, 'Parse::RecDescent::Subrule' ),
-                                                                                                          bless( {
-                                                                                                                   'description' => '\')\'',
-                                                                                                                   'hashname' => '__STRING3__',
-                                                                                                                   'line' => 13,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => ')'
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'code' => '{ Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 10800); $item[3] }',
-                                                                                                                   'hashname' => '__ACTION1__',
-                                                                                                                   'line' => 13,
-                                                                                                                   'lookahead' => 0
-                                                                                                                 }, 'Parse::RecDescent::Action' )
-                                                                                                        ],
-                                                                                             'line' => 13,
-                                                                                             'number' => 4,
-                                                                                             'patcount' => 0,
-                                                                                             'strcount' => 3,
-                                                                                             'uncommit' => undef
-                                                                                           }, 'Parse::RecDescent::Production' ),
-                                                                                    bless( {
-                                                                                             'actcount' => 1,
-                                                                                             'dircount' => 0,
-                                                                                             'error' => undef,
-                                                                                             'items' => [
-                                                                                                          bless( {
-                                                                                                                   'description' => '\'2hour\'',
-                                                                                                                   'hashname' => '__STRING1__',
-                                                                                                                   'line' => 14,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => '2hour'
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'description' => '\'(\'',
-                                                                                                                   'hashname' => '__STRING2__',
-                                                                                                                   'line' => 14,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => '('
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'argcode' => undef,
-                                                                                                                   'implicit' => undef,
-                                                                                                                   'line' => 14,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'matchrule' => 0,
-                                                                                                                   'subrule' => 'statement_signal'
-                                                                                                                 }, 'Parse::RecDescent::Subrule' ),
-                                                                                                          bless( {
-                                                                                                                   'description' => '\')\'',
-                                                                                                                   'hashname' => '__STRING3__',
-                                                                                                                   'line' => 14,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => ')'
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'code' => '{ Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 7200); $item[3] }',
-                                                                                                                   'hashname' => '__ACTION1__',
-                                                                                                                   'line' => 14,
-                                                                                                                   'lookahead' => 0
-                                                                                                                 }, 'Parse::RecDescent::Action' )
-                                                                                                        ],
-                                                                                             'line' => 14,
-                                                                                             'number' => 5,
-                                                                                             'patcount' => 0,
-                                                                                             'strcount' => 3,
-                                                                                             'uncommit' => undef
-                                                                                           }, 'Parse::RecDescent::Production' ),
-                                                                                    bless( {
-                                                                                             'actcount' => 1,
-                                                                                             'dircount' => 0,
-                                                                                             'error' => undef,
-                                                                                             'items' => [
-                                                                                                          bless( {
-                                                                                                                   'description' => '\'hour\'',
-                                                                                                                   'hashname' => '__STRING1__',
-                                                                                                                   'line' => 15,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => 'hour'
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'description' => '\'(\'',
-                                                                                                                   'hashname' => '__STRING2__',
-                                                                                                                   'line' => 15,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => '('
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'argcode' => undef,
-                                                                                                                   'implicit' => undef,
-                                                                                                                   'line' => 15,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'matchrule' => 0,
-                                                                                                                   'subrule' => 'statement_signal'
-                                                                                                                 }, 'Parse::RecDescent::Subrule' ),
-                                                                                                          bless( {
-                                                                                                                   'description' => '\')\'',
-                                                                                                                   'hashname' => '__STRING3__',
-                                                                                                                   'line' => 15,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => ')'
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'code' => '{ Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 3600); $item[3] }',
-                                                                                                                   'hashname' => '__ACTION1__',
-                                                                                                                   'line' => 15,
-                                                                                                                   'lookahead' => 0
-                                                                                                                 }, 'Parse::RecDescent::Action' )
-                                                                                                        ],
-                                                                                             'line' => 15,
-                                                                                             'number' => 6,
-                                                                                             'patcount' => 0,
-                                                                                             'strcount' => 3,
-                                                                                             'uncommit' => undef
-                                                                                           }, 'Parse::RecDescent::Production' ),
-                                                                                    bless( {
-                                                                                             'actcount' => 1,
-                                                                                             'dircount' => 0,
-                                                                                             'error' => undef,
-                                                                                             'items' => [
-                                                                                                          bless( {
-                                                                                                                   'description' => '\'30minute\'',
-                                                                                                                   'hashname' => '__STRING1__',
-                                                                                                                   'line' => 16,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => '30minute'
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'description' => '\'(\'',
-                                                                                                                   'hashname' => '__STRING2__',
-                                                                                                                   'line' => 16,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => '('
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'argcode' => undef,
-                                                                                                                   'implicit' => undef,
-                                                                                                                   'line' => 16,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'matchrule' => 0,
-                                                                                                                   'subrule' => 'statement_signal'
-                                                                                                                 }, 'Parse::RecDescent::Subrule' ),
-                                                                                                          bless( {
-                                                                                                                   'description' => '\')\'',
-                                                                                                                   'hashname' => '__STRING3__',
-                                                                                                                   'line' => 16,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => ')'
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'code' => '{ Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 1800); $item[3] }',
-                                                                                                                   'hashname' => '__ACTION1__',
-                                                                                                                   'line' => 16,
-                                                                                                                   'lookahead' => 0
-                                                                                                                 }, 'Parse::RecDescent::Action' )
-                                                                                                        ],
-                                                                                             'line' => 16,
-                                                                                             'number' => 7,
-                                                                                             'patcount' => 0,
-                                                                                             'strcount' => 3,
-                                                                                             'uncommit' => undef
-                                                                                           }, 'Parse::RecDescent::Production' ),
-                                                                                    bless( {
-                                                                                             'actcount' => 1,
-                                                                                             'dircount' => 0,
-                                                                                             'error' => undef,
-                                                                                             'items' => [
-                                                                                                          bless( {
-                                                                                                                   'description' => '\'15minute\'',
-                                                                                                                   'hashname' => '__STRING1__',
-                                                                                                                   'line' => 17,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => '15minute'
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'description' => '\'(\'',
-                                                                                                                   'hashname' => '__STRING2__',
-                                                                                                                   'line' => 17,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => '('
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'argcode' => undef,
-                                                                                                                   'implicit' => undef,
-                                                                                                                   'line' => 17,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'matchrule' => 0,
-                                                                                                                   'subrule' => 'statement_signal'
-                                                                                                                 }, 'Parse::RecDescent::Subrule' ),
-                                                                                                          bless( {
-                                                                                                                   'description' => '\')\'',
-                                                                                                                   'hashname' => '__STRING3__',
-                                                                                                                   'line' => 17,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => ')'
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'code' => '{ Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 900); $item[3] }',
-                                                                                                                   'hashname' => '__ACTION1__',
-                                                                                                                   'line' => 17,
-                                                                                                                   'lookahead' => 0
-                                                                                                                 }, 'Parse::RecDescent::Action' )
-                                                                                                        ],
-                                                                                             'line' => 17,
-                                                                                             'number' => 8,
-                                                                                             'patcount' => 0,
-                                                                                             'strcount' => 3,
-                                                                                             'uncommit' => undef
-                                                                                           }, 'Parse::RecDescent::Production' ),
-                                                                                    bless( {
-                                                                                             'actcount' => 1,
-                                                                                             'dircount' => 0,
-                                                                                             'error' => undef,
-                                                                                             'items' => [
-                                                                                                          bless( {
-                                                                                                                   'description' => '\'5minute\'',
-                                                                                                                   'hashname' => '__STRING1__',
-                                                                                                                   'line' => 18,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => '5minute'
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'description' => '\'(\'',
-                                                                                                                   'hashname' => '__STRING2__',
-                                                                                                                   'line' => 18,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => '('
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'argcode' => undef,
-                                                                                                                   'implicit' => undef,
-                                                                                                                   'line' => 18,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'matchrule' => 0,
-                                                                                                                   'subrule' => 'statement_signal'
-                                                                                                                 }, 'Parse::RecDescent::Subrule' ),
-                                                                                                          bless( {
-                                                                                                                   'description' => '\')\'',
-                                                                                                                   'hashname' => '__STRING3__',
-                                                                                                                   'line' => 18,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => ')'
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'code' => '{ Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 300); $item[3] }',
-                                                                                                                   'hashname' => '__ACTION1__',
-                                                                                                                   'line' => 18,
-                                                                                                                   'lookahead' => 0
-                                                                                                                 }, 'Parse::RecDescent::Action' )
-                                                                                                        ],
-                                                                                             'line' => 18,
-                                                                                             'number' => 9,
-                                                                                             'patcount' => 0,
-                                                                                             'strcount' => 3,
-                                                                                             'uncommit' => undef
-                                                                                           }, 'Parse::RecDescent::Production' ),
-                                                                                    bless( {
-                                                                                             'actcount' => 1,
-                                                                                             'dircount' => 0,
-                                                                                             'error' => undef,
-                                                                                             'items' => [
-                                                                                                          bless( {
-                                                                                                                   'description' => '\'2minute\'',
-                                                                                                                   'hashname' => '__STRING1__',
-                                                                                                                   'line' => 19,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => '2minute'
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'description' => '\'(\'',
-                                                                                                                   'hashname' => '__STRING2__',
-                                                                                                                   'line' => 19,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => '('
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'argcode' => undef,
-                                                                                                                   'implicit' => undef,
-                                                                                                                   'line' => 19,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'matchrule' => 0,
-                                                                                                                   'subrule' => 'statement_signal'
-                                                                                                                 }, 'Parse::RecDescent::Subrule' ),
-                                                                                                          bless( {
-                                                                                                                   'description' => '\')\'',
-                                                                                                                   'hashname' => '__STRING3__',
-                                                                                                                   'line' => 19,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => ')'
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'code' => '{ Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 120); $item[3] }',
-                                                                                                                   'hashname' => '__ACTION1__',
-                                                                                                                   'line' => 19,
-                                                                                                                   'lookahead' => 0
-                                                                                                                 }, 'Parse::RecDescent::Action' )
-                                                                                                        ],
-                                                                                             'line' => 19,
-                                                                                             'number' => 10,
-                                                                                             'patcount' => 0,
-                                                                                             'strcount' => 3,
-                                                                                             'uncommit' => undef
-                                                                                           }, 'Parse::RecDescent::Production' ),
-                                                                                    bless( {
-                                                                                             'actcount' => 1,
-                                                                                             'dircount' => 0,
-                                                                                             'error' => undef,
-                                                                                             'items' => [
-                                                                                                          bless( {
-                                                                                                                   'description' => '\'minute\'',
-                                                                                                                   'hashname' => '__STRING1__',
-                                                                                                                   'line' => 20,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => 'minute'
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'description' => '\'(\'',
-                                                                                                                   'hashname' => '__STRING2__',
-                                                                                                                   'line' => 20,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => '('
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'argcode' => undef,
-                                                                                                                   'implicit' => undef,
-                                                                                                                   'line' => 20,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'matchrule' => 0,
-                                                                                                                   'subrule' => 'statement_signal'
-                                                                                                                 }, 'Parse::RecDescent::Subrule' ),
-                                                                                                          bless( {
-                                                                                                                   'description' => '\')\'',
-                                                                                                                   'hashname' => '__STRING3__',
-                                                                                                                   'line' => 20,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => ')'
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'code' => '{ Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 60); $item[3] }',
-                                                                                                                   'hashname' => '__ACTION1__',
-                                                                                                                   'line' => 20,
-                                                                                                                   'lookahead' => 0
-                                                                                                                 }, 'Parse::RecDescent::Action' )
-                                                                                                        ],
-                                                                                             'line' => 20,
-                                                                                             'number' => 11,
-                                                                                             'patcount' => 0,
-                                                                                             'strcount' => 3,
-                                                                                             'uncommit' => undef
-                                                                                           }, 'Parse::RecDescent::Production' ),
-                                                                                    bless( {
-                                                                                             'actcount' => 1,
-                                                                                             'dircount' => 0,
-                                                                                             'error' => undef,
-                                                                                             'items' => [
-                                                                                                          bless( {
-                                                                                                                   'description' => '\'30second\'',
-                                                                                                                   'hashname' => '__STRING1__',
-                                                                                                                   'line' => 21,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => '30second'
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'description' => '\'(\'',
-                                                                                                                   'hashname' => '__STRING2__',
-                                                                                                                   'line' => 21,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => '('
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'argcode' => undef,
-                                                                                                                   'implicit' => undef,
-                                                                                                                   'line' => 21,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'matchrule' => 0,
-                                                                                                                   'subrule' => 'statement_signal'
-                                                                                                                 }, 'Parse::RecDescent::Subrule' ),
-                                                                                                          bless( {
-                                                                                                                   'description' => '\')\'',
-                                                                                                                   'hashname' => '__STRING3__',
-                                                                                                                   'line' => 21,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => ')'
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'code' => '{ Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 30); $item[3] }',
-                                                                                                                   'hashname' => '__ACTION1__',
-                                                                                                                   'line' => 21,
-                                                                                                                   'lookahead' => 0
-                                                                                                                 }, 'Parse::RecDescent::Action' )
-                                                                                                        ],
-                                                                                             'line' => 21,
-                                                                                             'number' => 12,
-                                                                                             'patcount' => 0,
-                                                                                             'strcount' => 3,
-                                                                                             'uncommit' => undef
-                                                                                           }, 'Parse::RecDescent::Production' ),
-                                                                                    bless( {
-                                                                                             'actcount' => 1,
-                                                                                             'dircount' => 0,
-                                                                                             'error' => undef,
-                                                                                             'items' => [
-                                                                                                          bless( {
-                                                                                                                   'description' => '\'15second\'',
-                                                                                                                   'hashname' => '__STRING1__',
-                                                                                                                   'line' => 22,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => '15second'
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'description' => '\'(\'',
-                                                                                                                   'hashname' => '__STRING2__',
-                                                                                                                   'line' => 22,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => '('
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'argcode' => undef,
-                                                                                                                   'implicit' => undef,
-                                                                                                                   'line' => 22,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'matchrule' => 0,
-                                                                                                                   'subrule' => 'statement_signal'
-                                                                                                                 }, 'Parse::RecDescent::Subrule' ),
-                                                                                                          bless( {
-                                                                                                                   'description' => '\')\'',
-                                                                                                                   'hashname' => '__STRING3__',
-                                                                                                                   'line' => 22,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => ')'
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'code' => '{ Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 15); $item[3] }',
-                                                                                                                   'hashname' => '__ACTION1__',
-                                                                                                                   'line' => 22,
-                                                                                                                   'lookahead' => 0
-                                                                                                                 }, 'Parse::RecDescent::Action' )
-                                                                                                        ],
-                                                                                             'line' => 22,
-                                                                                             'number' => 13,
-                                                                                             'patcount' => 0,
-                                                                                             'strcount' => 3,
-                                                                                             'uncommit' => undef
-                                                                                           }, 'Parse::RecDescent::Production' ),
-                                                                                    bless( {
-                                                                                             'actcount' => 1,
-                                                                                             'dircount' => 0,
-                                                                                             'error' => undef,
-                                                                                             'items' => [
-                                                                                                          bless( {
-                                                                                                                   'description' => '\'5second\'',
-                                                                                                                   'hashname' => '__STRING1__',
-                                                                                                                   'line' => 23,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => '5second'
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'description' => '\'(\'',
-                                                                                                                   'hashname' => '__STRING2__',
-                                                                                                                   'line' => 23,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => '('
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'argcode' => undef,
-                                                                                                                   'implicit' => undef,
-                                                                                                                   'line' => 23,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'matchrule' => 0,
-                                                                                                                   'subrule' => 'statement_signal'
-                                                                                                                 }, 'Parse::RecDescent::Subrule' ),
-                                                                                                          bless( {
-                                                                                                                   'description' => '\')\'',
-                                                                                                                   'hashname' => '__STRING3__',
-                                                                                                                   'line' => 23,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => ')'
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'code' => '{ Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 5); $item[3] }',
-                                                                                                                   'hashname' => '__ACTION1__',
-                                                                                                                   'line' => 23,
-                                                                                                                   'lookahead' => 0
-                                                                                                                 }, 'Parse::RecDescent::Action' )
-                                                                                                        ],
-                                                                                             'line' => 23,
-                                                                                             'number' => 14,
-                                                                                             'patcount' => 0,
-                                                                                             'strcount' => 3,
-                                                                                             'uncommit' => undef
-                                                                                           }, 'Parse::RecDescent::Production' ),
-                                                                                    bless( {
-                                                                                             'actcount' => 1,
-                                                                                             'dircount' => 0,
-                                                                                             'error' => undef,
-                                                                                             'items' => [
-                                                                                                          bless( {
-                                                                                                                   'description' => '\'second\'',
-                                                                                                                   'hashname' => '__STRING1__',
-                                                                                                                   'line' => 24,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => 'second'
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'description' => '\'(\'',
-                                                                                                                   'hashname' => '__STRING2__',
-                                                                                                                   'line' => 24,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => '('
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'argcode' => undef,
-                                                                                                                   'implicit' => undef,
-                                                                                                                   'line' => 24,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'matchrule' => 0,
-                                                                                                                   'subrule' => 'statement_signal'
-                                                                                                                 }, 'Parse::RecDescent::Subrule' ),
-                                                                                                          bless( {
-                                                                                                                   'description' => '\')\'',
-                                                                                                                   'hashname' => '__STRING3__',
-                                                                                                                   'line' => 24,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'pattern' => ')'
-                                                                                                                 }, 'Parse::RecDescent::Literal' ),
-                                                                                                          bless( {
-                                                                                                                   'code' => '{ Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 1); $item[3] }',
-                                                                                                                   'hashname' => '__ACTION1__',
-                                                                                                                   'line' => 24,
-                                                                                                                   'lookahead' => 0
-                                                                                                                 }, 'Parse::RecDescent::Action' )
-                                                                                                        ],
-                                                                                             'line' => 24,
-                                                                                             'number' => 15,
-                                                                                             'patcount' => 0,
-                                                                                             'strcount' => 3,
-                                                                                             'uncommit' => undef
-                                                                                           }, 'Parse::RecDescent::Production' ),
-                                                                                    bless( {
-                                                                                             'actcount' => 0,
-                                                                                             'dircount' => 0,
-                                                                                             'error' => undef,
-                                                                                             'items' => [
-                                                                                                          bless( {
-                                                                                                                   'argcode' => undef,
-                                                                                                                   'implicit' => undef,
-                                                                                                                   'line' => 25,
-                                                                                                                   'lookahead' => 0,
-                                                                                                                   'matchrule' => 0,
-                                                                                                                   'subrule' => 'statement_signal'
-                                                                                                                 }, 'Parse::RecDescent::Subrule' )
-                                                                                                        ],
-                                                                                             'line' => 25,
-                                                                                             'number' => 16,
-                                                                                             'patcount' => 0,
-                                                                                             'strcount' => 0,
-                                                                                             'uncommit' => undef
-                                                                                           }, 'Parse::RecDescent::Production' )
-                                                                                  ],
-                                                                       'vars' => ''
-                                                                     }, 'Parse::RecDescent::Rule' )
+                                                    }, 'Parse::RecDescent::Rule' )
                             },
                  'startcode' => ''
                }, 'Parse::RecDescent' );

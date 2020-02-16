@@ -1,40 +1,20 @@
-start_indicator:          statement_indicator /\Z/               {$item[1]}
+start_indicator:        statement_indicator /\Z/               {$item[1]}
 
-start_signal:          recursive_timeframe_statement_signal /\Z/               {$item[1]}
+start_signal:           statement_signal /\Z/               {$item[1]}
 
-statement_indicator:		expression(s /,/) {join(',', map { (/^[0-9]/ ? $_ : "$_") } @{$item[1]})}
+statement_indicator:    expression(s /,/) {join(',', map { (/^[0-9]/ ? $_ : "$_") } @{$item[1]})}
 
-recursive_timeframe_statement_signal:       <leftop: timeframe_statement_signal boolop timeframe_statement_signal >     { $item[1] }
-
-timeframe_statement_signal:     'month' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 18144000); $item[3] }
-                              | 'week' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 604800); $item[3] }
-                              | 'day' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 86400); $item[3] }
-                              | '4hour' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 14400); $item[3] }
-                              | '3hour' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 10800); $item[3] }
-                              | '2hour' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 7200); $item[3] }
-                              | 'hour' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 3600); $item[3] }
-                              | '30minute' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 1800); $item[3] }
-                              | '15minute' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 900); $item[3] }
-                              | '5minute' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 300); $item[3] }
-                              | '2minute' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 120); $item[3] }
-                              | 'minute' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 60); $item[3] }
-                              | '30second' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 30); $item[3] }
-                              | '15second' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 15); $item[3] }
-                              | '5second' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 5); $item[3] }
-                              | 'second' '(' statement_signal ')'   { Finance::HostedTrader::ExpressionParser::setSignalTimeframe($item[3], 1); $item[3] }
-                              | statement_signal
-
-statement_signal:		<leftop: signal boolop signal > { $item[1] }
+statement_signal:       <leftop: signal boolop signal > { $item[1] }
 
 statement: statement_indicator | statement_signal
 
-boolop:	'and' | 'or'
+boolop: 'and' | 'or'
 
 signal:
-			    'crossoverup' '(' expression ',' number ')' { my $key = Finance::HostedTrader::ExpressionParser::getID("crossoverup","ta_previous($item[3],1)", $item[5], $item[3], $item[5]); $key }
-			  | 'crossoverup' '(' expression ',' expression ')' { my $key = Finance::HostedTrader::ExpressionParser::getID("crossoverup","ta_previous($item[3],1)", "ta_previous($item[5],1)", $item[3], $item[5]); $key }
-			  | 'crossoverdown' '(' expression ',' number ')' { my $key = Finance::HostedTrader::ExpressionParser::getID("crossoverdown","ta_previous($item[3],1)", $item[5], $item[3], $item[5]); $key }
-			  | 'crossoverdown' '(' expression ',' expression ')' { my $key = Finance::HostedTrader::ExpressionParser::getID("crossoverdown","ta_previous($item[3],1)", "ta_previous($item[5],1)", $item[3], $item[5]); $key }
+                'crossoverup' '(' expression ',' number ')' { my $key = Finance::HostedTrader::ExpressionParser::getID("crossoverup","ta_previous($item[3],1)", $item[5], $item[3], $item[5]); $key }
+              | 'crossoverup' '(' expression ',' expression ')' { my $key = Finance::HostedTrader::ExpressionParser::getID("crossoverup","ta_previous($item[3],1)", "ta_previous($item[5],1)", $item[3], $item[5]); $key }
+              | 'crossoverdown' '(' expression ',' number ')' { my $key = Finance::HostedTrader::ExpressionParser::getID("crossoverdown","ta_previous($item[3],1)", $item[5], $item[3], $item[5]); $key }
+              | 'crossoverdown' '(' expression ',' expression ')' { my $key = Finance::HostedTrader::ExpressionParser::getID("crossoverdown","ta_previous($item[3],1)", "ta_previous($item[5],1)", $item[3], $item[5]); $key }
               | expression cmp_op expression      { my $key = Finance::HostedTrader::ExpressionParser::getID("cmpop$item[2]",$item[1],$item[3]); $key }
               | expression
 
@@ -56,7 +36,7 @@ term:           timeframe
 
 number:         /-?\d+(\.\d+)?/
 
-field:			"datetime" | "open" | "high" | "low" | "close"
+field:          "datetime" | "open" | "high" | "low" | "close"
 
 timeframe:
         '1minute(' function ')' { Finance::HostedTrader::ExpressionParser::SetIndicatorTimeframe($item[2], 60); $item[2] } |
@@ -70,21 +50,21 @@ timeframe:
         '8hour(' function ')' { Finance::HostedTrader::ExpressionParser::SetIndicatorTimeframe($item[2], 28800); $item[2] }
 
 function:
-		'ema(' expression ',' number ')' { "round(ta_ema($item[2],$item[4]), 4)" } |
-		'sma(' expression ',' number ')' { "round(" . Finance::HostedTrader::ExpressionParser::GetIndicatorTimeframe("ta_sma($item[2],$item[4])", "ta_sma_win($item[2],$item[4]) OVER (PARTITION BY datetime_TIMEFRAME ORDER BY datetime)") . ", 4)" } |
-		'rsi(' expression ',' number ')' { "round(" . Finance::HostedTrader::ExpressionParser::GetIndicatorTimeframe("ta_rsi($item[2],$item[4])", "ta_rsi_win($item[2],$item[4]) OVER (PARTITION BY datetime_TIMEFRAME ORDER BY datetime)") . ", 2)" } |
-		'max(' expression ',' number ')' { "ta_max($item[2],$item[4])" } |
-		'min(' expression ',' number ')' { "ta_min($item[2],$item[4])" } |
-		'tr(' ')'  { "round(ta_tr(high,low,close), 4)" } |
-		'atr(' number ')'  { "round(" . Finance::HostedTrader::ExpressionParser::GetIndicatorTimeframe("ta_ssma(ta_tr(high,low,close),$item[2])", "ta_atr_win(high, low, close, $item[2]) OVER (PARTITION BY datetime_TIMEFRAME ORDER BY datetime)") . ", 4)" } |
-		'stddev(' expression ',' number ')' { "round(ta_stddevp($item[2],$item[4]), 4)" } |
-		'previous(' expression ',' number ')' { "ta_previous($item[2],$item[4])" } |
-		'bolhigh(' expression ',' number ',' number ')' { "round(ta_sma($item[2],$item[4]) + $item[6]*ta_stddevp($item[2], $item[4]), 4)" } |
-		'bollow(' expression ',' number ',' number ')' { "round(ta_sma($item[2],$item[4]) - $item[6]*ta_stddevp($item[2], $item[4]), 4)" } |
-		'trend(' expression ',' number ')' { "round(($item[2] - ta_sma($item[2],$item[4])) / (SQRT(ta_sum(POW($item[2] - ta_sma($item[2], $item[4]), 2), $item[4])/$item[4])), 2)" } |
-		'macd(' expression ',' number ',' number ',' number ')' { "round(ta_ema($item[2],$item[4]) - ta_ema($item[2],$item[6]), 4)" } |
-		'macdsig(' expression ',' number ',' number ',' number ')' { "round(ta_ema(ta_ema($item[2],$item[4]) - ta_ema($item[2],$item[6]),$item[8]),4)" } |
-		'macddiff(' expression ',' number ',' number ',' number ')' { "round((ta_ema($item[2],$item[4]) - ta_ema($item[2],$item[6])) - (ta_ema(ta_ema($item[2],$item[4]) - ta_ema($item[2],$item[6]),$item[8])),4)" } |
-		'abs(' expression ')' { "round(abs($item[2]), 4)" } |
-		'weekday(' expression ')' { "weekday($item[2])" } |
-		'dayname(' expression ')' { "dayname($item[2])" }
+        'ema(' expression ',' number ')' { "round(ta_ema($item[2],$item[4]), 4)" } |
+        'sma(' expression ',' number ')' { "round(" . Finance::HostedTrader::ExpressionParser::GetIndicatorTimeframe("ta_sma($item[2],$item[4])", "ta_sma_win($item[2],$item[4]) OVER (PARTITION BY datetime_TIMEFRAME ORDER BY datetime)") . ", 4)" } |
+        'rsi(' expression ',' number ')' { "round(" . Finance::HostedTrader::ExpressionParser::GetIndicatorTimeframe("ta_rsi($item[2],$item[4])", "ta_rsi_win($item[2],$item[4]) OVER (PARTITION BY datetime_TIMEFRAME ORDER BY datetime)") . ", 2)" } |
+        'max(' expression ',' number ')' { "ta_max($item[2],$item[4])" } |
+        'min(' expression ',' number ')' { "ta_min($item[2],$item[4])" } |
+        'tr(' ')'  { "round(ta_tr(high,low,close), 4)" } |
+        'atr(' number ')'  { "round(" . Finance::HostedTrader::ExpressionParser::GetIndicatorTimeframe("ta_ssma(ta_tr(high,low,close),$item[2])", "ta_atr_win(high, low, close, $item[2]) OVER (PARTITION BY datetime_TIMEFRAME ORDER BY datetime)") . ", 4)" } |
+        'stddev(' expression ',' number ')' { "round(ta_stddevp($item[2],$item[4]), 4)" } |
+        'previous(' expression ',' number ')' { "ta_previous($item[2],$item[4])" } |
+        'bolhigh(' expression ',' number ',' number ')' { "round(ta_sma($item[2],$item[4]) + $item[6]*ta_stddevp($item[2], $item[4]), 4)" } |
+        'bollow(' expression ',' number ',' number ')' { "round(ta_sma($item[2],$item[4]) - $item[6]*ta_stddevp($item[2], $item[4]), 4)" } |
+        'trend(' expression ',' number ')' { "round(($item[2] - ta_sma($item[2],$item[4])) / (SQRT(ta_sum(POW($item[2] - ta_sma($item[2], $item[4]), 2), $item[4])/$item[4])), 2)" } |
+        'macd(' expression ',' number ',' number ',' number ')' { "round(ta_ema($item[2],$item[4]) - ta_ema($item[2],$item[6]), 4)" } |
+        'macdsig(' expression ',' number ',' number ',' number ')' { "round(ta_ema(ta_ema($item[2],$item[4]) - ta_ema($item[2],$item[6]),$item[8]),4)" } |
+        'macddiff(' expression ',' number ',' number ',' number ')' { "round((ta_ema($item[2],$item[4]) - ta_ema($item[2],$item[6])) - (ta_ema(ta_ema($item[2],$item[4]) - ta_ema($item[2],$item[6]),$item[8])),4)" } |
+        'abs(' expression ')' { "round(abs($item[2]), 4)" } |
+        'weekday(' expression ')' { "weekday($item[2])" } |
+        'dayname(' expression ')' { "dayname($item[2])" }

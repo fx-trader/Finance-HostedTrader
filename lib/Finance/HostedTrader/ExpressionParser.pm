@@ -194,12 +194,18 @@ See L</getIndicatorData> for list of arguments.
 =cut
 sub getSignalData {
     my ( $self, $args ) = @_;
-    my $sql = $self->_getSignalSql($args);
+
+    my $test = delete $args->{test};
+
+    my $sql;
+    $sql = $self->_getSignalSql2($args); # This one supports window functions and better handling of multiple timeframes per expression.
+    #$sql = $self->_getSignalSql($args); # This one has primitive support for multiple timeframes per expression based on joins, which is a piece of rubbish and is going in the bin.
 
     $self->{_logger}->debug($sql);
 
     my $dbh = $self->{_ds}->dbh;
-    my $data = $dbh->selectcol_arrayref($sql) || $self->{_logger}->logconfess( $DBI::errstr . $sql );
+    my $data;
+    $data = $dbh->selectcol_arrayref($sql) || $self->{_logger}->logconfess( $DBI::errstr . $sql );
 
     return { data => $data, sql => $sql } if ($args->{sqldebug});
     return { data => $data, };
@@ -506,6 +512,106 @@ LIMIT $itemCount
 return $sql;
 
 }
+
+sub _getSignalSql2 {
+my ($self, $args) = @_;
+
+    my @good_args           = qw(provider timeframe expression instrument max_loaded_items start_period end_period item_count fields);
+
+    foreach my $key (keys %$args) {
+        $self->{_logger}->logconfess("invalid arg in _getSignalSql: $key") unless grep { /$key/ } @good_args;
+    }
+
+    my $tf_name = $args->{timeframe} || $args->{tf} || 'day';
+    my $tf = $self->{_ds}->cfg->timeframes->getTimeframeID($tf_name);
+    $self->{_logger}->logconfess( "Could not understand timeframe " . ( $tf_name ) ) if (!$tf);
+    my $expr   = $args->{expression} || $args->{expr}   || $self->{_logger}->logconfess("No expression set for signal");
+    $expr = lc($expr);
+    my $instrument = $args->{instrument} || $args->{symbol} || $self->{_logger}->logconfess("No instrument set");
+    my $maxLoadedItems = $args->{max_loaded_items} || $args->{maxLoadedItems} || 10_000_000_000;
+    my $displayStartDate = $args->{start_period} || $args->{startPeriod} || '0001-01-01 00:00:00';
+    my $displayEndDate = $args->{end_period} || $args->{endPeriod} || '9999-12-31 23:59:59';
+    my $fields = $args->{fields} || 'datetime';
+    my $provider = $args->{provider};
+    my $sqlFilter = $args->{inner_sql_filter} // '';
+
+    my $data_provider = $self->{_ds}->cfg->provider($provider);
+
+    my $itemCount = $args->{item_count} || $args->{numItems} || $maxLoadedItems;
+
+    %TIMEFRAMES = ();
+    %INDICATORS = ();
+    @VALUES     = ();
+    my $results  = $self->{_parser}->start_signal( \$expr );
+
+    #use Data::Dumper;
+    #print "TIMEFRAMES = " . Dumper(\%TIMEFRAMES);
+    #print "INDICATORS = " . Dumper(\%INDICATORS);
+    #print "VALUES = " . Dumper(\@VALUES);
+    #print "results = " . Dumper(\$results);
+
+    $self->{_logger}->logdie("Syntax error in signal \n\n$expr\n") unless ( defined($results) );
+
+    my $tableName = $data_provider->getTableName($instrument, $tf);
+
+    #my $datetime_labels = join(', ', map {"datetime_${_}"} keys %DATETIMES);
+    use Finance::HostedTrader::Synthetics;
+    my $datetime_expressions = join(', ', map { Finance::HostedTrader::Synthetics::getDateFormat($_) . " AS datetime_${_}" } keys %DATETIMES);
+    $datetime_expressions .= ',' if ($datetime_expressions);
+
+    my $WHERE_FILTER = "WHERE datetime >= '$displayStartDate' AND datetime <= '$displayEndDate'";
+    $WHERE_FILTER .= " AND ($sqlFilter)" if ($sqlFilter);
+
+    my %query_items;
+    foreach my $result (@$results) {
+        next unless ($result =~ /^\d+$/);
+        foreach my $item ( @{ $VALUES[$result]->{items} }) {
+            $query_items{$item} = $INDICATORS{$item};
+        }
+    }
+
+    my $select_items = join(",\n  ", ('datetime', map { "$_ AS F" . $query_items{$_} } keys %query_items));
+
+    my @pp = map { ($_ =~ /^\d+$/ ? $VALUES[$_] : $_) } @$results;
+    #print "PP=" . Dumper(\@pp);
+    my @ppp = map { (ref($_) eq 'HASH' ? "F" . $INDICATORS{$_->{items}[0]} . " " . $_->{type} . " F" . $INDICATORS{$_->{items}[1]} : $_) } @pp;
+
+    #print "PPP=" . Dumper(\@ppp);
+
+    my $signal_where_filter = join(" ", map { s/cmpop//;$_ } @ppp);
+
+
+    my $sql = "
+WITH T AS (
+  SELECT datetime, mid_open AS open, mid_high AS high, mid_low AS low, mid_close AS close
+  FROM ${tableName}
+  $WHERE_FILTER
+  ORDER BY datetime DESC
+  LIMIT $maxLoadedItems
+),
+data AS (
+  SELECT
+  datetime,${datetime_expressions} open, high, low, close
+  FROM T
+  ORDER BY datetime ASC
+  LIMIT 18446744073709551615 -- See https://mariadb.com/kb/en/why-is-order-by-in-a-from-subquery-ignored/
+),
+indicators AS (
+  SELECT
+  $select_items
+  FROM data
+  ORDER BY datetime ASC
+  LIMIT 18446744073709551615 -- See https://mariadb.com/kb/en/why-is-order-by-in-a-from-subquery-ignored/
+)
+SELECT datetime FROM indicators
+WHERE $signal_where_filter
+ORDER BY datetime DESC
+LIMIT $itemCount
+";
+print "$sql\n";
+    return $sql;
+}
+
 
 sub _getIndicatorSql {
     my ($self, %args) = @_;
