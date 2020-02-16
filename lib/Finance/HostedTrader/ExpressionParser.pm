@@ -451,7 +451,7 @@ sub _getIndicatorSql2 {
     my $displayEndDate   = $args{end_period} || $args{end_period} || '9999-12-31';
     my $expr      = $args{expression} || $args{fields}          || $self->{_logger}->logconfess("No indicator expression set");
     $expr = lc($expr);
-    my $symbol    = $args{instrument} || $args{symbol}          || $self->{_logger}->logconfess("No instrument set for indicator");
+    my $instrument= $args{instrument} || $args{symbol}          || $self->{_logger}->logconfess("No instrument set for indicator");
     my $itemCount = $args{item_count} || $args{numItems} || 10_000_000;
     my $sqlFilter = $args{inner_sql_filter} // '';
     my $provider  = $args{provider};
@@ -469,7 +469,7 @@ sub _getIndicatorSql2 {
     $WHERE_FILTER .= " AND ($sqlFilter)" if ($sqlFilter);
 #    $WHERE_FILTER .= ' AND dayofweek(datetime) <> 1' if ( $tf != 604800 );
 
-    my $tableName = $data_provider->getTableName($symbol, $tf);
+    my $tableName = $data_provider->getTableName($instrument, $tf);
 
     my $datetime_labels = join(', ', map {"datetime_${_}"} keys %DATETIMES);
     use Finance::HostedTrader::Synthetics;
