@@ -167,12 +167,7 @@ weekdays
 sub getIndicatorData {
     my ( $self, $args ) = @_;
 
-    my $sql;
-    if (delete $args->{test}) {
-        $sql = $self->_getIndicatorSql2(%$args);
-    } else {
-        $sql = $self->_getIndicatorSql(%$args);
-    }
+    my $sql = $self->_getIndicatorSql(%$args);
     $self->{_logger}->debug($sql);
 
     my $dbh = $self->{_ds}->dbh;
@@ -243,7 +238,7 @@ sub log_obsolete_argument_names {
     }
 }
 
-sub _getIndicatorSql2 {
+sub _getIndicatorSql {
     my ($self, %args) = @_;
     my ( $result );
 
@@ -416,73 +411,6 @@ LIMIT $itemCount
 
     return $sql;
 }
-
-
-sub _getIndicatorSql {
-    my ($self, %args) = @_;
-    my ( $result );
-
-    my @obsolete_arg_names  = qw(tf fields maxLoadedItems endPeriod numItems symbol);
-    $self->log_obsolete_argument_names(\@obsolete_arg_names, \%args);
-    my @good_args           = qw(provider timeframe expression instrument max_loaded_items start_period end_period item_count inner_sql_filter weekdays);
-
-    foreach my $key (keys %args) {
-        $self->{_logger}->logconfess("invalid arg in getIndicatorData: $key") unless grep { /$key/ } @good_args, @obsolete_arg_names;
-    }
-
-    my $tf_name = $args{timeframe} || $args{tf} || 'day';
-    my $tf = $self->{_ds}->cfg->timeframes->getTimeframeID($tf_name);
-    $self->{_logger}->logconfess( "Could not understand timeframe " . ( $tf_name ) ) if (!$tf);
-    my $maxLoadedItems = $args{max_loaded_items} || $args{maxLoadedItems} || 10_000_000_000;;
-    my $displayStartDate   = $args{start_period} || $args{start_period} || '0001-01-01';
-    my $displayEndDate   = $args{end_period} || $args{end_period} || '9999-12-31';
-    my $expr      = $args{expression} || $args{fields}          || $self->{_logger}->logconfess("No indicator expression set");
-    $expr = lc($expr);
-    my $instrument    = $args{instrument} || $args{symbol}          || $self->{_logger}->logconfess("No instrument set for indicator");
-    my $itemCount = $args{item_count} || $args{numItems} || 10_000_000;
-    my $sqlFilter = $args{inner_sql_filter} // '';
-    my $provider  = $args{provider};
-
-    my $data_provider = $self->{_ds}->cfg->provider($provider);
-
-    #TODO: Refactor the parser bit so that it can be called independently. This will be usefull to validate expressions before running them.
-    $result     = $self->{_parser}->start_indicator($expr);
-
-    #TODO: Need a more meaningfull error message describing what's wrong with the given expression
-    $self->{_logger}->logdie("Syntax error in indicator \n\n$expr\n")
-        unless ( defined($result) );
-
-#TODO These substitutions should be provider specific
-    $result =~ s/open/mid_open/g;
-    $result =~ s/high/mid_high/g;
-    $result =~ s/low/mid_low/g;
-    $result =~ s/close/mid_close/g;
-
-    my $WHERE_FILTER = "WHERE datetime >= '$displayStartDate' AND datetime <= '$displayEndDate'";
-    $WHERE_FILTER .= " AND ($sqlFilter)" if ($sqlFilter);
-#    $WHERE_FILTER .= ' AND dayofweek(datetime) <> 1' if ( $tf != 604800 );
-
-    my $tableName = $data_provider->getTableName($instrument, $tf);
-    my $sql = qq(
-SELECT * FROM (
-SELECT $result FROM (
-  SELECT * FROM $tableName
-  $WHERE_FILTER
-  ORDER BY datetime DESC
-  LIMIT $maxLoadedItems
-) AS R
-ORDER BY datetime ASC
-LIMIT 18446744073709551615 -- See https://mariadb.com/kb/en/why-is-order-by-in-a-from-subquery-ignored/
-) AS LIMIT_ROWS
-ORDER BY datetime DESC
-LIMIT $itemCount
-);
-
-return $sql;
-
-}
-
-
 
 =method C<checkSignal>
 Check wether a given signal occurred in a given period of time
