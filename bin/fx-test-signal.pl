@@ -104,7 +104,7 @@ foreach my $instrument ( @instruments ) {
         {
             'expression'        => $signal,
             'item_count'        => $item_count,
-            'symbol'            => $instrument,
+            'instrument'        => $instrument,
             'timeframe'         => $timeframe,
             'max_loaded_items'  => $max_loaded_items,
             'start_period'      => UnixDate($startPeriod, '%Y-%m-%d %H:%M:%S'),

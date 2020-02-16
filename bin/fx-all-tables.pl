@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# ABSTRACT: Generates statments which can be used against all symbols/timeframes
+# ABSTRACT: Generates statments which can be used against all instruments/timeframes
 # PODNAME: fx-all-tables.pl
 
 =head1 SYNOPSIS

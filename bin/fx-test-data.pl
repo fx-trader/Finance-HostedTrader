@@ -29,23 +29,23 @@ my $ds = Finance::HostedTrader::Datasource->new();
 my $cfg = $ds->cfg;
 my $dbh = $ds->dbh;
 
-my $symbols = $cfg->symbols->all;
+my $instruments = $cfg->symbols->all;
 my $timeframes = $cfg->timeframes->all;
 
-plan tests => scalar(@$symbols) * scalar(@$timeframes) * 2;
+plan tests => scalar(@$instruments) * scalar(@$timeframes) * 2;
 
 foreach my $tf (@$timeframes) {
-    foreach my $symbol (@$symbols) {
+    foreach my $instrument (@$instruments) {
         my $sql = qq|
-SELECT Count(1) FROM $symbol\_$tf
+SELECT Count(1) FROM $instrument\_$tf
 |;
         my $numRecords = $dbh->selectcol_arrayref($sql);
-        isnt($numRecords->[0], 0, "Records exit in $symbol\_$tf");
+        isnt($numRecords->[0], 0, "Records exit in $instrument\_$tf");
 
 
         $sql = qq |
 SELECT datetime, open, high, low, close
-FROM $symbol\_$tf
+FROM $instrument\_$tf
 WHERE high < low OR high < close OR low > close OR high < open OR low > open
 |;
         my $sth = $dbh->prepare($sql) or die($DBI::errstr);
@@ -54,7 +54,7 @@ WHERE high < low OR high < close OR low > close OR high < open OR low > open
         my $data = $sth->fetchall_arrayref();
         $sth->finish() or die($DBI::errstr);
 
-        is(scalar(@$data), 0, "Invalid records in $symbol\_$tf");
+        is(scalar(@$data), 0, "Invalid records in $instrument\_$tf");
         if (scalar(@$data) > 0) {
             print Dumper(\$data);
         }

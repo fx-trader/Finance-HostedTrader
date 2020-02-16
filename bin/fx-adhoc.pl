@@ -10,7 +10,7 @@ use warnings;
 use Finance::FXCM::Simple;
 use Data::Printer;
 
-    my $symbol = "AUD/USD";
+    my $instrument = "AUD/USD";
     my $direction = "long";
 
     my $ff = Finance::FXCM::Simple->new(
@@ -20,6 +20,6 @@ use Data::Printer;
                 "http://www.fxcorporate.com/Hosts.jsp");
 
 # Print AUD/USD trades only, sorted by open price
-    my @trades = sort { $a->{openPrice} <=> $b->{openPrice} } grep { $_->{symbol} eq $symbol && $_->{direction} eq $direction } @{ $ff->getTrades };
+    my @trades = sort { $a->{openPrice} <=> $b->{openPrice} } grep { $_->{instrument} eq $instrument && $_->{direction} eq $direction } @{ $ff->getTrades };
     p @trades;
 

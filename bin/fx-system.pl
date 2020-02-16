@@ -215,7 +215,7 @@ sub get_data {
     my $data = $f->getIndicatorData(
         {
             'expression'    => 'datetime,close,sma(close,200)',
-            'symbol'        => 'EUR_USD',
+            'instrument'    => 'EUR_USD',
             'timeframe'     => 'min',
             'start_period'  => $start_date,
             'end_period'    => $end_date,

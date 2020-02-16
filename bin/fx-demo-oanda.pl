@@ -35,7 +35,7 @@ sub _getCurrencyRatio {
         'expression'        => "datetime,close",
         'timeframe'         => "5min",
         'item_count'        => 1,
-        'symbol'            => "${account_currency}_${base_currency}"
+        'instrument'        => "${account_currency}_${base_currency}"
     };
     my $indicator_result    = $signal_processor->getIndicatorData($params);
     return $indicator_result->{data}[0][1];
@@ -73,7 +73,7 @@ sub get_account_risk {
         my $base_currency = $oanda->getInstrumentDenominator($instrument);
 
         my $currency_ratio      = _getCurrencyRatio($account_currency, $base_currency);
-        $params->{symbol}       = $instrument || die("Could not map $instrument");
+        $params->{instrument}   = $instrument || die("Could not map $instrument");
         my $indicator_result    = $signal_processor->getIndicatorData($params);
         my $atr14 = $indicator_result->{data}[0][1];
         my $positionSize = $position->{long}{units} - $position->{short}{units};

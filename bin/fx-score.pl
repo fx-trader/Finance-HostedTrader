@@ -25,7 +25,7 @@ my $result = GetOptions(
 my $signal_processor = Finance::HostedTrader::ExpressionParser->new();
 my %scores;
 
-my %symbols = (
+my %instruments = (
     AUD     => { s => 'AUDUSD',     m => 1 },
     EUR     => { s => 'EURUSD',     m => 1 },
     CAD     => { s => 'USDCAD',     m => -1 },
@@ -50,19 +50,19 @@ my %symbols = (
     SUI30   => { s => 'SUI30USD',   m => 1 },
 );
 
-foreach my $asset ( keys(%symbols) ) {
-    my $symbol = $symbols{$asset}->{s};
+foreach my $asset ( keys(%instruments) ) {
+    my $instrument = $instruments{$asset}->{s};
     my $indicator_result = $signal_processor->getIndicatorData(
         {
             'expression'      => 'datetime,ema(trend(close,21),13)',
-            'symbol'          => $symbol,
+            'instrument'      => $instrument,
             'timeframe'       => $timeframe,
             'max_loaded_items'=> $max_loaded_items,
             'item_count'      => 1,
         }
     );
     my $data = $indicator_result->{data};
-    $scores{$asset}{score}      = $data->[0][1] * $symbols{$asset}->{m};
+    $scores{$asset}{score}      = $data->[0][1] * $instruments{$asset}->{m};
     $scores{$asset}{datetime}   = $data->[0][0];  # Make datetime visible so that's it's clear if data is out of date
 }
 $scores{USD}{score}     = 1;
