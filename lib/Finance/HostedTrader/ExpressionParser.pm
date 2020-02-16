@@ -20,7 +20,7 @@ use Finance::HostedTrader::Provider;
 # perl -MParse::RecDescent - /src/Finance-HostedTrader/lib/Finance/HostedTrader/grammar Finance::HostedTrader::ExpressionParser::Grammar
 use Finance::HostedTrader::ExpressionParser::Grammar;
 
-my ( %TIMEFRAMES, %INDICATORS, @VALUES );
+my ( %INDICATORS, @VALUES );
 my ( @INDICATOR_TIMEFRAMES, %DATETIMES );
 
 sub SetIndicatorTimeframe {
@@ -56,13 +56,6 @@ sub getID {
         push @{ $VALUES[$key]->{items} }, $item;
     }
     return $key;
-}
-
-sub setSignalTimeframe {
-    my ($sig, $tf) = @_;
-
-    my $key = join (' ', @$sig);
-    $TIMEFRAMES{$key} = $tf;
 }
 
 #$::RD_TRACE=1;
@@ -237,189 +230,6 @@ sub getSystemData {
     return $data;
 }
 
-sub _getSignalSql {
-my ($self, $args) = @_;
-
-    my @obsolete_arg_names  = qw(tf expr maxLoadedItems startPeriod endPeriod numItems fields symbol);
-    $self->log_obsolete_argument_names(\@obsolete_arg_names, $args);
-    my @good_args           = qw(provider timeframe expression instrument max_loaded_items start_period end_period item_count fields);
-
-    foreach my $key (keys %$args) {
-        $self->{_logger}->logconfess("invalid arg in _getSignalSql: $key") unless grep { /$key/ } @good_args, @obsolete_arg_names;
-    }
-
-    my $tf_name = $args->{timeframe} || $args->{tf} || 'day';
-    my $default_tf = $self->{_ds}->cfg->timeframes->getTimeframeID($tf_name);
-    $self->{_logger}->logconfess( "Could not understand timeframe " . ( $tf_name ) ) if (!$default_tf);
-    my $expr   = $args->{expression} || $args->{expr}   || $self->{_logger}->logconfess("No expression set for signal");
-    $expr = lc($expr);
-    my $instrument = $args->{instrument} || $args->{symbol} || $self->{_logger}->logconfess("No instrument set");
-    my $maxLoadedItems = $args->{max_loaded_items} || $args->{maxLoadedItems} || 10_000_000_000;
-    my $startPeriod = $args->{start_period} || $args->{startPeriod} || '0001-01-01 00:00:00';
-    my $endPeriod = $args->{end_period} || $args->{endPeriod} || '9999-12-31 23:59:59';
-    my $fields = $args->{fields} || 'datetime';
-    my $provider = $args->{provider};
-
-    my $data_provider = $self->{_ds}->cfg->provider($provider);
-
-    my $itemCount = $args->{item_count} || $args->{numItems} || $maxLoadedItems;
-
-    %TIMEFRAMES = ();
-    %INDICATORS = ();
-    @VALUES     = ();
-    my $results = $self->{_parser}->start_signal( $expr );
-
-    #use Data::Dumper;
-    #print "TIMEFRAMES = " . Dumper(\%TIMEFRAMES);
-    #print "INDICATORS = " . Dumper(\%INDICATORS);
-    #print "VALUES = " . Dumper(\@VALUES);
-    #print "results = " . Dumper(\$results);
-    #exit;
-
-    $self->{_logger}->logdie("Syntax error in signal \n\n$expr\n") unless ( defined($results) );
-
-    my @all_timeframes_sql = ();
-    my @timeframes_sql_glue = ();
-
-    my $max_timeframe_requested = List::Util::max(values %TIMEFRAMES) || $default_tf;
-    my $min_timeframe_requested = List::Util::min(values %TIMEFRAMES) || $default_tf;
-    my $cfg = $self->{_ds}->cfg;
-    my $common_timeframe_pattern = $cfg->timeframes->getTimeframeFormat($cfg->timeframes->getTimeframeName($max_timeframe_requested));
-
-    foreach my $result (@$results) {
-
-        my $result_str;
-        if (!ref($result)) {
-            push @timeframes_sql_glue, $result;
-            next;
-        }
-        my $tf = $TIMEFRAMES{join(' ', @$result)} || $default_tf;
-        my @fields;
-
-        foreach my $result_signal (@$result) {
-            if ($result_signal =~ /^[0-9]+$/) {
-                my $value = $VALUES[$result_signal];
-                my $str;
-
-                push @fields, map { "$_ AS T$INDICATORS{$_}" } @{$value->{items}};
-
-                if ( $value->{type} eq 'crossoverup' ) {
-                    $str = "(T" . $INDICATORS{$value->{items}->[0]} . " <= T" . $INDICATORS{$value->{items}->[1]} . " AND T" . $INDICATORS{$value->{items}->[2]} . " > T" . $INDICATORS{$value->{items}->[3]} . ")";
-                } elsif ( $value->{type} eq 'crossoverdown' ) {
-                    $str = "(T" . $INDICATORS{$value->{items}->[0]} . " >= T" . $INDICATORS{$value->{items}->[1]} . " AND T" . $INDICATORS{$value->{items}->[2]} . " < T" . $INDICATORS{$value->{items}->[3]} . ")";
-                } elsif ( $value->{type} eq 'cmpop>=' ) {
-                    $str = "(T" . $INDICATORS{$value->{items}->[0]} . " >= T" . $INDICATORS{$value->{items}->[1]} . ")";
-                } elsif ( $value->{type} eq 'cmpop>' ) {
-                    $str = "(T" . $INDICATORS{$value->{items}->[0]} . " > T" . $INDICATORS{$value->{items}->[1]} . ")";
-                } elsif ( $value->{type} eq 'cmpop<=' ) {
-                    $str = "(T" . $INDICATORS{$value->{items}->[0]} . " <= T" . $INDICATORS{$value->{items}->[1]} . ")";
-                } elsif ( $value->{type} eq 'cmpop<' ) {
-                    $str = "(T" . $INDICATORS{$value->{items}->[0]} . " < T" . $INDICATORS{$value->{items}->[1]} . ")";
-                } else {
-                    die("Invalid grammar. $value->{type}");
-                }
-                $result_str .= $str;
-            } else {
-                $result_str .= ' ' . $result_signal . ' ';
-            }
-        }
-
-        my %unique_fields = map { $_ => undef } @fields;
-
-        my $select_fields = join( ', ', keys %unique_fields );
-        $select_fields = ',' . $select_fields if ($select_fields);
-        #TODO These substitutions should be provider specific
-        $select_fields =~ s/open/mid_open/g;
-        $select_fields =~ s/high/mid_high/g;
-        $select_fields =~ s/low/mid_low/g;
-        $select_fields =~ s/close/mid_close/g;
-
-        my $WHERE_FILTER = " WHERE datetime <= '$endPeriod'";
-        $WHERE_FILTER .= ' AND dayofweek(datetime) <> 1' if ( $tf != 604800 );
-        my $ORDERBY_CLAUSE='';
-        $ORDERBY_CLAUSE='ORDER BY datetime ASC';
-
-        my $tableName = $data_provider->getTableName($instrument, $tf);
-
-        my $tf_sql = qq(
-(
-SELECT $fields, $common_timeframe_pattern AS COMMON_TIMEFRAME_PATTERN FROM (
-SELECT $fields FROM (
-SELECT *$select_fields
-FROM (
-    SELECT * FROM ${tableName}
-    $WHERE_FILTER
-    ORDER BY datetime DESC
-    LIMIT $maxLoadedItems
-) AS T_INNER
-ORDER BY datetime ASC
-LIMIT 18446744073709551615 -- See https://mariadb.com/kb/en/why-is-order-by-in-a-from-subquery-ignored/
-) AS T_OUTER
-WHERE $result_str AND datetime <='$endPeriod'
-) AS DT
-$ORDERBY_CLAUSE
-LIMIT 18446744073709551615 -- See https://mariadb.com/kb/en/why-is-order-by-in-a-from-subquery-ignored/
-) AS SIGNALS_TF_$tf
-
-);
-
-        push @all_timeframes_sql,  {sql => $tf_sql, tf => $tf};
-    }
-
-    #print Dumper(\@all_timeframes_sql);
-    #print Dumper(\@timeframes_sql_glue);
-    my %unique_timeframes_sql_glue = map { $_ => 1 } @timeframes_sql_glue;
-    if (scalar(keys(%unique_timeframes_sql_glue)) > 1) {
-        # When using a signal expression with more than one timeframe,
-        # This is valid:
-        #   4hour(close > ema(close,21)) and 2hour(close > ema(close,21)) and hour(close > ema(close,21))
-        # This is not:
-        #   4hour(close > ema(close,21)) and 2hour(close > ema(close,21)) or hour(close > ema(close,21))
-
-        # In other words, currently, if a signal expression has multiple timeframes, they all need to be 'and' or 'or'.
-        # I haven't figured out how to write a query to mix and match them.
-        # This validates for that condition and returns an appropriate error.
-
-        $self->{_logger}->logdie("In a multiple timeframe signal expression, all boolean operators between timeframe functions need to be the same. This is a limitation of the API.");
-    }
-
-    my $sql;
-    my $where_clause;
-    if (!@timeframes_sql_glue) {
-        my $leftop = shift(@all_timeframes_sql);
-        $sql = "SELECT $fields FROM $leftop->{sql}";
-        $where_clause = "WHERE datetime >= '$startPeriod'";
-    } else {
-        $sql = "SELECT SIGNALS_TF_$min_timeframe_requested.datetime FROM\n";
-        $where_clause = "WHERE SIGNALS_TF_$min_timeframe_requested.datetime >= '$startPeriod'";
-        if (scalar(@all_timeframes_sql) < 2) {
-            # This condition should never happen. If it does,
-            # there was an error filling up the internal data structures
-            # that support signal calculations
-            $self->{_logger}->logdie("missing data, internal error");
-        }
-
-        my $leftop = shift(@all_timeframes_sql);
-        $sql .= $leftop->{sql};
-
-        while ( my $op = shift(@timeframes_sql_glue) ) {
-            my $rightop = shift(@all_timeframes_sql);
-
-            if ($op eq 'and') {
-                $sql .= "\nINNER JOIN\n" . $rightop->{sql} . " ON SIGNALS_TF_$leftop->{tf}.COMMON_TIMEFRAME_PATTERN = SIGNALS_TF_$rightop->{tf}.COMMON_TIMEFRAME_PATTERN";
-            } elsif ($op eq 'or') {
-                $sql .= "\nUNION ALL\n" . $rightop->{sql};
-            } else {
-                # This can't really be reached because the grammar only allows operators 'and', 'or'.
-                $self->{_logger}->logconfess("Unknown operator: $op");
-            }
-
-        }
-    }
-    $sql .= " $where_clause ORDER BY datetime DESC limit $itemCount";
-    return $sql;
-}
-
 sub log_obsolete_argument_names {
     use Devel::StackTrace;
     my ($self, $obsolete_arg_names, $args) = @_;
@@ -539,13 +349,13 @@ my ($self, $args) = @_;
 
     my $itemCount = $args->{item_count} || $args->{numItems} || $maxLoadedItems;
 
-    %TIMEFRAMES = ();
     %INDICATORS = ();
     @VALUES     = ();
     my $results  = $self->{_parser}->start_signal( \$expr );
 
     #use Data::Dumper;
-    #print "TIMEFRAMES = " . Dumper(\%TIMEFRAMES);
+    #print "INDICATOR_TIMEFRAMES = " . Dumper(\@INDICATOR_TIMEFRAMES);
+    #print "DATETIME = " . Dumper(\%DATETIMES);
     #print "INDICATORS = " . Dumper(\%INDICATORS);
     #print "VALUES = " . Dumper(\@VALUES);
     #print "results = " . Dumper(\$results);
@@ -559,7 +369,7 @@ my ($self, $args) = @_;
     my $datetime_expressions = join(', ', map { Finance::HostedTrader::Synthetics::getDateFormat($_) . " AS datetime_${_}" } keys %DATETIMES);
     $datetime_expressions .= ',' if ($datetime_expressions);
 
-    my $WHERE_FILTER = "WHERE datetime >= '$displayStartDate' AND datetime <= '$displayEndDate'";
+    my $WHERE_FILTER = "(datetime >= '$displayStartDate' AND datetime <= '$displayEndDate')";
     $WHERE_FILTER .= " AND ($sqlFilter)" if ($sqlFilter);
 
     my %query_items;
@@ -585,7 +395,6 @@ my ($self, $args) = @_;
 WITH T AS (
   SELECT datetime, mid_open AS open, mid_high AS high, mid_low AS low, mid_close AS close
   FROM ${tableName}
-  $WHERE_FILTER
   ORDER BY datetime DESC
   LIMIT $maxLoadedItems
 ),
@@ -604,7 +413,7 @@ indicators AS (
   LIMIT 18446744073709551615 -- See https://mariadb.com/kb/en/why-is-order-by-in-a-from-subquery-ignored/
 )
 SELECT datetime FROM indicators
-WHERE $signal_where_filter
+WHERE ($signal_where_filter) AND $WHERE_FILTER
 ORDER BY datetime DESC
 LIMIT $itemCount
 ";
