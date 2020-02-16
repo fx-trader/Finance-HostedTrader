@@ -188,7 +188,7 @@ See L</getIndicatorData> for list of arguments.
 sub getSignalData {
     my ( $self, $args ) = @_;
 
-    my $sql = $self->_getSignalSql2($args); # This one supports window functions and better handling of multiple timeframes per expression.
+    my $sql = $self->_getSignalSql($args); # This one supports window functions and better handling of multiple timeframes per expression.
 
     $self->{_logger}->debug($sql);
 
@@ -319,7 +319,7 @@ return $sql;
 
 }
 
-sub _getSignalSql2 {
+sub _getSignalSql {
 my ($self, $args) = @_;
 
     my @good_args           = qw(provider timeframe expression instrument max_loaded_items start_period end_period item_count fields);
