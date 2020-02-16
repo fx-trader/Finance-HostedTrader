@@ -10,7 +10,7 @@
 
 =head1 DESCRIPTION
 
-This script requires approximately 60000 records of 5 minute data per symbol produce valid results.
+This script requires approximately 60000 records of 5 minute data per instrument produce valid results.
 If not enough data is available, the script will exit with an error.
 
 =head2 OPTIONS
@@ -27,7 +27,7 @@ Optional argument. Output column separator, defaults to single space
 
 =item C<--numItems=i>
 
-Optional argument. Number of data points to output per symbol. Defaults to 1.
+Optional argument. Number of data points to output per instrument. Defaults to 1.
 
 
 =back
@@ -58,18 +58,18 @@ my $result = GetOptions(
 
 my $signal_processor = Finance::HostedTrader::ExpressionParser->new();
 my $c = Finance::HostedTrader::Config->new();
-my $symbols = $c->symbols->get_symbols_by_denominator("USD");
+my $instruments = $c->symbols->get_symbols_by_denominator("USD");
 my $dbh = $signal_processor->{_ds}->dbh;
 
 
-foreach my $symbol ( @$symbols ) {
+foreach my $instrument ( @$instruments ) {
     my $asset = $c->symbols->getSymbolNumerator($symbol);
-    my $sql = getSQL($symbol, $average, $numItems);
+    my $sql = getSQL($instrument, $average, $numItems);
     my $data = $dbh->selectall_arrayref($sql) or die($DBI::errstr);
 
     if (!defined($data) || !defined($data->[0]) || !defined($data->[0]->[1])) {
         warn "$sql\n";
-        die("No data for $symbol");
+        die("No data for $instrument");
     }
 
     foreach my $row (@$data) {
@@ -78,15 +78,15 @@ foreach my $symbol ( @$symbols ) {
 
 }
 
-$symbols = $c->symbols->get_symbols_by_numerator("USD");
-foreach my $symbol ( @$symbols ) {
-    my $asset = $c->symbols->getSymbolDenominator($symbol);
-    my $sql = getSQL($symbol, $average, $numItems);
+$instruments = $c->symbols->get_symbols_by_numerator("USD");
+foreach my $instrument ( @$instruments ) {
+    my $asset = $c->symbols->getSymbolDenominator($instrument);
+    my $sql = getSQL($instrument, $average, $numItems);
     my $data = $dbh->selectall_arrayref($sql) or die($DBI::errstr);
 
     if (!defined($data) || !defined($data->[0]) || !defined($data->[0]->[1])) {
         warn "$sql\n";
-        die("No data for $symbol");
+        die("No data for $instrument");
     }
 
     foreach my $row (@$data) {
@@ -98,7 +98,7 @@ foreach my $symbol ( @$symbols ) {
 
 
 sub getSQL {
-    my ($symbol, $average, $numItems) = @_;
+    my ($instrument, $average, $numItems) = @_;
 
 # The inner query converts 5 minute data to weekly format, and returns at most 1000 rows of weekly data
 # See this article for more details on this technique: http://zonalivre.org/2009/10/12/simulating-firstlast-aggregate-functions-in-mysql/
@@ -115,7 +115,7 @@ sub getSQL {
 
             SELECT  date_format(date_sub(datetime, interval weekday(datetime)-5 DAY), '%Y-%m-%d 00:00:00') as datetime,
                     CAST(SUBSTRING_INDEX(GROUP_CONCAT(CAST(close AS CHAR) ORDER BY datetime DESC), ',', 1) AS DECIMAL(10,4)) as close
-            FROM ${symbol}_300
+            FROM ${instrument}_300
             GROUP BY date_format(datetime, '%x-%v')
             ORDER BY datetime ASC
             LIMIT 1000

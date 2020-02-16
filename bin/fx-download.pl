@@ -89,7 +89,7 @@ if (!$service || download_data()) {
             print "Updating $instrument $lowerTf synthetic\n" if ($verbose);
             my $synthetic_info = $data_provider->synthetic->{$instrument} || die("Don't know how to calculate $instrument. Add it to fx.yml");
             my $table = $data_provider->getTableName($instrument, $lowerTf);
-            my $select_sql = Finance::HostedTrader::Synthetics::get_synthetic_symbol(provider => $data_provider, symbol => $instrument, timeframe => $lowerTf, synthetic_info => $synthetic_info, incremental_base_table => "$table");
+            my $select_sql = Finance::HostedTrader::Synthetics::get_synthetic_instrument(provider => $data_provider, instrument => $instrument, timeframe => $lowerTf, synthetic_info => $synthetic_info, incremental_base_table => "$table");
 
             my $sql = qq /REPLACE INTO ${table}
                 ${select_sql};
@@ -102,7 +102,7 @@ if (!$service || download_data()) {
             foreach my $tf (@tfs) {
                 print "Updating $instrument $tf synthetic\n" if ($verbose);
                 my $table = $data_provider->getTableName($instrument, $tf);
-                my $select_sql = Finance::HostedTrader::Synthetics::get_synthetic_timeframe(provider => $data_provider, symbol => $instrument, timeframe => $tf, incremental_base_table => "$table");
+                my $select_sql = Finance::HostedTrader::Synthetics::get_synthetic_timeframe(provider => $data_provider, instrument => $instrument, timeframe => $tf, incremental_base_table => "$table");
 
                 my $sql = qq/REPLACE INTO $table
                 $select_sql/;
@@ -164,7 +164,7 @@ Required. A comma separated string of timeframe codes for which data is to be do
 
 =item C<--instruments=$SYM1[,$SYM2 ...]>
 
-Required. A comma separated string of symbol codes for which data is to be downloaded. See L<Finance::HostedTrader::Config::Symbols> for available codes.  Defaults to download every natural (as opposed to synthetic) symbol.
+Required. A comma separated string of instrument codes for which data is to be downloaded. See L<Finance::HostedTrader::Config::Symbols> for available codes.  Defaults to download every natural (as opposed to synthetic) instrument.
 
 =item C<--numItems=i>
 

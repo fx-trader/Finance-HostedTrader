@@ -35,15 +35,15 @@ while (<STDIN>) {
     $out{$date}{$asset} = $value;
 }
 my %unique = map { map { $_ => 1} keys(%{$out{$_}})  } keys(%out);
-my @symbols = sort(keys(%unique));
-print "Time," , join(",", @symbols), "\n";
+my @instruments = sort(keys(%unique));
+print "Time," , join(",", @instruments), "\n";
 
 my @sorted_dates = sort(keys(%out));
 
 foreach my $date (@sorted_dates) {
     print $date;
-    foreach my $symbol (@symbols) {
-        my $value = (defined($out{$date}{$symbol}) ? $out{$date}{$symbol} : '');
+    foreach my $instrument (@instruments) {
+        my $value = (defined($out{$date}{$instrument}) ? $out{$date}{$instrument} : '');
         print ",", $value;
     }
     print "\n";

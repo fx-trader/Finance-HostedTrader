@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# ABSTRACT: Sets the subscription status of the input symbols to subscribed so that they show up in tradestation
+# ABSTRACT: Sets the subscription status of the input instruments to subscribed so that they show up in tradestation
 # PODNAME: fx-setsubscription.pl
 
 use strict;
@@ -17,7 +17,7 @@ my $fxcm_accounttype = $ENV{FXCM_ACCOUNT_TYPE} || $provider->accountType;
 print "Connecting to fxcm account $fxcm_user ($fxcm_accounttype)\n";
 my $fxcm = Finance::FXCM::Simple->new($fxcm_user, $fxcm_pass, $fxcm_accounttype, $provider->serverURL);
 
-foreach my $symbol (@ARGV) {
-    print "Setting subscription for $symbol\n";
-    $fxcm->setSubscriptionStatus($symbol, "T");
+foreach my $instrument (@ARGV) {
+    print "Setting subscription for $instrument\n";
+    $fxcm->setSubscriptionStatus($instrument, "T");
 }

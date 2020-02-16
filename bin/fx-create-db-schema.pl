@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# ABSTRACT: Outputs SQL suitable to create db, mysql users and tables to store symbol historical data in various timeframes
+# ABSTRACT: Outputs SQL suitable to create db, mysql users and tables to store instrument historical data in various timeframes
 # PODNAME: fx-create-db-schema.pl
 
 =head1 SYNOPSIS
@@ -18,7 +18,7 @@ A valid MariaDB table type. Defaults to MYISAM.
 
 =item C<--mode=s>
 
-simple - Create tables for all symbols/timeframes, including synthetic symbols (default).
+simple - Create tables for all instruments/timeframes, including synthetic instruments (default).
 
 views - Create table structure with views based on the lower timeframe.
 
@@ -77,13 +77,13 @@ foreach my $provider_type (@provider_types) {
     my @tfs = sort { $a <=> $b } @{ $cfg->timeframes->all() };
 
     my $p = $cfg->providers->{$provider_type};
-    my @symbols = $p->getInstruments();
+    my @instruments = $p->getInstruments();
 
     if ($mode eq 'simple') {
 
-        foreach my $symbol (@symbols, $p->synthetic_names) {
+        foreach my $instrument (@instruments, $p->synthetic_names) {
             foreach my $tf (@tfs) {
-                my $tableName = $p->getTableName($symbol, $tf);
+                my $tableName = $p->getTableName($instrument, $tf);
                 print "DROP TABLE IF EXISTS `$tableName`;\n" if ($drop_table);
                 print qq /
     CREATE TABLE IF NOT EXISTS `$tableName` (
@@ -111,8 +111,8 @@ foreach my $provider_type (@provider_types) {
         my $lowerTf = shift(@tfs);
 
 
-        foreach my $symbol (@symbols) {
-            my $tableName = $p->getTableName($symbol, $lowerTf);
+        foreach my $instrument (@instruments) {
+            my $tableName = $p->getTableName($instrument, $lowerTf);
             print "DROP TABLE IF EXISTS `$tableName`;\n" if ($drop_table);
             print qq /
         CREATE TABLE IF NOT EXISTS `$tableName` (
@@ -135,11 +135,11 @@ foreach my $provider_type (@provider_types) {
         /;
         }
 
-        foreach my $symbol ($p->synthetic_names) {
+        foreach my $instrument ($p->synthetic_names) {
 
-            my $synthetic_info = $p->synthetic->{$symbol} || die("Don't know how to calculate $symbol. Add it to fx.yml");
-            my $sql = Finance::HostedTrader::Synthetics::get_synthetic_symbol(provider => $p, symbol => $symbol, timeframe => $lowerTf, synthetic_info => $synthetic_info);
-            my $tableName = $p->getTableName($symbol, $lowerTf);
+            my $synthetic_info = $p->synthetic->{$instrument} || die("Don't know how to calculate $instrument. Add it to fx.yml");
+            my $sql = Finance::HostedTrader::Synthetics::get_synthetic_instrument(provider => $p, instrument => $instrument, timeframe => $lowerTf, synthetic_info => $synthetic_info);
+            my $tableName = $p->getTableName($instrument, $lowerTf);
 
             print qq /
         CREATE OR REPLACE VIEW $tableName AS
@@ -147,10 +147,10 @@ foreach my $provider_type (@provider_types) {
         /;
         }
 
-        foreach my $symbol (@symbols, $p->synthetic_names) {
+        foreach my $instrument (@instruments, $p->synthetic_names) {
             foreach my $tf (@tfs) {
-                my $sql = Finance::HostedTrader::Synthetics::get_synthetic_timeframe(provider => $p, symbol => $symbol, timeframe => $tf);
-                my $tableName = $p->getTableName($symbol, $tf);
+                my $sql = Finance::HostedTrader::Synthetics::get_synthetic_timeframe(provider => $p, instrument => $instrument, timeframe => $tf);
+                my $tableName = $p->getTableName($instrument, $tf);
 
         print qq/
         CREATE OR REPLACE VIEW $tableName AS

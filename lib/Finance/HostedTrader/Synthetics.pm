@@ -1,5 +1,5 @@
 package Finance::HostedTrader::Synthetics;
-# ABSTRACT: Finance::Synthetics - Framework Helper functions for dealing with synthetic symbols/timeframes
+# ABSTRACT: Finance::Synthetics - Framework Helper functions for dealing with synthetic instruments/timeframes
 
 =head1 SYNOPSIS
 =cut
@@ -100,11 +100,11 @@ if (@filters) {
 return $sql;
 }
 
-sub get_synthetic_symbol {
+sub get_synthetic_instrument {
     my %options = @_;
 
     my $synthetic_info  = $options{synthetic_info};
-    my $symbol          = $options{symbol};
+    my $instrument      = $options{instrument};
     my $tf              = $options{timeframe};
     my $p               = $options{provider};
     my $incremental_base_table  = $options{incremental_base_table};
@@ -126,7 +126,7 @@ sub get_synthetic_symbol {
         $high   = 'low';
         $low    = 'high';
     } else {
-        die("Invalid op component for synthetic $symbol . Fix fx.yml.");
+        die("Invalid op component for synthetic $instrument . Fix fx.yml.");
     }
 
     if ($leftop ne '1') {
@@ -186,7 +186,7 @@ sub get_synthetic_symbol {
 
 sub get_synthetic_timeframe {
     my %options = @_;
-    my $symbol = $options{symbol} || die("missing symbol");
+    my $instrument = $options{instrument} || die("missing instrument");
     my $tf = $options{timeframe} || die("missing timeframe");
     my $p  = $options{provider} || die("missing provider");
     my $incremental_base_table  = $options{incremental_base_table};
@@ -204,7 +204,7 @@ sub get_synthetic_timeframe {
 
     $where_clause = ( $where_clause ? "WHERE $where_clause" : "" );
 
-    my $table = $p->getTableName($symbol, $lowerTf);
+    my $table = $p->getTableName($instrument, $lowerTf);
 
     return qq/SELECT
       $date_format AS datetime,

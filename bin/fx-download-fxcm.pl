@@ -20,10 +20,10 @@ use Try::Tiny;
 
 
 my $numItemsToDownload = 10;
-my ( $timeframes_from_txt, $symbols_from_txt, $verbose, $help, $service, $mode ) = ( undef, undef, 0, 0, 0, 'simple' );
+my ( $timeframes_from_txt, $instruments_from_txt, $verbose, $help, $service, $mode ) = ( undef, undef, 0, 0, 0, 'simple' );
 
 my $result = GetOptions(
-    "symbols=s",    \$symbols_from_txt,
+    "instruments=s",\$instruments_from_txt,
     "timeframes=s", \$timeframes_from_txt,
     "numItems=i",   \$numItemsToDownload,
     "verbose",      \$verbose,
@@ -34,7 +34,7 @@ my $result = GetOptions(
 pod2usage(1) if ( $help || !defined($timeframes_from_txt));
 
 my $cfg = Finance::HostedTrader::Config->new();
-my @symbols = ( $symbols_from_txt ? split(',', $symbols_from_txt) : @{ $cfg->symbols->natural } );
+my @instruments = ( $instruments_from_txt ? split(',', $instruments_from_txt) : @{ $cfg->symbols->natural } );
 my @timeframes  = sort split(',', $timeframes_from_txt);
 
 my $sleep_interval = $ENV{"DATA_DOWNLOAD_INTERVAL"} // 300;
@@ -52,17 +52,17 @@ if (!$service || download_data()) {
     my $data_provider = Finance::HostedTrader::Provider->factory('FXCM');
     foreach my $timeframe (@timeframes) {
 
-        foreach my $symbol (@symbols) {
-            print "Fetching $symbol $timeframe\n" if ($verbose);
-            my $tableToLoad = $symbol . '_' . $timeframe;
+        foreach my $instrument (@instruments) {
+            print "Fetching $instrument $timeframe\n" if ($verbose);
+            my $tableToLoad = $instrument . '_' . $timeframe;
 
             try {
-                $data_provider->saveHistoricalDataToFile($tableToLoad, $symbol, $timeframe, $numItemsToDownload);
+                $data_provider->saveHistoricalDataToFile($tableToLoad, $instrument, $timeframe, $numItemsToDownload);
                 my $ds = (defined($global_ds) ? $global_ds :  Finance::HostedTrader::Datasource->new());
                 $ds->dbh->do("LOAD DATA LOCAL INFILE '$tableToLoad' IGNORE INTO TABLE $tableToLoad FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n'") or die($!);
                 unlink($tableToLoad);
             } catch {
-                warn "Failed to fetch $symbol $timeframe: $_";
+                warn "Failed to fetch $instrument $timeframe: $_";
             };
         }
     }
@@ -70,30 +70,30 @@ if (!$service || download_data()) {
     $data_provider = undef;
 
     if ($mode eq 'simple') {
-        my $symbols = $cfg->symbols->natural();
-        my $symbols_synthetic = $cfg->symbols->synthetic();
+        my $instruments = $cfg->symbols->natural();
+        my $instruments_synthetic = $cfg->symbols->synthetic();
         my @tfs = sort { $a <=> $b } @{ $cfg->timeframes->all() };
         my $lowerTf = shift (@tfs);
 
         my $ds = (defined($global_ds) ? $global_ds :  Finance::HostedTrader::Datasource->new());
-        foreach my $symbol (keys %$symbols_synthetic) {
-            print "Updating $symbol $lowerTf synthetic\n" if ($verbose);
-            my $synthetic_info = $cfg->symbols->synthetic->{$symbol} || die("Don't know how to calculate $symbol. Add it to fx.yml");
-            my $select_sql = Finance::HostedTrader::Synthetics::get_synthetic_symbol(symbol => $symbol, timeframe => $lowerTf, synthetic_info => $synthetic_info, incremental_base_table => "${symbol}_${lowerTf}");
+        foreach my $instrument (keys %$instruments_synthetic) {
+            print "Updating $instrument $lowerTf synthetic\n" if ($verbose);
+            my $synthetic_info = $cfg->symbols->synthetic->{$instrument} || die("Don't know how to calculate $instrument. Add it to fx.yml");
+            my $select_sql = Finance::HostedTrader::Synthetics::get_synthetic_instrument timeframe => $lowerTf, synthetic_info => $synthetic_info, incremental_base_table => "${instrument}_${lowerTf}");
 
-            my $sql = qq /REPLACE INTO ${symbol}_${lowerTf}
+            my $sql = qq /REPLACE INTO ${instrument}_${lowerTf}
                 ${select_sql};
             /;
 
             $ds->dbh->do($sql) or die($!);
         }
 
-        foreach my $symbol (@$symbols, keys %$symbols_synthetic) {
+        foreach my $instrument (@$instruments, keys %$instruments_synthetic) {
             foreach my $tf (@tfs) {
-                print "Updating $symbol $tf synthetic\n" if ($verbose);
-                my $select_sql = Finance::HostedTrader::Synthetics::get_synthetic_timeframe(symbol => $symbol, timeframe => $tf, incremental_base_table => "${symbol}_${tf}");
+                print "Updating $instrument $tf synthetic\n" if ($verbose);
+                my $select_sql = Finance::HostedTrader::Synthetics::get_synthetic_timeframe(instrument => $instrument, timeframe => $tf, incremental_base_table => "${instrument}_${tf}");
 
-                my $sql = qq/REPLACE INTO ${symbol}_${tf}
+                my $sql = qq/REPLACE INTO ${instrument}_${tf}
                 $select_sql/;
 
                 $ds->dbh->do($sql) or die($!);
@@ -141,7 +141,7 @@ version 0.022
 
 =head1 SYNOPSIS
 
-    fx-download-fxcm.pl --timeframes=$TF1[,$TF2] [--symbols=SYM,...] [--verbose] [--help] [--start="15 days ago"] [--end="today] [--numItems=i] [--mode=simple|views]
+    fx-download-fxcm.pl --timeframes=$TF1[,$TF2] [--instruments=SYM,...] [--verbose] [--help] [--start="15 days ago"] [--end="today] [--numItems=i] [--mode=simple|views]
 
 =head2 OPTIONS
 
@@ -151,9 +151,9 @@ version 0.022
 
 Required. A comma separated string of timeframe codes for which data is to be downloaded. See L<Finance::HostedTrader::Config::Timeframes> for available codes.
 
-=item C<--symbols=$SYM1[,$SYM2 ...]>
+=item C<--instruments=$SYM1[,$SYM2 ...]>
 
-Required. A comma separated string of symbol codes for which data is to be downloaded. See L<Finance::HostedTrader::Config::Symbols> for available codes.  Defaults to download every natural (as opposed to synthetic) symbol.
+Required. A comma separated string of instrument codes for which data is to be downloaded. See L<Finance::HostedTrader::Config::Symbols> for available codes.  Defaults to download every natural (as opposed to synthetic) instrument.
 
 =item C<--numItems=i>
 
@@ -161,8 +161,8 @@ Optional. An integer representing how many items to download.  Defaults to 10.
 
 =item C<--mode=s>
 
-simple - Downloads data only for the lower timeframe.  Synthetic symbols/timeframes are calculated via a query and inserted into their respective tables (default).
-views - Downloads data only for the lower timeframe.  Synthetic symbols/timeframes are implemented as views ( calculated on the fly at run time ).
+simple - Downloads data only for the lower timeframe.  Synthetic instruments/timeframes are calculated via a query and inserted into their respective tables (default).
+views - Downloads data only for the lower timeframe.  Synthetic instruments/timeframes are implemented as views ( calculated on the fly at run time ).
 
 
 =item C<--verbose>

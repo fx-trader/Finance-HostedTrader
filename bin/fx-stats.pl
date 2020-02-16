@@ -45,7 +45,7 @@ my $params = {
     'timeframe'         => $timeframe,
     'max_loaded_items'  => $max_loaded_items,
     'item_count'        => $max_display_items,
-    'symbol'            => $instrument,
+    'instrument'        => $instrument,
 };
 
 my $result = $signal_processor->getDescriptiveStatisticsData($params);

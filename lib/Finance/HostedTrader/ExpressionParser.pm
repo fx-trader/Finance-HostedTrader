@@ -83,7 +83,7 @@ sub new {
 sub getDescriptiveStatisticsData {
     my ($self, $args) = @_;
 
-    my @good_args = qw(provider timeframe symbol max_loaded_items start_period end_period item_count expression percentiles weekdays inner_sql_filter);
+    my @good_args = qw(provider timeframe instrument instrument symbol max_loaded_items start_period end_period item_count expression percentiles weekdays inner_sql_filter);
     foreach my $key (keys %$args) {
         $self->{_logger}->logconfess("invalid arg in getStatisticsData: $key") unless grep { /$key/ } @good_args;
     }
@@ -142,7 +142,7 @@ args
 
 timeframe
 expression
-symbol
+instrument
 max_loaded_items
 end_period
 item_count
@@ -208,9 +208,9 @@ sub getSystemData {
 sub _getSignalSql {
 my ($self, $args) = @_;
 
-    my @obsolete_arg_names  = qw(tf expr maxLoadedItems startPeriod endPeriod numItems fields);
+    my @obsolete_arg_names  = qw(tf expr maxLoadedItems startPeriod endPeriod numItems fields symbol);
     $self->log_obsolete_argument_names(\@obsolete_arg_names, $args);
-    my @good_args           = qw(provider timeframe expression symbol max_loaded_items start_period end_period item_count fields);
+    my @good_args           = qw(provider timeframe expression instrument max_loaded_items start_period end_period item_count fields);
 
     foreach my $key (keys %$args) {
         $self->{_logger}->logconfess("invalid arg in _getSignalSql: $key") unless grep { /$key/ } @good_args, @obsolete_arg_names;
@@ -221,7 +221,7 @@ my ($self, $args) = @_;
     $self->{_logger}->logconfess( "Could not understand timeframe " . ( $tf_name ) ) if (!$default_tf);
     my $expr   = $args->{expression} || $args->{expr}   || $self->{_logger}->logconfess("No expression set for signal");
     $expr = lc($expr);
-    my $symbol = $args->{symbol} || $self->{_logger}->logconfess("No symbol set");
+    my $instrument = $args->{instrument} || $args->{symbol} || $self->{_logger}->logconfess("No instrument set");
     my $maxLoadedItems = $args->{max_loaded_items} || $args->{maxLoadedItems} || 10_000_000_000;
     my $startPeriod = $args->{start_period} || $args->{startPeriod} || '0001-01-01 00:00:00';
     my $endPeriod = $args->{end_period} || $args->{endPeriod} || '9999-12-31 23:59:59';
@@ -307,7 +307,7 @@ my ($self, $args) = @_;
         my $ORDERBY_CLAUSE='';
         $ORDERBY_CLAUSE='ORDER BY datetime ASC';
 
-        my $tableName = $data_provider->getTableName($symbol, $tf);
+        my $tableName = $data_provider->getTableName($instrument, $tf);
 
         my $tf_sql = qq(
 (
@@ -425,7 +425,7 @@ sub _getIndicatorSql {
     my $displayEndDate   = $args{end_period} || $args{end_period} || '9999-12-31';
     my $expr      = $args{expression} || $args{fields}          || $self->{_logger}->logconfess("No indicator expression set");
     $expr = lc($expr);
-    my $symbol    = $args{instrument} || $args{symbol}          || $self->{_logger}->logconfess("No instrument set for indicator");
+    my $instrument    = $args{instrument} || $args{symbol}          || $self->{_logger}->logconfess("No instrument set for indicator");
     my $itemCount = $args{item_count} || $args{numItems} || 10_000_000;
     my $sqlFilter = $args{inner_sql_filter} // '';
     my $provider  = $args{provider};
@@ -449,7 +449,7 @@ sub _getIndicatorSql {
     $WHERE_FILTER .= " AND ($sqlFilter)" if ($sqlFilter);
 #    $WHERE_FILTER .= ' AND dayofweek(datetime) <> 1' if ( $tf != 604800 );
 
-    my $tableName = $data_provider->getTableName($symbol, $tf);
+    my $tableName = $data_provider->getTableName($instrument, $tf);
     my $sql = qq(
 SELECT * FROM (
 SELECT $result FROM (
@@ -477,14 +477,14 @@ Check wether a given signal occurred in a given period of time
 sub checkSignal {
     my ( $self, $args ) = @_;
 
-    my @good_args = qw(provider expr symbol tf maxLoadedItems period simulatedNowValue);
+    my @good_args = qw(provider expr instrument symbol tf maxLoadedItems period simulatedNowValue);
 
     foreach my $key (keys %$args) {
         $self->{_logger}->logconfess("invalid arg in checkSignal: $key") unless grep { /$key/ } @good_args;
     }
 
     my $expr = $args->{expr} || $self->{_logger}->logconfess("expr argument missing in checkSignal");
-    my $symbol = $args->{symbol} || $self->{_logger}->logconfess("symbol argument missing in checkSignal");
+    my $instrument = $args->{instrument} || $args->{symbol} || $self->{_logger}->logconfess("instrument argument missing in checkSignal");
     my $timeframe = $args->{tf} || $self->{_logger}->logconfess("timeframe argument missing in checkSignal");
     my $maxLoadedItems = $args->{maxLoadedItems} || -1;
     my $period = $args->{period} || 3600;
@@ -497,7 +497,7 @@ sub checkSignal {
         {
             'provider'        => $provider,
             'expr'            => $expr,
-            'symbol'          => $symbol,
+            'instrument'      => $instrument,
             'tf'              => $timeframe,
             'maxLoadedItems'  => $maxLoadedItems,
             'startPeriod'     => $startPeriod,

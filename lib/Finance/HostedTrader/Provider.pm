@@ -93,17 +93,17 @@ sub getAllInstruments {
 }
 
 sub convertInstrumentTo {
-    my ($self, $symbol) = @_;
+    my ($self, $instrument) = @_;
 
-    $self->log->logconfess("Unsupported symbol '$symbol'") if (!exists($self->instrumentMap->{$symbol}));
-    return $self->instrumentMap->{$symbol};
+    $self->log->logconfess("Unsupported instrument '$instrument'") if (!exists($self->instrumentMap->{$instrument}));
+    return $self->instrumentMap->{$instrument};
 }
 
 sub convertInstrumentFrom {
-    my ($self, $symbol) = @_;
+    my ($self, $instrument) = @_;
 
-    $self->log->logconfess("Unsupported symbol '$symbol'") if (!exists($self->{_reverseInstrumentMap}->{$symbol}));
-    return $self->{_reverseInstrumentMap}->{$symbol};
+    $self->log->logconfess("Unsupported instrument '$instrument'") if (!exists($self->{_reverseInstrumentMap}->{$instrument}));
+    return $self->{_reverseInstrumentMap}->{$instrument};
 }
 
 sub convertTimeframeTo {

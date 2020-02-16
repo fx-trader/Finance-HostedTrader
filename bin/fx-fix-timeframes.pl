@@ -46,12 +46,12 @@ $ds->cfg->forEachProvider( sub {
     my $p = shift;
 
     my @provider_instruments = (@instruments ? @instruments : $p->getInstruments());
-    foreach my $symbol (@provider_instruments) {
+    foreach my $instrument (@provider_instruments) {
         foreach my $tf (@tfs) {
             next unless (grep(/^$tf$/,@timeframes));
-            print "Updating " . $p->id . " $symbol $tf synthetic\n" if ($verbose);
-            my $select_sql = Finance::HostedTrader::Synthetics::get_synthetic_timeframe(provider => $p, symbol => $symbol, timeframe => $tf );
-            my $table = $p->getTableName($symbol, $tf);
+            print "Updating " . $p->id . " $instrument $tf synthetic\n" if ($verbose);
+            my $select_sql = Finance::HostedTrader::Synthetics::get_synthetic_timeframe(provider => $p, instrument => $instrument, timeframe => $tf );
+            my $table = $p->getTableName($instrument, $tf);
 
             my $sql = qq/REPLACE INTO $table
             $select_sql/;

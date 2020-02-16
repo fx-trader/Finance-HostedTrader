@@ -18,7 +18,7 @@ with 'MooseX::Log::Log4perl';
 
 # the values in the meta1 and meta2 keys are used to calculate position sizes
 
-my %symbolBaseMap = (
+my %instrumentBaseMap = (
  AUDCAD => { numerator => 'AUD',        denominator => 'CAD', meta1 => 10000, meta2 => 1 },
  AUDCHF => { numerator => 'AUD',        denominator => 'CHF', meta1 => 10000, meta2 => 1 },
  AUDJPY => { numerator => 'AUD',        denominator => 'JPY', meta1 => 100  , meta2 => 1 },
@@ -117,8 +117,8 @@ my %symbolBaseMap = (
 
 =attr C<natural>
 
-Returns a list of natural symbols.
-Natural symbols originate from the datasource, as opposed to synthetic symbols which are calculated based on natural symbols
+Returns a list of natural instruments.
+Natural instruments originate from the datasource, as opposed to synthetic instruments which are calculated based on natural instruments
 
 Eg: AUDJPY can be synthetically calculated based on AUDUSD and USDJPY
 
@@ -131,14 +131,14 @@ has natural => (
 
 =attr C<synthetic>
 
-Returns a list of synthetic symbols.
+Returns a list of synthetic instruments.
 
-See the description for natural symbols.
+See the description for natural instruments.
 
 =cut
 
 
-sub _around_synthetic_symbols {
+sub _around_synthetic_instruments {
     my $orig = shift;
     my $self = shift;
 
@@ -161,7 +161,7 @@ sub _build_synthetic {
 }
 
 #register method modifier so that undef values can be converted to empty lists
-around 'synthetic' => \&_around_synthetic_symbols;
+around 'synthetic' => \&_around_synthetic_instruments;
 
 
 sub synthetic_names {
@@ -173,7 +173,7 @@ sub synthetic_names {
 
 =method C<all>
 
-Returns a list of all symbols, natural and synthetic.
+Returns a list of all instruments, natural and synthetic.
 
 =cut
 sub all {
@@ -183,12 +183,12 @@ sub all {
 
 }
 
-=method C<getSymbolDenominator($symbol)>
+=method C<getSymbolDenominator($instrument)>
 
-Returns the asset the symbol is denominated in.
+Returns the asset the instrument is denominated in.
 
 This is required to calculate PL in a different currency, or
-create a synthetic symbol based in a different currency.
+create a synthetic instrument based in a different currency.
 
 Eg:
  GER30      => 'EUR' ( Denominated in EUR )
@@ -198,20 +198,20 @@ Eg:
 
 =cut
 sub getSymbolDenominator {
-    my ($self, $symbol) = @_;
+    my ($self, $instrument) = @_;
 
     $self->logger->logconfess("This should be calling the Provider getSymbolDenominator method");
-    $self->logger->logconfess("Required parameter symbol missing") unless(defined($symbol));
-    if (!exists($symbolBaseMap{$symbol})) {
-        $self->logger->logconfess("Symbol '$symbol' does not exist in ".__PACKAGE__."::\$symbolBaseMap");
+    $self->logger->logconfess("Required parameter instrument missing") unless(defined($instrument));
+    if (!exists($instrumentBaseMap{$instrument})) {
+        $self->logger->logconfess("Instrument '$instrument' does not exist in ".__PACKAGE__."::\$instrumentBaseMap");
     }
 
-    return $symbolBaseMap{$symbol}->{denominator};
+    return $instrumentBaseMap{$instrument}->{denominator};
 }
 
-=method C<getSymbolNumerator($symbol)>
+=method C<getSymbolNumerator($instrument)>
 
-Returns the asset the symbol represents.
+Returns the asset the instrument represents.
 
 Eg:
  GER30      => 'GER30'  ( Represents in GER30 )
@@ -222,50 +222,50 @@ Eg:
 =cut
 
 sub getSymbolNumerator {
-    my ($self, $symbol) = @_;
+    my ($self, $instrument) = @_;
 
     $self->logger->logconfess("This should be calling the Provider getSymbolNumerator method");
-    if (!exists($symbolBaseMap{$symbol})) {
-        $self->logger->logcroak("Unsupported symbol '$symbol'");
+    if (!exists($instrumentBaseMap{$instrument})) {
+        $self->logger->logcroak("Unsupported instrument '$instrument'");
     }
 
-    return $symbolBaseMap{$symbol}->{numerator};
+    return $instrumentBaseMap{$instrument}->{numerator};
 }
 
-=method C<getMeta1($symbol)>
+=method C<getMeta1($instrument)>
 
-Returns information about symbol. This information is used to calculate position sizes.
+Returns information about instrument. This information is used to calculate position sizes.
 I don't know exactly what the information is, this documentation needs improving.
 
 =cut
 
 sub getSymbolMeta1 {
-    my ($self, $symbol) = @_;
+    my ($self, $instrument) = @_;
 
     $self->logger->logconfess("This should be calling a Provider method");
-    if (!exists($symbolBaseMap{$symbol})) {
-        $self->logger->logcroak("Unsupported symbol '$symbol'");
+    if (!exists($instrumentBaseMap{$instrument})) {
+        $self->logger->logcroak("Unsupported instrument '$instrument'");
     }
 
-    return $symbolBaseMap{$symbol}->{meta1};
+    return $instrumentBaseMap{$instrument}->{meta1};
 }
 
-=method C<getMeta2($symbol)>
+=method C<getMeta2($instrument)>
 
-Returns information about symbol. This information is used to calculate position sizes.
+Returns information about instrument. This information is used to calculate position sizes.
 I don't know exactly what the information is, this documentation needs improving.
 
 =cut
 
 sub getSymbolMeta2 {
-    my ($self, $symbol) = @_;
+    my ($self, $instrument) = @_;
 
     $self->logger->logconfess("This should be calling a Provider method");
-    if (!exists($symbolBaseMap{$symbol})) {
-        $self->logger->logcroak("Unsupported symbol '$symbol'");
+    if (!exists($instrumentBaseMap{$instrument})) {
+        $self->logger->logcroak("Unsupported instrument '$instrument'");
     }
 
-    return $symbolBaseMap{$symbol}->{meta2};
+    return $instrumentBaseMap{$instrument}->{meta2};
 }
 
 sub get_symbols_by_denominator {
@@ -279,7 +279,7 @@ sub get_symbols_by_numerator {
     my ($self, $base) = @_;
 
     $self->logger->logconfess("This should be calling a Provider method");
-    return [ grep { $self->getSymbolNumerator($_) eq $base } @{$self->all} ];
+    return [ grep { $self->getinstrumentNumerator($_) eq $base } @{$self->all} ];
 }
 
 

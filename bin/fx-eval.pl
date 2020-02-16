@@ -97,11 +97,11 @@ my @instruments = $data_provider->getAllInstruments();
 
 @instruments = split( ',', $instruments_txt ) if ($instruments_txt);
 print "Processing in the $timeframe timeframe\n";
-foreach my $symbol ( @instruments ) {
+foreach my $instrument ( @instruments ) {
     my $indicator_result = $signal_processor->getIndicatorData(
         {
             'expression'      => $ARGV[0],
-            'symbol'          => $symbol,
+            'instrument'      => $instrument,
             'timeframe'       => $timeframe,
             'max_loaded_items'=> $max_loaded_items,
             'item_count'      => $max_display_items,
@@ -111,7 +111,7 @@ foreach my $symbol ( @instruments ) {
     );
     my $data = $indicator_result->{data};
     foreach my $item (@$data) {
-        print "$symbol\t" . join( "\t", @$item ) . "\n";
+        print "$instrument\t" . join( "\t", @$item ) . "\n";
     }
-    print "$symbol\t" . Dumper( \$data ) if ($debug);
+    print "$instrument\t" . Dumper( \$data ) if ($debug);
 }
