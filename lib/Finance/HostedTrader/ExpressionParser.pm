@@ -413,7 +413,7 @@ WHERE ($signal_where_filter) AND $WHERE_FILTER
 ORDER BY datetime DESC
 LIMIT $itemCount
 ";
-print "$sql\n";
+
     return $sql;
 }
 
