@@ -188,11 +188,7 @@ See L</getIndicatorData> for list of arguments.
 sub getSignalData {
     my ( $self, $args ) = @_;
 
-    my $test = delete $args->{test};
-
-    my $sql;
-    $sql = $self->_getSignalSql2($args); # This one supports window functions and better handling of multiple timeframes per expression.
-    #$sql = $self->_getSignalSql($args); # This one has primitive support for multiple timeframes per expression based on joins, which is a piece of rubbish and is going in the bin.
+    my $sql = $self->_getSignalSql2($args); # This one supports window functions and better handling of multiple timeframes per expression.
 
     $self->{_logger}->debug($sql);
 
