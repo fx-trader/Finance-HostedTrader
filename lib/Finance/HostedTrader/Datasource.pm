@@ -78,7 +78,7 @@ sub getLastClose {
     my $data_provider   = $self->cfg->provider($args{provider});
 
     my $cfg = $self->cfg;
-    my $timeframe = 300;#TODO hardcoded lowest available timeframe is 5min. Could look it up in $cfg instead.
+    my $timeframe = 300;#TODO hardcoded lowest available timeframe is 5minute. Could look it up in $cfg instead.
 
     my $tableName = $data_provider->getTableName($instrument, $timeframe);
     my $sql = qq{

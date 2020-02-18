@@ -24,7 +24,7 @@ isa_ok($tfs,'Finance::HostedTrader::Config::Timeframes');
 is($tfs->getTimeframeName($tfs->getTimeframeID('min')), 'min', 'GetTimeframe{ID,Name}');
 is_deeply($tfs->natural, [60, 300], 'Natural timeframes sorted');
 is_deeply($tfs->all, [60, 300], 'All timeframes sorted');
-is_deeply($tfs->all_by_name, [qw/min 5min/], 'All timeframes sorted');
+is_deeply($tfs->all_by_name, [qw/min 5minute/], 'All timeframes sorted');
 
 
 $tfs = Finance::HostedTrader::Config::Timeframes->new(

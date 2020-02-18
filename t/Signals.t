@@ -10,7 +10,7 @@ use Data::Dumper;
 use Finance::HostedTrader::ExpressionParser;
 
 my $symbol  = 'EURUSD';
-my $tf      = '5min';
+my $tf      = '5minute';
 my $expect;
 
 my $e = Finance::HostedTrader::ExpressionParser->new();

@@ -33,7 +33,7 @@ sub _getCurrencyRatio {
     my $signal_processor = Finance::HostedTrader::ExpressionParser->new();
     my $params = {
         'expression'        => "datetime,close",
-        'timeframe'         => "5min",
+        'timeframe'         => "5minute",
         'item_count'        => 1,
         'instrument'        => "${account_currency}_${base_currency}"
     };

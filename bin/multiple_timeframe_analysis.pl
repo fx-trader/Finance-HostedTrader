@@ -10,7 +10,7 @@ my $parser = Finance::HostedTrader::ExpressionParser->new();
 
 my $instrument = "XAU_EUR";
 my $max_loaded_items = "25000";
-my $timeframe = '5min';
+my $timeframe = '5minute';
 my $provider = 'oanda_historical';
 
 =pod
