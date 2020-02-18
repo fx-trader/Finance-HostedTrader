@@ -47,7 +47,9 @@ timeframe:
         '2hour(' function ')' { Finance::HostedTrader::ExpressionParser::SetIndicatorTimeframe($item[2], 7200); $item[2] } |
         '3hour(' function ')' { Finance::HostedTrader::ExpressionParser::SetIndicatorTimeframe($item[2], 10800); $item[2] } |
         '4hour(' function ')' { Finance::HostedTrader::ExpressionParser::SetIndicatorTimeframe($item[2], 14400); $item[2] } |
-        '8hour(' function ')' { Finance::HostedTrader::ExpressionParser::SetIndicatorTimeframe($item[2], 28800); $item[2] }
+        '8hour(' function ')' { Finance::HostedTrader::ExpressionParser::SetIndicatorTimeframe($item[2], 28800); $item[2] } |
+        'day(' function ')' { Finance::HostedTrader::ExpressionParser::SetIndicatorTimeframe($item[2], 86400); $item[2] } |
+        'week(' function ')' { Finance::HostedTrader::ExpressionParser::SetIndicatorTimeframe($item[2], 604800); $item[2] }
 
 function:
         'ema(' expression ',' number ')' { "round(ta_ema($item[2],$item[4]), 4)" } |
