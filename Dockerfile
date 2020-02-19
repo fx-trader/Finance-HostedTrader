@@ -47,8 +47,8 @@ RUN curl -L http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz | 
 
 COPY . Finance-HostedTrader
 
-ENV PATH="/src/Finance-HostedTrader/bin:/root/Finance-HostedTrader/bin:${PATH}"
-ENV PERL5LIB="/src/Finance-HostedTrader/lib:/root/Finance-HostedTrader/lib:${PERL5LIB}"
+ENV PATH="/root/Finance-HostedTrader/bin:${PATH}"
+ENV PERL5LIB="/root/Finance-HostedTrader/lib:${PERL5LIB}"
 ENV LD_LIBRARY_PATH="/usr/local/lib:${FXCONNECT_HOME}/lib"
 
 WORKDIR /root/ta-lib
