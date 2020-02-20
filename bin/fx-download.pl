@@ -41,7 +41,7 @@ my $calculate_synthetics = ($mode eq 'all' || $mode eq 'synthetics_only');
 
 my $cfg = Finance::HostedTrader::Config->new();
 my @instruments = split(',', $instruments_from_txt // '');
-my @timeframes  = sort split(',', $timeframes_from_txt);
+my @timeframes  = split(',', $timeframes_from_txt);
 
 my $sleep_interval = $ENV{"DATA_DOWNLOAD_INTERVAL"} // 300;
 
