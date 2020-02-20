@@ -286,6 +286,7 @@ sub saveHistoricalDataToFile {
         my $response = $self->{_client}->get("https://${server_url}/v3/instruments/$instrument/candles?" . $qq->stringify);
         my $obj = $self->_handle_oanda_response($response);
         foreach my $candle ( @{ $obj->{candles} } ) {
+            next unless ($candle->{complete});
             my $price_bid = $candle->{bid};
             my $price_ask = $candle->{ask};
             my $price_mid = $candle->{mid};
