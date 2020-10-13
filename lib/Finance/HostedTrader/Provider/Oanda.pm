@@ -199,10 +199,10 @@ sub BUILD {
 sub _handle_oanda_response {
     my ($self, $response) = @_;
 
-    if (!$response->is_success()) {
-        $self->log->logconfess($response->status_line());
-    }
     my $content = $response->decoded_content();
+    if (!$response->is_success()) {
+        $self->log->logconfess($response->status_line(), "\n$content");
+    }
     return $self->_decode_oanda_json($content);
 }
 
