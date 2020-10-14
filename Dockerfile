@@ -1,7 +1,7 @@
 FROM ubuntu
 MAINTAINER Joao Costa <joaocosta@zonalivre.org>
 
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install \
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install \
         curl \
         make \
         gcc \
