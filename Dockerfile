@@ -11,6 +11,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-rec
         git \
         libdatetime-format-strptime-perl \
         libdbd-mysql-perl \
+        libfile-slurp-perl \
         libyaml-libyaml-perl \
         libtry-tiny-perl \
         libjson-maybexs-perl \
