@@ -21,6 +21,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-rec
         libdate-manip-perl \
         cpanminus \
         libconfig-any-perl \
+        libparams-validate-perl \
         libparse-recdescent-perl \
         libredis-perl \
         libstatistics-descriptive-perl \
