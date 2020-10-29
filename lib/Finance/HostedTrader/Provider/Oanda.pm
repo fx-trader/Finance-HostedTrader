@@ -183,7 +183,11 @@ sub BUILD {
 
     $self->{_token} = read_file($self->token_file);
 
-    my $client = LWP::UserAgent->new( keep_alive => 100 );
+    my $client = LWP::UserAgent->new(
+        keep_alive => 100, 
+        ssl_opts => {
+            SSL_cipher_list => 'DEFAULT:!DH' # see https://stackoverflow.com/questions/36417224/openssl-dh-key-too-small-error
+	});
     $client->default_header("Authorization" => "Bearer $self->{_token}");
     $client->default_header("Content-Type" => "application/json");
     $client->default_header("Accept-Datetime-Format" => $self->datetime_format);
