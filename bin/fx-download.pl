@@ -21,7 +21,7 @@ use Try::Tiny;
 use Time::Piece;
 
 my $numItemsToDownload = 10;
-my ( $timeframes_from_txt, $instruments_from_txt, $verbose, $help, $service, $mode, $provider, $nodb ) = ( undef, undef, 0, 0, 0, 'all', undef, 0 );
+my ( $timeframes_from_txt, $instruments_from_txt, $verbose, $help, $service, $mode, $provider ) = ( undef, undef, 0, 0, 0, 'all', undef );
 
 my $result = GetOptions(
     "instruments=s",    \$instruments_from_txt,
@@ -31,7 +31,6 @@ my $result = GetOptions(
     "service",      \$service,
     "mode=s",       \$mode,
     "provider=s",   \$provider,
-    "nodb",         \$nodb,
     "help",         \$help)  or pod2usage(1);
 
 pod2usage(1) if ( $help || !defined($timeframes_from_txt));
@@ -66,12 +65,56 @@ if (!$service || download_data()) {
                 my $tableToLoad = $data_provider->getTableName($instrument, $timeframe);
 
                 try {
-                    $data_provider->saveHistoricalDataToFile($tableToLoad, $instrument, $timeframe, $numItemsToDownload);
-                    if (!$nodb) {
+                    my @buffer;
+                    my $buffer_size = 0;
+                    $data_provider->streamHistoricalData($instrument, $timeframe, $numItemsToDownload, sub {
+                        my $candle = shift;
+
+                        my $price_bid = $candle->{bid};
+                        my $price_ask = $candle->{ask};
+                        my $price_mid = $candle->{mid};
+                        $candle->{time} =~ s/T/ /;
+                        $candle->{time} =~ s/Z$//;
+
+                        push @buffer,
+                            $candle->{time},
+                            $price_ask->{o},
+                            $price_ask->{h},
+                            $price_ask->{l},
+                            $price_ask->{c},
+                            $price_bid->{o},
+                            $price_bid->{h},
+                            $price_bid->{l},
+                            $price_bid->{c},
+                            $price_mid->{o},
+                            $price_mid->{h},
+                            $price_mid->{l},
+                            $price_mid->{c},
+                            $candle->{volume};
+
+                        $buffer_size++;
+
+                        if ($buffer_size >= 20) {
+                            my $sql = "INSERT IGNORE INTO $tableToLoad (datetime, ask_open, ask_high, ask_low, ask_close, bid_open, bid_high, bid_low, bid_close, mid_open, mid_high, mid_low, mid_close, volume) VALUES " . ( "(?,?,?,?,?,?,?,?,?,?,?,?,?,?)," x ($buffer_size) );
+                            chop($sql);
+                            
+                            my $ds = (defined($global_ds) ? $global_ds :  Finance::HostedTrader::Datasource->new());
+                            $ds->dbh->do($sql, undef, @buffer) or die($!);
+
+                            @buffer = ();
+                            $buffer_size=0;
+                        }
+                    });
+
+                    if ($buffer_size) {
+                        my $sql = "INSERT IGNORE INTO $tableToLoad (datetime, ask_open, ask_high, ask_low, ask_close, bid_open, bid_high, bid_low, bid_close, mid_open, mid_high, mid_low, mid_close, volume) VALUES " . ( "(?,?,?,?,?,?,?,?,?,?,?,?,?,?)," x ($buffer_size) );
+                        my $last_char = chop($sql);
+                        $sql .= $last_char if ($last_char ne ',');
+
                         my $ds = (defined($global_ds) ? $global_ds :  Finance::HostedTrader::Datasource->new());
-                        $ds->dbh->do("LOAD DATA LOCAL INFILE '$tableToLoad' IGNORE INTO TABLE $tableToLoad FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n'") or die($!);
-                        unlink($tableToLoad);
+                        $ds->dbh->do($sql, undef, @buffer) or die($!);
                     }
+
                 } catch {
                     warn "Failed to fetch $instrument $timeframe: $_";
                 };
@@ -177,10 +220,6 @@ all - Downloads data only for the lower timeframe.  Synthetic instruments/timefr
 data_only - Downloads data only for the lower timeframe.  Synthetic instruments/timeframes are implemented as views ( calculated on the fly at run time ).
 
 synthetic_only - Only calculate synthetic instruments/timeframes, without downloading any data from the provider.
-
-=item C<--nodb>
-
-Write data to a file instead of the database
 
 =item C<--verbose>
 

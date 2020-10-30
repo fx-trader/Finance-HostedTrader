@@ -321,6 +321,48 @@ sub saveHistoricalDataToFile {
     close($fh);
 }
 
+=item C<streamHistoricalData($instrument, $tf, $numberOfItems, $callback)>
+
+=cut
+
+sub streamHistoricalData {
+    my ($self, $instrument, $tf, $numberOfItems, $callback) = @_;
+
+
+    $instrument = $self->convertInstrumentTo($instrument);
+    $tf = $self->convertTimeframeTo($tf);
+
+    my $server_url = $self->endpoint_hosts->{rest};
+    my $timeTo = undef;
+    my @candle_buffer;
+
+    while ($numberOfItems > 0) {
+
+        my $oanda_args = {
+            granularity => $tf,
+            count       => ($numberOfItems > 5000 ? 5000 : $numberOfItems),
+            to          => $timeTo,
+            price       => 'BAM',
+        };
+
+        my $qq = URI::Query->new($oanda_args);
+
+        my $response = $self->{_client}->get("https://${server_url}/v3/instruments/$instrument/candles?" . $qq->stringify);
+        my $obj = $self->_handle_oanda_response($response);
+        foreach my $candle ( @{ $obj->{candles} } ) {
+            next unless ($candle->{complete});
+            $callback->($candle);
+        }
+
+        $numberOfItems -= scalar(@{$obj->{candles}});
+        if ($numberOfItems > 0) {
+            $timeTo = $obj->{candles}->[0]->{time};
+            last if(!$timeTo);
+            warn "$timeTo\n";
+        }
+    }
+}
+
 =item C<getHistoricalData($instrument, $tf, $numberOfItems)>
 
 See also http://developer.oanda.com/rest-live-v20/instrument-ep/
