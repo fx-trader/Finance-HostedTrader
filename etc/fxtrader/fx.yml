@@ -113,6 +113,7 @@ symbols:
 
 timeframes:
     natural:
+        - 60
         - 300
         - 900
         - 1800
