@@ -35,8 +35,6 @@ Required.  The template for what statment will be output.
 
 =back
 
-Defaults to "TABLE_NAME".
-
 =item C<--help>
 
 Help screen
