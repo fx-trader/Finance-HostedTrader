@@ -228,17 +228,25 @@ sub _decode_oanda_json {
 sub getInstrumentsFromProvider {
     my $self = shift;
 
-    my $url = "https://api-fxtrade.oanda.com/v3/accounts/${\$self->account_id}/instruments";
+    my $url = "https://${\$self->endpoint_hosts->{rest}}/v3/accounts/${\$self->account_id}/instruments";
     my $response = $self->{_client}->get($url) or $self->log->logconfess("Unable to get $url:\n$!");
     my $obj = $self->_handle_oanda_response($response);
 
     return { map { $_->{name}, $_ } @{$obj->{instruments}} };
 }
 
+sub getAccounts {
+    my $self = shift;
+
+    my $url     = "https://${\$self->endpoint_hosts->{rest}}/v3/accounts";
+    my $response = $self->{_client}->get($url) or $self->log->logconfess("Unable to get $url:\n$!");
+    return $self->_handle_oanda_response($response);
+}
+
 sub getAccountSummary {
     my $self = shift;
 
-    my $url     = "https://api-fxtrade.oanda.com/v3/accounts/${\$self->account_id}/summary";
+    my $url     = "https://${\$self->endpoint_hosts->{rest}}/v3/accounts/${\$self->account_id}/summary";
     my $response = $self->{_client}->get($url) or $self->log->logconfess("Unable to get $url:\n$!");
     return $self->_handle_oanda_response($response);
 }
@@ -246,7 +254,7 @@ sub getAccountSummary {
 sub getOpenPositions {
     my $self = shift;
 
-    my $url     = "https://api-fxtrade.oanda.com/v3/accounts/${\$self->account_id}/openPositions";
+    my $url     = "https://${\$self->endpoint_hosts->{rest}}/v3/accounts/${\$self->account_id}/openPositions";
     my $response = $self->{_client}->get($url) or $self->log->logconfess("Unable to get $url:\n$!");
     return $self->_handle_oanda_response($response);
 }
@@ -254,7 +262,7 @@ sub getOpenPositions {
 sub getOpenTrades {
     my $self = shift;
 
-    my $url     = "https://api-fxtrade.oanda.com/v3/accounts/${\$self->account_id}/openTrades";
+    my $url     = "https://${\$self->endpoint_hosts->{rest}}/v3/accounts/${\$self->account_id}/openTrades";
     my $response = $self->{_client}->get($url) or $self->log->logconfess("Unable to get $url:\n$!");
     return $self->_handle_oanda_response($response)->{trades};
 }
