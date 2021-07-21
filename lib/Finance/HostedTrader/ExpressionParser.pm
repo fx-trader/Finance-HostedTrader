@@ -97,7 +97,7 @@ sub new {
 sub getDescriptiveStatisticsData {
     my ($self, $args) = @_;
 
-    my @good_args = qw(provider timeframe instrument instrument symbol max_loaded_items start_period end_period item_count expression percentiles weekdays inner_sql_filter);
+    my @good_args = qw(provider timeframe instrument instrument symbol max_loaded_items start_period end_period item_count expression percentiles weekdays);
     foreach my $key (keys %$args) {
         $self->{_logger}->logconfess("invalid arg in getStatisticsData: $key") unless grep { /$key/ } @good_args;
     }
@@ -242,9 +242,9 @@ sub _getIndicatorSql {
     my ($self, %args) = @_;
     my ( $result );
 
-    my @obsolete_arg_names  = qw(tf fields maxLoadedItems endPeriod numItems symbol);
+    my @obsolete_arg_names  = qw(tf fields maxLoadedItems endPeriod numItems symbol inner_sql_filter);
     $self->log_obsolete_argument_names(\@obsolete_arg_names, \%args);
-    my @good_args           = qw(provider timeframe expression instrument max_loaded_items start_period end_period item_count inner_sql_filter weekdays);
+    my @good_args           = qw(provider timeframe expression instrument max_loaded_items start_period end_period item_count weekdays);
 
     foreach my $key (keys %args) {
         $self->{_logger}->logconfess("invalid arg in getIndicatorData: $key") unless grep { /$key/ } @good_args, @obsolete_arg_names;
@@ -260,7 +260,6 @@ sub _getIndicatorSql {
     $expr = lc($expr);
     my $instrument= $args{instrument} || $args{symbol}          || $self->{_logger}->logconfess("No instrument set for indicator");
     my $itemCount = $args{item_count} || $args{numItems} || 10_000_000;
-    my $sqlFilter = $args{inner_sql_filter} // '';
     my $provider  = $args{provider};
 
     my $data_provider = $self->{_ds}->cfg->provider($provider);
@@ -273,7 +272,6 @@ sub _getIndicatorSql {
         unless ( defined($result) );
 
     my $WHERE_FILTER = "WHERE datetime >= '$displayStartDate' AND datetime <= '$displayEndDate'";
-    $WHERE_FILTER .= " AND ($sqlFilter)" if ($sqlFilter);
 #    $WHERE_FILTER .= ' AND dayofweek(datetime) <> 1' if ( $tf != 604800 );
 
     my $tableName = $data_provider->getTableName($instrument, $tf);
@@ -287,7 +285,6 @@ sub _getIndicatorSql {
 WITH T AS (
   SELECT datetime, mid_open AS open, mid_high AS high, mid_low AS low, mid_close AS close
   FROM ${tableName}
-  $WHERE_FILTER
   ORDER BY datetime DESC
   LIMIT $maxLoadedItems
 ),
@@ -306,6 +303,7 @@ indicators AS (
   LIMIT 18446744073709551615 -- See https://mariadb.com/kb/en/why-is-order-by-in-a-from-subquery-ignored/
 )
 SELECT * FROM indicators
+$WHERE_FILTER
 ORDER BY datetime DESC
 LIMIT $itemCount
 ";
@@ -334,7 +332,6 @@ my ($self, $args) = @_;
     my $displayEndDate = $args->{end_period} || $args->{endPeriod} || '9999-12-31 23:59:59';
     my $fields = $args->{fields} || 'datetime';
     my $provider = $args->{provider};
-    my $sqlFilter = $args->{inner_sql_filter} // '';
 
     my $data_provider = $self->{_ds}->cfg->provider($provider);
 
@@ -361,7 +358,6 @@ my ($self, $args) = @_;
     $datetime_expressions .= ',' if ($datetime_expressions);
 
     my $WHERE_FILTER = "(datetime >= '$displayStartDate' AND datetime <= '$displayEndDate')";
-    $WHERE_FILTER .= " AND ($sqlFilter)" if ($sqlFilter);
 
     my %query_items;
     foreach my $result (@$results) {
